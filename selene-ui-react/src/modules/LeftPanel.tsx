@@ -1,14 +1,41 @@
+import { useEffect, useState } from 'react';
+// import {FileTree} from "./components/";
+import FileTree from "@/components/FileTree";
+const { ipcRenderer } = window.require('electron');
 
-export default function LeftPanel() {
+function LeftPanel() {
+  const [folders, setFolders] = useState<any[]>([]);
 
-    return (
+  useEffect(() => {
+    ipcRenderer.on('replace-folders', (event, { basePath, contents }) => {
+      setFolders([{ basePath, contents }]);
+    });
 
-        <div className="w-60   overflow-auto">
-            <nav className="p-4 space-y-2">
-                <div>菜单1</div>
-                <div>菜单2</div>
-                <div>菜单3</div>
-            </nav>
+    ipcRenderer.on('append-folder', (event, { basePath, contents }) => {
+      setFolders(prev => [...prev, { basePath, contents }]);
+    });
+
+    return () => {
+      ipcRenderer.removeAllListeners('replace-folders');
+      ipcRenderer.removeAllListeners('append-folder');
+    };
+  }, []);
+
+  return (
+    <div className="left-panel">
+      {folders.map((folder, i) => (
+        <div key={i} className="folder">
+          <h4>{folder.basePath}</h4>
+          <FileTree  nodes={folder.contents} />
+          {/*<ul>*/}
+          {/*  {folder.contents.map(item => (*/}
+          {/*    <li key={item.path}>{item.name}{item.isDirectory ? '/' : ''}</li>*/}
+          {/*  ))}*/}
+          {/*</ul>*/}
         </div>
-    )
+      ))}
+    </div>
+  );
 }
+
+export default LeftPanel;
