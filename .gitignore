@@ -134,3 +134,14 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+
+selene-client/node_modules
+selene-ui/node_modules
+selene-ui-react/node_modules
+
+selene-server/main.spec
+selene-server/build
+
+.idea/
+selene-ui-react/.yarn/
