@@ -145,3 +145,5 @@ selene-server/build
 
 .idea/
 selene-ui-react/.yarn/
+
+*/yarn.lock
