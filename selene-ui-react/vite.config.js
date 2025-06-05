@@ -13,6 +13,11 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'), // <-- 关键配置
     },
   },
+  base: './', // ✅ 避免路径丢失
+  build: {
+    outDir: path.resolve(__dirname, '../selene-client/renderer'), // <-- 指向 Electron 主进程目录
+    emptyOutDir: true
+  }
 })
 
 

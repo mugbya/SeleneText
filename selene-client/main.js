@@ -2,14 +2,17 @@
 const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path')
 const { spawn } = require('child_process')
-const { createFileMenu } = require('./src/menu/fileMenu'); // 引入自定义菜单模块
-const createAppMenu = require('./src/menu/appMenu'); // 👈 新增 appMenu 模块
+// const { createFileMenu } = require('./src/menu/fileMenu'); // 引入自定义菜单模块
+const { createFileMenu } = require(path.join(__dirname, 'src/menu/fileMenu')); // 引入自定义菜单模块
+const createAppMenu = require(path.join(__dirname, 'src/menu/AppMenu')); // 👈 新增 appMenu 模块
 
 app.setName('Selene Text'); // ✅ 强制设置 App 名称
 let pythonProcess
 
 // 避免  Electron / Chromium 在初始化图形（GPU）渲染环境时的 OpenGL 或 EGL 报错
 app.disableHardwareAcceleration(); // 👈 加这一行
+
+const isDev = !app.isPackaged;
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -22,14 +25,26 @@ function createWindow () {
     },
   })
   win.webContents.openDevTools();
-  win.loadURL('http://localhost:5173') // ✅ 重要 开发时加载 Vite，本地页面
+  
+
+  // if (process.env.NODE_ENV === 'development') {
+  if (isDev) {
+    win.loadURL('http://localhost:5173'); // ✅ 重要 开发时加载 Vite，本地页面
+  } else {
+    // 注意这里路径要正确指向 `selene-ui-react` 打包产物
+    // win.loadFile(path.join(__dirname, '../selene-ui-react/dist/index.html'));
+    win.loadFile(path.join(__dirname, 'renderer/index.html'));
+  }
+
+  // win.loadFile(path.join(__dirname, 'renderer/index.html'));
+
   win.webContents.on('did-fail-load', (event, errorCode, errorDescription, validatedURL) => {
     console.error('❌ Failed to load:', validatedURL, errorDescription);
   });
   win.webContents.on('did-finish-load', () => {
     console.log('✅ Page loaded');
   });
-  // 打包后这样写：win.loadFile(path.join(__dirname, '../dist/index.html'))
+
 
 
 

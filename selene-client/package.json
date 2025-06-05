@@ -20,12 +20,19 @@
     "electron-builder": "26.0.12",
     "wait-on": "^8.0.3"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mugbya/SeleneText.git"
+  },
   "build": {
-    "asar": true,
-    "asarUnpack": ["**/src/menu/**"],
+    "asar": false,
+    "publish": null,
     "files": [
-      "dist/**/*",
-      "src/menu/**/*"
+      "main.js",
+      "src/menu/**/*",
+      "renderer/**/*",
+      "node_modules/**",
+      "package.json"
     ],
     "appId": "com.yourdomain.selenetext",
     "productName": "Selene Text",
