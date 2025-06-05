@@ -43,3 +43,12 @@ yarn dlx shadcn@latest add dropdown-menu
 ```tsx
 <Button variant="default">Hello Shadcn</Button>
 ```
+
+构建配置 参考 `vite.config.js`
+```bash
+# 构建
+yarn build
+
+# 构建后预览
+yarn preview
+```

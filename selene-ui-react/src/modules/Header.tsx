@@ -1,7 +1,6 @@
 import React from "react";
 import {Button} from "@/components/ui/button";
 import {PanelLeft, PanelRight} from 'lucide-react';
-import FileMenu from "@/components/FileMenu";
 
 interface HeadProps {
     toggleLeft: () => void;
@@ -16,7 +15,6 @@ export default function Head({toggleLeft, toggleRight}: HeadProps) {
 
             <div className="flex gap-1 items-center">
                 <div className="p-1 h-7 w-7"/>
-                <FileMenu/>
 
             </div>
 
