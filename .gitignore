@@ -147,3 +147,6 @@ selene-server/build
 selene-ui-react/.yarn/
 
 */yarn.lock
+
+.DS_Store
+

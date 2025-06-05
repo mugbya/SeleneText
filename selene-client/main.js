@@ -1,8 +1,11 @@
 // electron/main.js
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path')
 const { spawn } = require('child_process')
+const { createFileMenu } = require('./src/menu/fileMenu'); // 引入自定义菜单模块
+const createAppMenu = require('./src/menu/appMenu'); // 👈 新增 appMenu 模块
 
+app.setName('Selene Text'); // ✅ 强制设置 App 名称
 let pythonProcess
 
 // 避免  Electron / Chromium 在初始化图形（GPU）渲染环境时的 OpenGL 或 EGL 报错
@@ -27,7 +30,45 @@ function createWindow () {
     console.log('✅ Page loaded');
   });
   // 打包后这样写：win.loadFile(path.join(__dirname, '../dist/index.html'))
+
+
+
+  // const menuTemplate = [
+  //   createFileMenu(win), // 加载文件菜单
+  //   // 你可以继续添加其他模块化菜单：如 Edit、View、Help 等
+  // ];
+  //
+  // const menu = Menu.buildFromTemplate(menuTemplate);
+  // Menu.setApplicationMenu(menu);
+
+  const menuTemplate = [];
+
+  // 👇 macOS 特有的 App 菜单（位于左上角）
+  if (process.platform === 'darwin') {
+    menuTemplate.push(createAppMenu(win));
+  }
+
+  // 👇 通用菜单项
+  menuTemplate.push(
+    createFileMenu(win),
+    {
+      label: '编辑',
+      submenu: [
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+      ],
+    }
+  );
+
+  const menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
 }
+
+
 
 app.whenReady().then(() => {
   console.log('✅ Electron App Ready');

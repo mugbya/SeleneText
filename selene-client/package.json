@@ -4,6 +4,7 @@
   "description": "Hello World!",
   "main": "main.js",
   "scripts": {
+    "build": "electron-builder",
     "start": "electron .",
     "dev": "concurrently -k -n UI,ELECTRON -c cyan,green \"yarn dev:ui\" \"yarn dev:electron\"",
     "dev:ui": "cd ../selene-ui-react && yarn dev",
@@ -16,6 +17,38 @@
   "devDependencies": {
     "concurrently": "^9.1.2",
     "electron": "^36.3.2",
+    "electron-builder": "26.0.12",
     "wait-on": "^8.0.3"
+  },
+  "build": {
+    "asar": true,
+    "asarUnpack": ["**/src/menu/**"],
+    "files": [
+      "dist/**/*",
+      "src/menu/**/*"
+    ],
+    "appId": "com.yourdomain.selenetext",
+    "productName": "Selene Text",
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.productivity",
+      "icon": "src/assets/logo/logo.icns"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "zip"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "build/icon.png"
+    }
   }
 }

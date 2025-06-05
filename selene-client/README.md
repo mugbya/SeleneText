@@ -32,3 +32,5 @@ yarn dev
 
 ```
 
+
+ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/ yarn add -D electron-builder
