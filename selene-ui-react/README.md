@@ -35,6 +35,7 @@ yarn dlx shadcn@latest init
 ```bash
 yarn dlx shadcn@latest add button
 yarn dlx shadcn@latest add card scroll-area
+yarn dlx shadcn@latest add dropdown-menu
 
 ```
 
