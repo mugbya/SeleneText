@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { PanelLeft, PanelRight } from 'lucide-react';
 
 interface HeadProps {
     toggleLeft: () => void;
@@ -17,13 +18,17 @@ export default function Head({ toggleLeft, toggleRight }: HeadProps) {
 
             </div>
 
-            <div className="flex gap-2">
-                <Button variant="ghost" size="sm" onClick={toggleLeft}>
-                    切换左侧栏
+            <div className="flex gap-1">
+                <Button className="p-1 h-7 w-7" variant="ghost" size="sm" onClick={toggleLeft}>
+                    <PanelLeft className="w-3 h-5"/>
                 </Button>
-                <Button variant="ghost" size="sm" onClick={toggleRight}>
-                    切换右侧栏
+                <Button className="p-1 h-7 w-7" variant="ghost" size="sm" onClick={toggleRight}>
+                    <PanelRight className="w-3 h-5"/>
                 </Button>
+
+                <div className="p-1 h-7 w-7" >
+
+                </div>
             </div>
 
         </div>

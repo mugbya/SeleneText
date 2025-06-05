@@ -52,7 +52,7 @@ export default function Layout() {
             {/* 主体区域：左右中布局 */}
             <div className="flex flex-1 overflow-hidden">
                 {/* 左侧 Panel */}
-                <MenuPanel openSettings={openSettings} />
+                <MenuPanel openSettings={openSettings} toggleLeft={toggleLeft} />
 
                 {/*显示设置详情*/}
                 {isSettingsMode && <SettingsPage onClose={closeSettings}/> }
