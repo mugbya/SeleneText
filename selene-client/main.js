@@ -5,6 +5,9 @@ const { spawn } = require('child_process')
 
 let pythonProcess
 
+// 避免  Electron / Chromium 在初始化图形（GPU）渲染环境时的 OpenGL 或 EGL 报错
+app.disableHardwareAcceleration(); // 👈 加这一行
+
 function createWindow () {
   const win = new BrowserWindow({
     width: 1000,
