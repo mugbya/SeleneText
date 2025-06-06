@@ -77,7 +77,7 @@ function createFileMenu(win) {
       },
       { type: 'separator' },
       {
-        label: '打开文本文件',
+        label: '打开文件',
         click: async () => {
           const result = await dialog.showOpenDialog({
             properties: ['openFile'],

@@ -1,24 +1,59 @@
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { useEffect, useState } from 'react';
+// components/MainContent.tsx
+import React from 'react';
+import MarkdownViewer from './viewer/MarkdownViewer';
+import CodeViewer from './viewer/CodeViewer';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
-export default function MainContent({ filePath, content }: { filePath: string | null; content: string }) {
+function getFileType(filePath: string): 'markdown' | 'code' | 'plain' {
+    if (!filePath) return 'plain';
+    const ext = filePath.split('.').pop()?.toLowerCase();
+    if (!ext) return 'plain';
 
-    // const [content, setContent] = useState('');
+    if (['md', 'markdown'].includes(ext)) return 'markdown';
+    if (['ts', 'tsx', 'js', 'jsx', 'json', 'css', 'html'].includes(ext)) return 'code';
+
+    return 'plain';
+}
+
+export default function MainContent({
+                                        filePath,
+                                        content,
+                                    }: {
+    filePath: string | null;
+    content: string;
+}) {
+    const fileType = filePath ? getFileType(filePath) : 'plain';
+
+    const renderContent = () => {
+        switch (fileType) {
+            case 'markdown':
+                return <MarkdownViewer content={content} />;
+            case 'code':
+                const ext = filePath?.split('.').pop() || 'txt';
+                return <CodeViewer code={content} language={ext} />;
+            default:
+                return (
+                    <pre className="bg-muted p-4 rounded whitespace-pre-wrap text-sm">
+            {content}
+          </pre>
+                );
+        }
+    };
 
     return (
-        <main className="flex-1 overflow-auto p-4">
-            <ScrollArea className="h-full">
-                <div className="flex-1 p-4 overflow-auto">
-                    {filePath ? (
-                        <>
-                            <h2 className="text-base font-semibold mb-2">{filePath}</h2>
-                            <pre className="bg-zinc-100 dark:bg-zinc-900 p-4 rounded whitespace-pre-wrap text-sm">{content}</pre>
-                        </>
-                    ) : (
-                        <div className="text-zinc-500"></div>
-                    )}
-                </div>
+        <main className="flex-1 overflow-auto">
+            <ScrollArea className="h-full p-4">
+                {filePath ? (
+                    <div className="space-y-4">
+                        <h2 className="text-base font-semibold text-muted-foreground">
+                            {filePath}
+                        </h2>
+                        {renderContent()}
+                    </div>
+                ) : (
+                    <div className="text-zinc-400 text-sm">未打开任何文件</div>
+                )}
             </ScrollArea>
         </main>
-    )
+    );
 }

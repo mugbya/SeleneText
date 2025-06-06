@@ -16,6 +16,8 @@
   },
   "typeRoots": ["./node_modules/@types", "./src/types"],
   "esModuleInterop": true,
+  "allowSyntheticDefaultImports": true, // ✅ 也必须设置
+  "resolveJsonModule": true,
   "forceConsistentCasingInFileNames": true,
   "skipLibCheck": true,
   "include": ["src"]
