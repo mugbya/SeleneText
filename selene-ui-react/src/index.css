@@ -1,6 +1,12 @@
+
+
 @import "tailwindcss";
 @import "tw-animate-css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+@plugin "@tailwindcss/typography";
 @custom-variant dark (&:is(.dark *));
 
 
@@ -233,11 +239,23 @@ button:focus-visible {
   --sidebar-ring: oklch(0.7 0.18 240);
 }
 
-@layer base {
+/* @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
   }
+} */
+
+
+.prose table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid #ccc;
+  padding: 8px;
 }

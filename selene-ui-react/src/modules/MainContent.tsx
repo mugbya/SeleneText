@@ -23,6 +23,8 @@ export default function MainContent({
     content: string;
 }) {
     const fileType = filePath ? getFileType(filePath) : 'plain';
+    // console.log("file content");
+    //  console.log(content);
 
     const renderContent = () => {
         switch (fileType) {
@@ -56,15 +58,5 @@ export default function MainContent({
             </ScrollArea>
         </main>
 
-        // <>
-        //     {filePath ? (
-        //         <>
-        //             {/* <div>{filePath}</div> */}
-        //             {renderContent()}
-        //         </>
-        //     ) : (
-        //     <div className="text-zinc-400 text-sm">未打开任何文件</div>
-        //     )}
-        // </>
     );
 }
