@@ -42,7 +42,7 @@ function LeftPanel({ selectedPath, onFileSelect }: LeftPanelProps) {
   }, []);
 
   return (
-    <div className="left-panel p-2 space-y-2 overflow-auto text-sm">
+    <div className="left-panel p-2 space-y-2  text-sm h-full overflow-y-auto">
       {folders.map((folder) => {
         // const rootName = folder.basePath.split("/").filter(Boolean).pop();
         const rootName =

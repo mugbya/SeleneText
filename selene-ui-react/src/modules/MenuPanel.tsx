@@ -25,7 +25,8 @@ export default function MenuPanel({ openSettings, toggleLeft }: MenuPanelProps) 
             {/*</div>*/}
 
 
-            <div className="p-0 space-y-2 border-r ">
+            {/* <div className="p-0 space-y-2 border-r "> */}
+            <div className="p-0 space-y-2">
                 <button
                     // onClick={() => setShowLeftPanel(true)}
                     onClick={toggleLeft}
