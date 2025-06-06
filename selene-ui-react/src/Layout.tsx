@@ -68,13 +68,6 @@ export default function Layout() {
                         onWidthChange={setLeftWidth}
                         show={showLeftPanel}
                     >
-                        {/* <LeftPanel
-                            onFileSelect={(filePath) => {
-                                setSelectedFile(filePath);
-                                // 通过 Electron 获取文件内容
-                                window.electronAPI.readFile(filePath).then(setFileContent);
-                            }}
-                        /> */}
                         <LeftPanel
                             selectedPath={selectedFile}
                             onFileSelect={(filePath) => {

@@ -58,17 +58,37 @@ const ResizablePanel: React.FC<ResizablePanelProps> = ({
         document.addEventListener("mouseup", onMouseUp);
     };
 
-    if (!show) return null;
+    // 这种会导致 LeftPanel 加载的目录树 丢失
+    // if (!show) return null;
+
+    // return (
+    //     <>
+    //         <div style={{ width }} className={`border-${side === "left" ? "r" : "l"} p-2`}>
+    //             {children}
+    //         </div>
+    //         <div
+    //             onMouseDown={startDrag}
+    //             className="w-1 cursor-col-resize transition"
+    //         />
+    //     </>
+    // );
 
     return (
         <>
-            <div style={{ width }} className={`border-${side === "left" ? "r" : "l"} p-2`}>
+            <div
+                className={`transition-all duration-300 overflow-hidden ${
+                    show ? "block" : "hidden"
+                } border-${side === "left" ? "r" : "l"} p-2`}
+                style={{ width: show ? width : 0 }}
+            >
                 {children}
             </div>
-            <div
-                onMouseDown={startDrag}
-                className="w-1 cursor-col-resize transition"
-            />
+            {show && (
+                <div
+                    onMouseDown={startDrag}
+                    className="w-1 cursor-col-resize transition"
+                />
+            )}
         </>
     );
 };
