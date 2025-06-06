@@ -131,13 +131,17 @@ export default function Layout() {
                     activeFile={activeFile}
                     onSwitchFile={setActiveFile}
                     onCloseFile={(path) => {
-                    setOpenFiles((prev) => prev.filter((f) => f.path !== path));
-                    if (activeFile === path) {
-                        const remaining = openFiles.filter((f) => f.path !== path);
-                        setActiveFile(remaining[0]?.path || null);
-                    }
+                        setOpenFiles(files => files.filter(f => f.path !== path));
+                        if (activeFile === path) setActiveFile(null);
                     }}
-                    onAddFile={handleAddFile}
+                    onAddFile={() => {
+                        const newPath = `Untitled-${Date.now()}.txt`;
+                        setOpenFiles(files => [...files, { path: newPath, content: "" }]);
+                        setActiveFile(newPath);
+                    }}
+                    onChangeFileContent={(path, content) => {
+                        setOpenFiles(files => files.map(f => f.path === path ? { ...f, content } : f));
+                    }}
                 />
             </Panel>
 

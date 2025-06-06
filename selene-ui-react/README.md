@@ -37,6 +37,7 @@ yarn dlx shadcn@latest add button
 yarn dlx shadcn@latest add card scroll-area
 yarn dlx shadcn@latest add dropdown-menu
 yarn dlx shadcn@latest add tabs
+yarn dlx shadcn@latest add textarea
 
 ```
 
