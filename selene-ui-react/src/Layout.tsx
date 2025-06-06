@@ -15,6 +15,9 @@ export default function Layout() {
     const [rightWidth, setRightWidth] = useState(320); // px
     const [rightMode, setRightMode] = useState<"normal" | "settings">("normal");
 
+    const [selectedFile, setSelectedFile] = useState<string | null>(null);
+    const [fileContent, setFileContent] = useState<string>("");
+
     const openSettings = () => {
         setRightMode("settings");
         setShowRightPanel(true);
@@ -64,12 +67,25 @@ export default function Layout() {
                         onWidthChange={setLeftWidth}
                         show={showLeftPanel}
                     >
-                        <LeftPanel />
+                        {/* <LeftPanel
+                            onFileSelect={(filePath) => {
+                                setSelectedFile(filePath);
+                                // 通过 Electron 获取文件内容
+                                window.electronAPI.readFile(filePath).then(setFileContent);
+                            }}
+                        /> */}
+                        <LeftPanel
+                            selectedPath={selectedFile}
+                            onFileSelect={(filePath) => {
+                                setSelectedFile(filePath);
+                                window.electronAPI.readFile(filePath).then(setFileContent);
+                            }}
+                        />
                     </ResizablePanel>
                 )}
 
                 {/* 中间内容区 */}
-                {!isSettingsMode && <MainContent />}
+                {!isSettingsMode && <MainContent filePath={selectedFile} content={fileContent} />}
 
                 {/* 右侧 Panel */}
                 {!isSettingsMode && (

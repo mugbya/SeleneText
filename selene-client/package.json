@@ -29,6 +29,7 @@
     "publish": null,
     "files": [
       "main.js",
+      "preload.js",
       "src/menu/**/*",
       "renderer/**/*",
       "node_modules/**",

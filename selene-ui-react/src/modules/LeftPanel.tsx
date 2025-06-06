@@ -1,43 +1,57 @@
 import { useEffect, useState } from "react";
 import FileTree from "@/components/FileTree";
 
-const { ipcRenderer } = window.require("electron");
 
-function LeftPanel() {
-  const [folders, setFolders] = useState<
-      { basePath: string; contents: any[] }[]
-  >([]);
+interface LeftPanelProps {
+  selectedPath: string | null;
+  onFileSelect: (filePath: string) => void;
+}
 
-  useEffect(() => {
-    ipcRenderer.on("replace-folders", (event, { basePath, contents }) => {
-      setFolders([{ basePath, contents }]);
-    });
 
-    ipcRenderer.on("append-folder", (event, { basePath, contents }) => {
-      setFolders((prev) => [...prev, { basePath, contents }]);
-    });
+function LeftPanel({ selectedPath, onFileSelect }: LeftPanelProps) {
+  const [folders, setFolders] = useState<FolderTree[]>([]);
+
+    useEffect(() => {
+    if (window.electronAPI?.on) {
+        window.electronAPI.on("replace-folders", ({ basePath, contents }) => {
+        setFolders([{ basePath, contents }]);
+        });
+
+        window.electronAPI.on("append-folder", ({ basePath, contents }) => {
+        setFolders((prev) => [...prev, { basePath, contents }]);
+        });
+    } else {
+        console.warn('⚠️ electronAPI 未注入，请检查 preload 配置或 contextIsolation 设置');
+    }
 
     return () => {
-      ipcRenderer.removeAllListeners("replace-folders");
-      ipcRenderer.removeAllListeners("append-folder");
+        window.electronAPI?.removeAllListeners?.("replace-folders");
+        window.electronAPI?.removeAllListeners?.("append-folder");
     };
-  }, []);
+    }, []);
 
   return (
-      <div className="left-panel p-2 space-y-2">
-        {folders.map((folder, i) => {
-          const rootName = folder.basePath.split("/").filter(Boolean).pop();
+    <div className="left-panel p-2 space-y-2 overflow-auto text-sm">
+      {folders.map((folder) => {
+        const rootName = folder.basePath.split("/").filter(Boolean).pop();
 
-          const treeRoot = {
-            name: rootName,
-            path: folder.basePath,
-            isDirectory: true,
-            children: folder.contents,
-          };
+        const treeRoot: FileNode = {
+          name: rootName || folder.basePath,
+          path: folder.basePath,
+          isDirectory: true,
+          children: folder.contents,
+        };
 
-          return <FileTree key={folder.basePath} nodes={[treeRoot]} />;
-        })}
-      </div>
+        return (
+          <FileTree
+            key={folder.basePath}
+            nodes={[treeRoot]}
+            onFileClick={onFileSelect}
+            selectedPath={selectedPath || ""}
+          />
+        );
+      })}
+    </div>
   );
 }
 

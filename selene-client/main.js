@@ -6,6 +6,13 @@ const { spawn } = require('child_process')
 const { createFileMenu } = require(path.join(__dirname, 'src/menu/FileMenu')); // 引入自定义菜单模块
 const createAppMenu = require(path.join(__dirname, 'src/menu/AppMenu')); // 👈 新增 appMenu 模块
 
+const { ipcMain } = require('electron');
+const fs = require('fs');
+
+ipcMain.handle('read-file', async (event, filePath) => {
+  return fs.promises.readFile(filePath, 'utf-8');
+});
+
 app.setName('Selene Text'); // ✅ 强制设置 App 名称
 let pythonProcess
 
@@ -15,13 +22,15 @@ app.disableHardwareAcceleration(); // 👈 加这一行
 const isDev = !app.isPackaged;
 
 function createWindow () {
+  console.log("preload.js: ", path.join(__dirname, 'preload.js'));
   const win = new BrowserWindow({
     width: 1000,
     height: 800,
     webPreferences: {
-      // preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: false,
-      nodeIntegration: true,
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,  // ✅ 开启上下文隔离
+      nodeIntegration: false,  // ✅ 禁用 Node 集成
+      sandbox: false, // ✅ 必须显式关闭 sandbox
     },
   })
   win.webContents.openDevTools();
