@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Header from "./modules/Header";
 import LeftPanel from "./modules/LeftPanel";
 import MainContent from "./modules/MainContent";
+import MainContentTabs from "./modules/MainContentTabs";
 import RightPanel from "./modules/RightPanel";
 import Footer from "./modules/Footer";
 import MenuPanel from "@/modules/MenuPanel";
@@ -14,6 +15,11 @@ import {
   ImperativePanelHandle,
 } from "react-resizable-panels";
 
+type FileTab = {
+    path: string;
+    content: string;
+  };
+
 export default function Layout() {
   const [showLeftPanel, setShowLeftPanel] = useState(true);
   const [showRightPanel, setShowRightPanel] = useState(false);
@@ -21,6 +27,18 @@ export default function Layout() {
 
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [fileContent, setFileContent] = useState<string>("");
+
+  const [openFiles, setOpenFiles] = useState<FileTab[]>([]);
+    const [activeFile, setActiveFile] = useState<string | null>(null);
+
+    const [newFileCounter, setNewFileCounter] = useState(1); // 文件编号
+
+    const handleAddFile = () => {
+    const newPath = `Untitled-${newFileCounter}.txt`;
+    setOpenFiles((prev) => [...prev, { path: newPath, content: "" }]);
+    setActiveFile(newPath);
+    setNewFileCounter((c) => c + 1);
+    };
 
   const openSettings = () => {
     setRightMode("settings");
@@ -79,13 +97,27 @@ export default function Layout() {
               onExpand={() => setShowLeftPanel(true)}
             >
               <div className="h-full rounded-lg overflow-hidden">
-                <LeftPanel
+                {/* <LeftPanel
                   selectedPath={selectedFile}
                   onFileSelect={(filePath) => {
                     setSelectedFile(filePath);
                     window.electronAPI.readFile(filePath).then(setFileContent);
                   }}
+                /> */}
+                <LeftPanel
+                  selectedPath={selectedFile}
+                  onFileSelect={(filePath) => {
+                    window.electronAPI.readFile(filePath).then((content: string) => {
+                      setOpenFiles((prev) => {
+                        const exists = prev.find((f) => f.path === filePath);
+                        if (exists) return prev;
+                        return [...prev, { path: filePath, content }];
+                      });
+                      setActiveFile(filePath);
+                    });
+                  }}
                 />
+                
               </div>
             </Panel>
 
@@ -93,7 +125,20 @@ export default function Layout() {
 
             {/* 中间内容区 */}
             <Panel minSize={30}>
-              <MainContent filePath={selectedFile} content={fileContent} />
+              {/* <MainContent filePath={selectedFile} content={fileContent} /> */}
+              <MainContentTabs
+                    openFiles={openFiles}
+                    activeFile={activeFile}
+                    onSwitchFile={setActiveFile}
+                    onCloseFile={(path) => {
+                    setOpenFiles((prev) => prev.filter((f) => f.path !== path));
+                    if (activeFile === path) {
+                        const remaining = openFiles.filter((f) => f.path !== path);
+                        setActiveFile(remaining[0]?.path || null);
+                    }
+                    }}
+                    onAddFile={handleAddFile}
+                />
             </Panel>
 
             {/* 右侧设置面板（可选） */}
