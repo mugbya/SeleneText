@@ -33,9 +33,9 @@ export default function MainContent({
                 return <CodeViewer code={content} language={ext} />;
             default:
                 return (
-                    <pre className="bg-muted p-4 rounded whitespace-pre-wrap text-sm">
-            {content}
-          </pre>
+                    <pre className="text-left bg-muted p-4 rounded whitespace-pre-wrap text-sm font-mono overflow-auto">
+                        {content}
+                    </pre>
                 );
         }
     };
@@ -55,5 +55,16 @@ export default function MainContent({
                 )}
             </ScrollArea>
         </main>
+
+        // <>
+        //     {filePath ? (
+        //         <>
+        //             {/* <div>{filePath}</div> */}
+        //             {renderContent()}
+        //         </>
+        //     ) : (
+        //     <div className="text-zinc-400 text-sm">未打开任何文件</div>
+        //     )}
+        // </>
     );
 }

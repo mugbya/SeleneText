@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import Header from "./modules/Header";
 import LeftPanel from "./modules/LeftPanel";
 import MainContent from "./modules/MainContent";
+import MainContentLocal from "./modules/MainContentLocal";
 import RightPanel from "./modules/RightPanel";
 import Footer from "./modules/Footer";
 import ResizablePanel from "./modules/ResizablePanel";
@@ -86,6 +87,7 @@ export default function Layout() {
 
                 {/* 中间内容区 */}
                 {!isSettingsMode && <MainContent filePath={selectedFile} content={fileContent} />}
+                {/* {!isSettingsMode && <MainContentLocal />}  */}
 
                 {/* 右侧 Panel */}
                 {!isSettingsMode && showRightPanel && (
