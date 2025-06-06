@@ -10,7 +10,9 @@ function isHidden(name) {
   return name.startsWith('.');
 }
 
-const allowedTextExtensions = ['.txt', '.md', '.js', '.ts', '.json', '.html', '.css'];
+// const allowedTextExtensions = ['.txt', '.md', '.js', '.ts', '.json', '.html', '.css'];
+const allowedTextExtensions = ['.txt', '.md', '.json', '.js', '.ts', '.jsx', '.tsx', '.html', '.css', '.scss', '.yml', '.yaml', '.xml', '.csv', '.env']; // 可自行扩展
+
 
 function isTextFile(filePath) {
   return allowedTextExtensions.includes(path.extname(filePath).toLowerCase());
@@ -36,6 +38,12 @@ function readDirRecursive(dirPath, depth = 0, maxDepth = 10) {
 
     const fullPath = path.join(dirPath, name);
     const isDir = entry.isDirectory();
+
+    // ✅ 文件类型过滤
+    if (!isDir && !isTextFile(fullPath)) {
+      continue;
+    }
+
 
     const node = {
       name,
