@@ -10,7 +10,7 @@ import SettingsPage from "@/modules/SettingsPage";
 
 export default function Layout() {
     const [showLeftPanel, setShowLeftPanel] = useState(true);
-    const [showRightPanel, setShowRightPanel] = useState(true);
+    const [showRightPanel, setShowRightPanel] = useState(false);
     const [leftWidth, setLeftWidth] = useState(240); // px
     const [rightWidth, setRightWidth] = useState(320); // px
     const [rightMode, setRightMode] = useState<"normal" | "settings">("normal");
@@ -58,7 +58,7 @@ export default function Layout() {
                 <MenuPanel openSettings={openSettings} toggleLeft={toggleLeft} />
 
                 {/*显示设置详情*/}
-                {isSettingsMode && <SettingsPage onClose={closeSettings}/> }
+                {isSettingsMode && <SettingsPage onClose={closeSettings} />}
 
                 {!isSettingsMode && (
                     <ResizablePanel
@@ -88,15 +88,15 @@ export default function Layout() {
                 {!isSettingsMode && <MainContent filePath={selectedFile} content={fileContent} />}
 
                 {/* 右侧 Panel */}
-                {!isSettingsMode && (
-                <ResizablePanel
-                    side="right"
-                    width={rightWidth}
-                    onWidthChange={setRightWidth}
-                    show={showRightPanel}
-                >
-                    <RightPanel />
-                </ResizablePanel>
+                {!isSettingsMode && showRightPanel && (
+                    <ResizablePanel
+                        side="right"
+                        width={rightWidth}
+                        onWidthChange={setRightWidth}
+                        show={showRightPanel}
+                    >
+                        <RightPanel />
+                    </ResizablePanel>
                 )}
             </div>
 
