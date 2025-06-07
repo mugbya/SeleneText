@@ -12,7 +12,6 @@ export default function BaseSettings() {
     const [fontFamily, setFontFamily] = useState('system-ui');
     const { t } = useI18n();
 
-
     return (
         <div className="flex-1 overflow-auto p-6 space-y-6">
             <h3 className="text-lg font-semibold mb-2">🌗 {t('themeSettings')}</h3>

@@ -9,16 +9,8 @@
  * 支持外部控制（比如 Header 按钮 ）
  */
 import React, { useRef, useEffect } from "react";
+import { ResizablePanelProps } from '@/types';
 
-interface ResizablePanelProps {
-    side: "left" | "right";
-    width: number;
-    onWidthChange: (width: number) => void;
-    show: boolean;
-    minWidth?: number;
-    maxWidth?: number;
-    children: React.ReactNode;
-}
 
 const ResizablePanel: React.FC<ResizablePanelProps> = ({
                                                            side,

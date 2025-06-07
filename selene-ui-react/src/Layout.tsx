@@ -14,11 +14,9 @@ import {
   PanelResizeHandle,
   ImperativePanelHandle,
 } from "react-resizable-panels";
+import type { FileTab } from '@/types';
 
-type FileTab = {
-    path: string;
-    content: string;
-  };
+
 
 export default function Layout() {
   const [showLeftPanel, setShowLeftPanel] = useState(true);

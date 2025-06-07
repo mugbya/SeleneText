@@ -5,6 +5,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { X, Plus } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea"; // ✅ 用于简单编辑器
+import type { FileTab } from '@/types';
+
 
 function getFileType(filePath: string): "markdown" | "code" | "plain" {
   if (!filePath) return "plain";
@@ -14,11 +16,6 @@ function getFileType(filePath: string): "markdown" | "code" | "plain" {
   if (["ts", "tsx", "js", "jsx", "json", "css", "html"].includes(ext)) return "code";
   return "plain";
 }
-
-type FileTab = {
-  path: string;
-  content: string;
-};
 
 export default function MainContentTabs({
   openFiles,
@@ -55,8 +52,8 @@ export default function MainContentTabs({
           <CodeViewer
             code={currentFile.content}
             language={currentFile.path.split(".").pop() || "txt"}
-            editable={true}
-            onChange={(newCode) => onChangeFileContent(currentFile.path, newCode)}
+            // editable={true}
+            // onChange={(newCode) => onChangeFileContent(currentFile.path, newCode)}
           />
         );
       default:

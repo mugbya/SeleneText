@@ -4,10 +4,8 @@ import LeftMenu from "@/modules/settings/LeftMenu";
 import BaseSettings from "@/modules/settings/BaseSettings";
 import About from "@/modules/settings/About";
 import { useI18n } from '@/hooks/useI18n';
+import {SettingsPageProps} from '@/types';
 
-interface SettingsPageProps {
-    onClose: () => void;
-}
 
 export default function SettingsPage({ onClose }: SettingsPageProps) {
     const [activeTab, setActiveTab] = useState<'base' | 'about'>('base');

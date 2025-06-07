@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import FileTree from "@/components/FileTree";
+import { LeftPanelProps, FileNode, FolderTree } from '@/types';
 
-interface LeftPanelProps {
-  selectedPath: string | null;
-  onFileSelect: (filePath: string) => void;
-}
 
 function LeftPanel({ selectedPath, onFileSelect }: LeftPanelProps) {
   const [folders, setFolders] = useState<FolderTree[]>([]);

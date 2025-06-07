@@ -1,9 +1,5 @@
 import { useI18n } from '@/hooks/useI18n';
-
-type LeftMenuProps = {
-    activeTab: 'base' | 'about';
-    onTabChange: (tab: 'base' | 'about') => void;
-};
+import type { LeftMenuProps } from '@/types';
 
 export default function LeftMenu({ activeTab, onTabChange }: LeftMenuProps) {
 

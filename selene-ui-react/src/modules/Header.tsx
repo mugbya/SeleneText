@@ -1,11 +1,7 @@
 import React from "react";
 import {Button} from "@/components/ui/button";
 import {PanelLeft, PanelRight} from 'lucide-react';
-
-interface HeadProps {
-    toggleLeft: () => void;
-    toggleRight: () => void;
-}
+import { HeadProps } from '@/types';
 
 
 export default function Head({toggleLeft, toggleRight}: HeadProps) {

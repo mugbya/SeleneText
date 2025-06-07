@@ -1,9 +1,6 @@
 import { Home, Search, Settings, Folder } from 'lucide-react';
+import {MenuPanelProps} from '@/types';
 
-interface MenuPanelProps {
-    openSettings: () => void;
-    toggleLeft: () => void;
-}
 
 
 export default function MenuPanel({ openSettings, toggleLeft }: MenuPanelProps) {
