@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
-const { dialog } = require('electron');
+// const { dialog } = require('electron');
+// const { BrowserWindow } = require('electron'); // ✅ 引入
+const { dialog, BrowserWindow, ipcMain } = require('electron');
 
 // 实现一个白名单文件类型后缀，只允许打开 这些文件，目前支持   .txt .md
 const EXCLUDED_FILES = ['.DS_Store'];
@@ -44,7 +46,6 @@ function readDirRecursive(dirPath, depth = 0, maxDepth = 10) {
       continue;
     }
 
-
     const node = {
       name,
       path: fullPath,
@@ -60,6 +61,37 @@ function readDirRecursive(dirPath, depth = 0, maxDepth = 10) {
 
   return result;
 }
+
+
+// 💡 主进程接收渲染进程请求并保存文件内容 - 新增保存
+ipcMain.handle('save-file-as', async (event, { defaultPath, content }) => {
+  const result = await dialog.showSaveDialog({
+    title: '保存文件',
+    defaultPath: defaultPath || 'untitled.txt',
+    filters: [
+      { name: 'Text Files', extensions: ['txt', 'md', 'json', 'js', 'ts'] },
+      { name: 'All Files', extensions: ['*'] },
+    ],
+  });
+
+  if (!result.canceled && result.filePath) {
+    await fs.promises.writeFile(result.filePath, content, 'utf-8');
+    return { success: true, filePath: result.filePath };
+  }
+
+  return { success: false };
+});
+
+// 写入文件（覆盖内容）
+ipcMain.handle('save-file', async (event, { path, content }) => {
+  try {
+    await fs.promises.writeFile(path, content, 'utf-8');
+    return { success: true };
+  } catch (err) {
+    console.error('❌ 写入文件失败:', err);
+    return { success: false, error: err.message };
+  }
+});
 
 /**
  * 文件菜单配置
@@ -162,6 +194,18 @@ function createFileMenu(win) {
           }
         }
       },
+      { type: 'separator' },
+      {
+        label: '保存',
+        accelerator: 'CmdOrCtrl+S',
+        click: () => {
+          const win = BrowserWindow.getFocusedWindow();
+          if (win){
+            win.webContents.send('file-save');
+          }
+        },
+      },
+
       { type: 'separator' },
       {
         label: '关闭文件夹',

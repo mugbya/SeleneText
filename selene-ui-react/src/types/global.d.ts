@@ -16,6 +16,7 @@ declare global {
       readFile: (filePath: string) => Promise<string>;
       resolvePath: (path: string) => Promise<string>;
       removeAllListeners: (channel: string) => void;
+
     };
   }
 }

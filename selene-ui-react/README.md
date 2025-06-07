@@ -54,3 +54,63 @@ yarn build
 # 构建后预览
 yarn preview
 ```
+
+
+
+
+```
+➜  selene-ui-react git:(develop) ✗ tree -L 3
+
+├── README.md
+├── clone项目操作步凑.md
+├── components.json
+├── eslint.config.js
+├── index.html
+├── node_modules
+├── package.json
+├── public
+├── src
+│   ├── App.css
+│   ├── App.tsx
+│   ├── Layout.tsx
+│   ├── assets
+│   ├── components
+│   │   ├── FileTree.tsx
+│   │   ├── LanguageSwitcher.tsx
+│   │   └── ui
+│   ├── constants
+│   │   └── theme.ts
+│   ├── hooks
+│   │   └── useI18n.ts
+│   ├── i18n
+│   ├── index.css
+│   ├── lib
+│   │   ├── theme-provider.tsx
+│   │   └── utils.ts
+│   ├── main.tsx
+│   ├── modules
+│   │   ├── Footer.tsx
+│   │   ├── Header.tsx
+│   │   ├── LeftPanel.tsx
+│   │   ├── MainContent.tsx
+│   │   ├── MainContentLocal.tsx
+│   │   ├── MainContentTabs.tsx
+│   │   ├── MenuPanel.tsx
+│   │   ├── ResizablePanel.tsx
+│   │   ├── RightPanel.tsx
+│   │   ├── SettingsPage.tsx
+│   │   ├── settings
+│   │   └── viewer
+│   └── types
+│       ├── file.ts
+│       ├── global.d.ts
+│       ├── images.d.ts
+│       ├── index.ts
+│       ├── props.ts
+│       └── react-markdown.d.ts
+├── tailwind.config.js
+├── tsconfig.json
+├── vite.config.js
+└── yarn.lock
+
+```

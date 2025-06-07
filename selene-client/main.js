@@ -1,16 +1,34 @@
 // electron/main.js
-const { app, BrowserWindow, Menu } = require('electron')
+const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron')
 const path = require('path')
+const fs = require('fs');
 const { spawn } = require('child_process')
 const { createFileMenu } = require(path.join(__dirname, 'src/menu/FileMenu'));  // 引入自定义菜单模块
 const createAppMenu = require(path.join(__dirname, 'src/menu/AppMenu'));        // 👈 新增 appMenu 模块
 
-const { ipcMain } = require('electron');
-const fs = require('fs');
+
+
+
 
 ipcMain.handle('read-file', async (event, filePath) => {
   return fs.promises.readFile(filePath, 'utf-8');
 });
+
+// 确保你已注册 IPC 方法：
+// ipcMain.handle('save-file-as', async (event, { defaultPath, content }) => {
+//   const result = await dialog.showSaveDialog({
+//     defaultPath,
+//     filters: [{ name: 'Text Files', extensions: ['txt', 'md', 'js', 'ts'] }],
+//   });
+
+//   if (!result.canceled && result.filePath) {
+//     await fs.promises.writeFile(result.filePath, content, 'utf-8');
+//     return { success: true, filePath: result.filePath };
+//   } else {
+//     return { success: false };
+//   }
+// });
+
 
 app.setName('Selene Text'); // ✅ 强制设置 App 名称
 let pythonProcess
