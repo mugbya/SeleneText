@@ -1,6 +1,7 @@
 // 💡 主进程接收渲染进程请求并保存文件内容 - 新增保存
 const { dialog, ipcMain } = require('electron');
 const fs = require('fs');
+const path = require('path')
 
 
 function registerFileHandlers() {
@@ -32,6 +33,27 @@ function registerFileHandlers() {
       return { success: true };
     } catch (err) {
       console.error('❌ 写入文件失败:', err);
+      return { success: false, error: err.message };
+    }
+  });
+
+
+  ipcMain.handle('create-file', async (event, { dir, name }) => {
+    const target = path.join(dir, name);
+    try {
+      await fs.promises.writeFile(target, '');
+      return { success: true, path: target };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  });
+
+  ipcMain.handle('create-folder', async (event, { dir, name }) => {
+    const target = path.join(dir, name);
+    try {
+      await fs.promises.mkdir(target, { recursive: true });
+      return { success: true, path: target };
+    } catch (err) {
       return { success: false, error: err.message };
     }
   });

@@ -18,6 +18,8 @@ declare global {
       removeAllListeners: (channel: string) => void;
       saveFile: (filePath: string, data: string) => Promise<void>;
       saveFileAs: (filePath: string, data: string) => Promise<{ success: boolean; filePath?: string }>;
+      ceateFile: (dir: string, name: string) => Promise<{ success: boolean}>;
+      ceateFolder: (dir: string, name: string) => Promise<{ success: boolean}>;
     };
   }
 }

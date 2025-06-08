@@ -38,6 +38,30 @@ function LeftPanel({ selectedPath, onFileSelect }: LeftPanelProps) {
     };
   }, []);
 
+    // ✅ 创建文件/文件夹逻辑
+    const handleNewFile = async (dirPath: string) => {
+      // const res = await window.electronAPI.invoke("create-file", {
+      //   dir: dirPath,
+      //   name: "新建文件.txt",
+      // });
+      const res = await window.electronAPI.ceateFile(dirPath, "新建文件.txt");
+      if (res.success) {
+        // 简单做法：重新加载整个目录
+        window.electronAPI.send("refresh-folder", dirPath);
+      }
+    };
+  
+    const handleNewFolder = async (dirPath: string) => {
+      // const res = await window.electronAPI.invoke("create-folder", {
+      //   dir: dirPath,
+      //   name: "新建文件夹",
+      // });
+      const res = await window.electronAPI.ceateFolder(dirPath, "新建文件夹");
+      if (res.success) {
+        window.electronAPI.send("refresh-folder", dirPath);
+      }
+    };
+
   return (
     <div className="left-panel p-2 space-y-2  text-sm h-full overflow-y-auto">
       {folders.map((folder) => {
@@ -53,11 +77,19 @@ function LeftPanel({ selectedPath, onFileSelect }: LeftPanelProps) {
         };
 
         return (
+          // <FileTree
+          //   key={folder.basePath}
+          //   nodes={[treeRoot]}
+          //   onFileClick={onFileSelect}
+          //   selectedPath={selectedPath || ""}
+          // />
           <FileTree
             key={folder.basePath}
             nodes={[treeRoot]}
             onFileClick={onFileSelect}
             selectedPath={selectedPath || ""}
+            onNewFile={handleNewFile}
+            onNewFolder={handleNewFolder}
           />
         );
       })}
