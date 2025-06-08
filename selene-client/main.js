@@ -5,6 +5,7 @@ const fs = require('fs');
 const { spawn } = require('child_process')
 const { createFileMenu } = require(path.join(__dirname, 'src/menu/FileMenu'));  // 引入自定义菜单模块
 const createAppMenu = require(path.join(__dirname, 'src/menu/AppMenu'));        // 👈 新增 appMenu 模块
+const {registerAllIpcHandlers} = require(path.join(__dirname, 'src/ipc'));        // 所有 ipc 处理器
 
 
 
@@ -110,6 +111,7 @@ function createWindow () {
 
 app.whenReady().then(() => {
   console.log('✅ Electron App Ready');
+  registerAllIpcHandlers();
   // const venvPythonPath = path.join(__dirname, '../selene-server/.venv/bin/python')  // ⬅️ macOS/Linux
 
   // 启动 Python 子进程（开发时）

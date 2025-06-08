@@ -49,6 +49,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveFileAs: (defaultPath, content) =>
     ipcRenderer.invoke('save-file-as', { defaultPath, content }),
 
+  saveFile: (filePath, content) =>
+    ipcRenderer.invoke('save-file', { path: path, content }),
+
 });
 
 
