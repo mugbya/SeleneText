@@ -29,10 +29,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveFile: (path, content) =>
     ipcRenderer.invoke('save-file', { path, content }),
 
-  ceateFile: (dir, name) =>
+  createFile: (dir, name) =>
      ipcRenderer.invoke('create-file', { dir, name }),
 
-  ceateFolder: (dir, name) =>
+  createFolder: (dir, name) =>
     ipcRenderer.invoke('create-folder', { dir, name }),
 
 

@@ -44,7 +44,7 @@ function LeftPanel({ selectedPath, onFileSelect }: LeftPanelProps) {
       //   dir: dirPath,
       //   name: "新建文件.txt",
       // });
-      const res = await window.electronAPI.ceateFile(dirPath, "新建文件.txt");
+      const res = await window.electronAPI.createFile(dirPath, "新建文件.txt");
       if (res.success) {
         // 简单做法：重新加载整个目录
         window.electronAPI.send("refresh-folder", dirPath);
@@ -56,7 +56,7 @@ function LeftPanel({ selectedPath, onFileSelect }: LeftPanelProps) {
       //   dir: dirPath,
       //   name: "新建文件夹",
       // });
-      const res = await window.electronAPI.ceateFolder(dirPath, "新建文件夹");
+      const res = await window.electronAPI.createFolder(dirPath, "新建文件夹");
       if (res.success) {
         window.electronAPI.send("refresh-folder", dirPath);
       }

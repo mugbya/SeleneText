@@ -38,6 +38,8 @@ yarn dlx shadcn@latest add card scroll-area
 yarn dlx shadcn@latest add dropdown-menu
 yarn dlx shadcn@latest add tabs
 yarn dlx shadcn@latest add textarea
+yarn dlx shadcn@latest add input dialog
+yarn dlx shadcn@latest add context-menu radio-group
 
 ```
 
