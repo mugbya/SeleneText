@@ -58,6 +58,32 @@ function registerFileHandlers() {
     }
   });
 
+  ipcMain.handle('rename-path', async (event, { oldPath, newName }) => {
+    try {
+      const newPath = path.join(path.dirname(oldPath), newName);
+      await fs.promises.rename(oldPath, newPath);
+      return { success: true, newPath };
+    } catch (err) {
+      console.error("重命名失败", err);
+      return { success: false, error: err.message };
+    }
+  });
+
+  ipcMain.handle('delete-path', async (event, { targetPath }) => {
+    try {
+      const stat = await fs.promises.stat(targetPath);
+      if (stat.isDirectory()) {
+        await fs.promises.rm(targetPath, { recursive: true });
+      } else {
+        await fs.promises.unlink(targetPath);
+      }
+      return { success: true };
+    } catch (err) {
+      console.error("删除失败", err);
+      return { success: false, error: err.message };
+    }
+  });
+
 }
 
 module.exports = {

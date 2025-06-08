@@ -20,6 +20,9 @@ declare global {
       saveFileAs: (filePath: string, data: string) => Promise<{ success: boolean; filePath?: string }>;
       createFile: (dir: string, name: string) => Promise<{ success: boolean}>;
       createFolder: (dir: string, name: string) => Promise<{ success: boolean}>;
+
+      deletePath: (path: string) => Promise<{ success: boolean}>;
+      renamePath: (path: string, newName: string) => Promise<{ success: boolean}>;
     };
   }
 }

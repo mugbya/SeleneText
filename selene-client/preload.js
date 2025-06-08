@@ -30,11 +30,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.invoke('save-file', { path, content }),
 
   createFile: (dir, name) =>
-     ipcRenderer.invoke('create-file', { dir, name }),
+    ipcRenderer.invoke('create-file', { dir, name }),
 
   createFolder: (dir, name) =>
     ipcRenderer.invoke('create-folder', { dir, name }),
 
+  renamePath: (oldPath, newName) =>
+    ipcRenderer.invoke('rename-path', { oldPath, newName }),
+
+  deletePath: (targetPath) =>
+    ipcRenderer.invoke('delete-path', { targetPath }),
 
 });
 
