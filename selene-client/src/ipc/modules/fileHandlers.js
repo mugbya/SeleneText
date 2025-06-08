@@ -4,10 +4,13 @@ const fs = require('fs');
 
 
 function registerFileHandlers() {
-  ipcMain.handle('save-file-as', async (event, { defaultPath, content }) => {
+
+  ipcMain.handle('save-file-as', async (event, { path, content }) => {
+
+    // 文件另存为
     const result = await dialog.showSaveDialog({
       title: '保存文件',
-      defaultPath: defaultPath || 'untitled.txt',
+      path: path || 'untitled.txt',
       filters: [
         { name: 'Text Files', extensions: ['txt', 'md', 'json', 'js', 'ts'] },
         { name: 'All Files', extensions: ['*'] },
@@ -22,7 +25,7 @@ function registerFileHandlers() {
     return { success: false };
   });
 
-// 写入文件（覆盖内容）
+  // 写入文件（覆盖内容）
   ipcMain.handle('save-file', async (event, { path, content }) => {
     try {
       await fs.promises.writeFile(path, content, 'utf-8');

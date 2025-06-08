@@ -1,11 +1,3 @@
-// contextBridge.exposeInMainWorld('electronAPI', {
-//     readFile: (filePath) => fs.readFile(filePath, 'utf-8'),
-//     send: (channel, data) => ipcRenderer.send(channel, data),
-//     on: (channel, callback) => ipcRenderer.on(channel, (event, ...args) => callback(...args)),
-//     invoke: (channel, data) => ipcRenderer.invoke(channel, data),
-//     resolvePath: (p) => path.resolve(p)
-// });
-
 const { contextBridge, ipcRenderer } = require('electron');
 const fs = require('fs').promises;
 const path = require('path');
@@ -25,32 +17,17 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.on(channel, (event, ...args) => callback(...args));
   },
 
-  invoke: (channel, data) => ipcRenderer.invoke(channel, data),
+  // invoke: (channel, data) => ipcRenderer.invoke(channel, data),
 
   removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel),
 
   resolvePath: (p) => path.resolve(p),
 
+  saveFileAs: (path, content) =>
+    ipcRenderer.invoke('save-file-as', { path, content }),
 
-  saveFile: (filePath, content) => fs.writeFile(filePath, content, 'utf-8'),
-
-  saveAsFile: async (content) => {
-    const result = await dialog.showSaveDialog({
-      title: '保存文件',
-      defaultPath: 'untitled.txt',
-    });
-    if (!result.canceled && result.filePath) {
-      await fs.writeFile(result.filePath, content, 'utf-8');
-      return result.filePath;
-    }
-    return null;
-  },
-
-  saveFileAs: (defaultPath, content) =>
-    ipcRenderer.invoke('save-file-as', { defaultPath, content }),
-
-  saveFile: (filePath, content) =>
-    ipcRenderer.invoke('save-file', { path: path, content }),
+  saveFile: (path, content) =>
+    ipcRenderer.invoke('save-file', { path, content }),
 
 });
 
