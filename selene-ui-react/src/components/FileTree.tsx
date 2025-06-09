@@ -212,6 +212,7 @@ function TreeNode({
             <Button variant="outline" onClick={() => setRenameDialogOpen(false)}>
               取消
             </Button>
+
             <Button onClick={async () => {
               const trimmed = renameValue.trim();
               if (!trimmed || trimmed === node.name) {
@@ -219,9 +220,11 @@ function TreeNode({
                 return;
               }
               const res = await window.electronAPI.renamePath(node.path, trimmed);
+            //   const res = await window.electronAPI.renamePath(oldPath, newName, folders.map(f => f.basePath));;
               if (res.success) {
-                toast.success("重命名成功");
-                window.electronAPI.send("refresh-folder", node.path.substring(0, node.path.lastIndexOf("/")));
+                toast.success("重命名成功, 触发..");
+                // 🚨 不再触发 refresh-folder，改由后端主动发 replace-folder(s)
+                // window.electronAPI.send("refresh-folder", node.path.substring(0, node.path.lastIndexOf("/")));
               } else {
                 toast.error("重命名失败");
               }

@@ -16,8 +16,18 @@ function LeftPanel({ selectedPath, onFileSelect }: LeftPanelProps) {
       return;
     }
 
-    api.on("replace-folders", ({ basePath, contents }) => {
-      setFolders([{ basePath, contents }]);
+    // api.on("replace-folders", ({ basePath, contents }) => {
+    //   setFolders([{ basePath, contents }]);
+    // });
+    // api.on("replace-folders", (foldersList) => {
+    //   setFolders(foldersList);
+    // });
+    api.on("replace-folders", (foldersList) => {
+      if (Array.isArray(foldersList)) {
+        setFolders(foldersList);
+      } else {
+        console.warn("replace-folders payload 应该是数组:", foldersList);
+      }
     });
 
     api.on("append-folder", ({ basePath, contents }) => {
@@ -32,9 +42,20 @@ function LeftPanel({ selectedPath, onFileSelect }: LeftPanelProps) {
       });
     });
 
+    api.on("replace-folder", ({ basePath, contents }) => {
+      setFolders((prev) =>
+        prev.map((folder) =>
+          api.resolvePath(folder.basePath) === api.resolvePath(basePath)
+            ? { basePath, contents }
+            : folder
+        )
+      );
+    });
+
     return () => {
       api.removeAllListeners("replace-folders");
       api.removeAllListeners("append-folder");
+      api.removeAllListeners("replace-folder");
     };
   }, []);
 
@@ -88,8 +109,8 @@ function LeftPanel({ selectedPath, onFileSelect }: LeftPanelProps) {
             nodes={[treeRoot]}
             onFileClick={onFileSelect}
             selectedPath={selectedPath || ""}
-            onNewFile={handleNewFile}
-            onNewFolder={handleNewFolder}
+            // onNewFile={handleNewFile}
+            // onNewFolder={handleNewFolder}
           />
         );
       })}
