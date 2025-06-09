@@ -4,7 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 
 // App.tsx
 import React from 'react';
-import MarkdownViewer from './viewer/MarkdownViewer';
+import MarkdownViewer from '../viewer/MarkdownViewer';
 
 const markdownContent = `
 # PIS整改工作细化

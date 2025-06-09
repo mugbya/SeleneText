@@ -1,7 +1,7 @@
 // components/MainContent.tsx
 import React from 'react';
-import MarkdownViewer from './viewer/MarkdownViewer';
-import CodeViewer from './viewer/CodeViewer';
+import MarkdownViewer from '../viewer/MarkdownViewer';
+import CodeViewer from '../viewer/CodeViewer';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 function getFileType(filePath: string): 'markdown' | 'code' | 'plain' {

@@ -5,7 +5,7 @@ const fs = require('fs');
 const { spawn } = require('child_process')
 const { createFileMenu } = require(path.join(__dirname, 'src/menu/FileMenu'));  // 引入自定义菜单模块
 const createAppMenu = require(path.join(__dirname, 'src/menu/AppMenu'));        // 👈 新增 appMenu 模块
-const {registerAllIpcHandlers} = require(path.join(__dirname, 'src/ipc'));        // 所有 ipc 处理器
+const { registerAllIpcHandlers } = require(path.join(__dirname, 'src/ipc'));        // 所有 ipc 处理器
 
 app.setName('Selene Text'); // ✅ 强制设置 App 名称
 let pythonProcess
@@ -15,7 +15,7 @@ app.disableHardwareAcceleration(); // 👈 加这一行
 
 const isDev = !app.isPackaged;
 
-function createWindow () {
+function createWindow() {
   console.log("preload.js: ", path.join(__dirname, 'preload.js'));
   const win = new BrowserWindow({
     width: 1000,
@@ -26,9 +26,11 @@ function createWindow () {
       nodeIntegration: false,  // ✅ 禁用 Node 集成
       sandbox: false, // ✅ 必须显式关闭 sandbox
     },
-  })
+  });
+
+
   win.webContents.openDevTools();
-  
+
 
   // if (process.env.NODE_ENV === 'development') {
   if (isDev) {
@@ -75,6 +77,7 @@ function createWindow () {
         { role: 'cut' },
         { role: 'copy' },
         { role: 'paste' },
+        { role: 'selectAll' }, // ✅ 必须有这个，才能启用 Cmd+A
       ],
     }
   );
@@ -102,8 +105,10 @@ app.whenReady().then(() => {
   // })
 
   createWindow()
-})
+});
 
 app.on('will-quit', () => {
   // pythonProcess.kill()
-})
+});
+
+

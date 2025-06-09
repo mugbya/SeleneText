@@ -3,6 +3,7 @@ import Header from "./modules/Header";
 import LeftPanel from "./modules/LeftPanel";
 // import MainContent from "./modules/MainContent";
 import MainContentTabs from "./modules/MainContentTabs";
+// import MinimalEditor from "./modules/test/MinimalEditor";
 import RightPanel from "./modules/RightPanel";
 import Footer from "./modules/Footer";
 import MenuPanel from "@/modules/MenuPanel";
@@ -153,6 +154,7 @@ export default function Layout() {
                 {/* 中间内容区 */}
                 <Panel minSize={30}>
                   {/* <MainContent filePath={selectedFile} content={fileContent} /> */}
+                  {/* <MinimalEditor /> */}
                   <MainContentTabs
                       openFiles={openFiles}
                       activeFile={activeFile}

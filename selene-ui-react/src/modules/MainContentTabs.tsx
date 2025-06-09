@@ -38,6 +38,7 @@ export default function MainContentTabs({
     if (!currentFile) return null;
 
     const fileType = getFileType(currentFile.path);
+    console.log("文件类型：", fileType);
     switch (fileType) {
       case "markdown":
         return (
@@ -58,7 +59,14 @@ export default function MainContentTabs({
         );
       default:
         return (
+          // <Textarea
+          //   value={currentFile.content}
+          //   onChange={(e) => onChangeFileContent(currentFile.path, e.target.value)}
+          //   className="w-full h-[60vh] resize-none font-mono text-sm"
+          // />
           <Textarea
+            autoFocus
+            onClick={(e) => e.currentTarget.focus()}
             value={currentFile.content}
             onChange={(e) => onChangeFileContent(currentFile.path, e.target.value)}
             className="w-full h-[60vh] resize-none font-mono text-sm"
