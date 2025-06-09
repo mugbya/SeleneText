@@ -61,7 +61,6 @@
     }
   },
   "dependencies": {
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "i18next": "^25.2.1"
   }
 }

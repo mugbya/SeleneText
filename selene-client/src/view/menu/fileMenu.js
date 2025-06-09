@@ -1,10 +1,9 @@
 const fs = require('fs');
 const path = require('path');
-// const { dialog } = require('electron');
-// const { BrowserWindow } = require('electron'); // ✅ 引入
 const { dialog, BrowserWindow, ipcMain } = require('electron');
-const {readDirRecursive} = require(path.join(__dirname, '../utils/fsUtils'));
-const {addRoot, getRoots} = require(path.join(__dirname, '../ipc/modules/state'));
+const {readDirRecursive} = require(path.join(global.__root, 'src/utils/fsUtils'));
+const {addRoot, getRoots} = require(path.join(global.__root, 'src/ipc/data/state'));
+const i18n = require(path.join(global.__root, 'src/i18n/i18n.main.js'));
 
 /**
  * 文件菜单配置
@@ -12,8 +11,10 @@ const {addRoot, getRoots} = require(path.join(__dirname, '../ipc/modules/state')
  * @returns {Electron.MenuItemConstructorOptions}
  */
 function createFileMenu(win) {
+  const t = i18n.t.bind(i18n);
+
   return {
-    label: '文件',
+    label: t("menu.file"),
     submenu: [
       {
         label: '新建文本文件',
@@ -54,16 +55,7 @@ function createFileMenu(win) {
         }
       },
       {
-        // label: '打开文件夹',
-        // click: async () => {
-        //   const { canceled, filePaths } = await dialog.showOpenDialog(win, {
-        //     properties: ['openDirectory'],
-        //   });
-        //   if (!canceled) {
-        //     console.log('打开文件夹:', filePaths);
-        //   }
-        // },
-        label: '打开文件夹',
+        label: t("menu.openFolder"),
         click: async () => {
           const result = await dialog.showOpenDialog({
             properties: ['openDirectory']
@@ -92,10 +84,7 @@ function createFileMenu(win) {
       { type: 'separator' },
       {
         // label: '将文件夹添加到工作区',
-        // click: () => {
-        //   console.log('添加文件夹到工作区');
-        // },
-        label: '添加文件夹到工作区',
+        label: t("menu.addFoldersToWorkspace"),
         click: async () => {
           const result = await dialog.showOpenDialog({
             properties: ['openDirectory']
@@ -138,4 +127,4 @@ function createFileMenu(win) {
 }
 
 
-module.exports = { createFileMenu };
+module.exports =  createFileMenu ;

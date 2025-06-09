@@ -2,8 +2,8 @@
 const { dialog, ipcMain, BrowserWindow } = require('electron');
 const fs = require('fs');
 const path = require('path')
-const { readDirRecursive } = require(path.join(__dirname, '../../utils/fsUtils'));
-const { addRoot, getRoots } = require(path.join(__dirname, './state'));
+const { readDirRecursive } = require(path.join(global.__root, 'src/utils/fsUtils'));
+const { addRoot, getRoots } = require(path.join(global.__root, 'src/ipc/data/state'));
 
 // 加一个 delay 函数
 function delay(ms) {
@@ -11,9 +11,6 @@ function delay(ms) {
 }
 
 function registerFileHandlers() {
-
-  // main.js 或全局变量中
-  // let currentFolders = [];
 
   ipcMain.handle('read-file', async (event, filePath) => {
     return fs.promises.readFile(filePath, 'utf-8');
