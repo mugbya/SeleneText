@@ -116,3 +116,14 @@ yarn preview
 └── yarn.lock
 
 ```
+
+
+```
+src/
+├── components/
+├── hooks/         ← ✅ 状态逻辑封装
+├── pages/
+├── styles/
+├── types/
+└── utils/
+```

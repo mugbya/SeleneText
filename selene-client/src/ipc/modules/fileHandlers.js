@@ -3,7 +3,7 @@ const { dialog, ipcMain, BrowserWindow } = require('electron');
 const fs = require('fs');
 const path = require('path')
 const { readDirRecursive } = require(path.join(global.__root, 'src/utils/fsUtils'));
-const { addRoot, getRoots } = require(path.join(global.__root, 'src/ipc/data/state'));
+const { addRoot, removeRoot, getRoots } = require(path.join(global.__root, 'src/ipc/data/state'));
 
 // 加一个 delay 函数
 function delay(ms) {
@@ -86,35 +86,32 @@ function registerFileHandlers() {
       const isRoot = currentRoots.some(root =>
         path.resolve(root) === path.resolve(oldPath)
       );
-
+      console.log("\n------------");
       console.log(`[重命名] 当前根目录:`, getRoots());
       console.log(`[重命名] oldPath: ${oldPath}, newPath: ${newPath}`);
       console.log(`[重命名] 是否根目录:`, isRoot);
 
       if (isRoot) {
-        console.log("🔄 重命名根目录，刷新整个工作区");
 
         const contents = readDirRecursive(newPath);
-        console.log("重命名根目录，刷新整个工作区, 重新调用 addRoot", newPath);
+        console.log("重命名根目录，刷新整个工作区, 重新调用 addRoot: %s, 且删除：%s", newPath, oldPath);
 
+        removeRoot(oldPath);
         addRoot(newPath);
 
         win?.webContents.send("replace-folders", [
           { basePath: newPath, contents }
         ]);
       } else {
-        console.log("🔄 重命名子目录:", newName);
-
         const rootBase = currentRoots.find(root =>
           path.resolve(oldPath).startsWith(path.resolve(root))
         );
+        console.log("🔄 重命名子目录:%s, 仅刷新所属根目录%s", newName, rootBase);
 
         if (rootBase && fs.existsSync(rootBase)) {
-          console.log("🔄 仅刷新所属根目录:", rootBase);
 
           const rootContents = readDirRecursive(rootBase);
 
-          console.log("仅刷新所属根目录, 重新调用 addRoot", rootBase);
           addRoot(rootBase);
 
           win?.webContents.send("replace-folder", {

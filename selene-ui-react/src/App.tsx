@@ -1,6 +1,6 @@
 import './App.css'
 import "./index.css";
-import Layout from './Layout.js'
+import Layout from './Layout'
 import {ThemeProvider} from "@/lib/theme-provider";
 
 

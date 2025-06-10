@@ -3,7 +3,7 @@ import { useTheme } from "next-themes"; // shadcn 默认集成了这个库
 import { themeOptions } from "@/constants/theme";
 import { cn } from "@/lib/utils"; // shadcn 提供的 class 合并工具
 import { useI18n } from '@/hooks/useI18n';
-import LanguageSwitcher from "@/components/LanguageSwitcher";
+import LanguageSwitcher from "@/components/common/LanguageSwitcher";
 
 
 export default function BaseSettings() {

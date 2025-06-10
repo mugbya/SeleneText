@@ -21,7 +21,12 @@ export interface HeadProps {
 export interface LeftPanelProps {
     selectedPath: string | null;
     onFileSelect: (filePath: string) => void;
-  }
+}
+
+export interface WorkspaceTreeProps {
+    selectedPath: string | null;
+    onFileSelect: (filePath: string) => void;
+}
 
 export interface ResizablePanelProps {
     side: "left" | "right";

@@ -55,6 +55,7 @@ function createFileMenu(win) {
         }
       },
       {
+        // 打开文件夹
         label: t("menu.openFolder"),
         click: async () => {
           const result = await dialog.showOpenDialog({

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import FileTree from "@/components/FileTree";
+import FileTree from "@/components/common/FileTree";
 import { LeftPanelProps, FileNode, FolderTree } from '@/types';
 
 
