@@ -109,7 +109,7 @@ function WorkSpaceTreePanel({
   onFileSelect,
 }: WorkspaceTreeProps) {
   const [folders, setFolders] = useState<FolderTree[]>([]);
-
+  
   // 当rootPath变化时，加载对应项目的文件目录
   useEffect(() => {
     // 清除当前显示的文件夹
@@ -133,7 +133,7 @@ function WorkSpaceTreePanel({
     }
 
     // 监听主程序发送的 replace-folders 事件。 刷新整个工作区域 放置 打开的文件夹
-    const replaceFoldersHandler = (foldersList) => {
+    const replaceFoldersHandler = (foldersList: FolderTree[]) => {
       if (Array.isArray(foldersList)) {
         console.log("Received folders:", foldersList);
         setFolders(foldersList);
@@ -143,22 +143,22 @@ function WorkSpaceTreePanel({
     };
 
     // 监听主程序发送的 append-folder 事件。 追加 打开的文件夹
-    const appendFolderHandler = ({ basePath, contents }) => {
-      const normalizedNew = api.resolvePath(basePath);
+    const appendFolderHandler = (folder: FolderTree) => {
+      const normalizedNew = api.resolvePath(folder.basePath);
       setFolders((prev) => {
         const exists = prev.some(
           (f) => api.resolvePath(f.basePath) === normalizedNew
         );
         if (exists) return prev; // ❌ 已存在就跳过
-        return [...prev, { basePath, contents }]; // ✅ 新文件夹
+        return [...prev, folder]; // ✅ 新文件夹
       });
     };
 
-    const replaceFolderHandler = ({ basePath, contents }) => {
+    const replaceFolderHandler = (folder: FolderTree) => {
       setFolders((prev) =>
         prev.map((folder) =>
-          api.resolvePath(folder.basePath) === api.resolvePath(basePath)
-            ? { basePath, contents }
+          api.resolvePath(folder.basePath) === api.resolvePath(folder.basePath)
+            ? folder
             : folder
         )
       );

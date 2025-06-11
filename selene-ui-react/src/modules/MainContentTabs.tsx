@@ -34,6 +34,9 @@ export default function MainContentTabs({
 }) {
   const currentFile = openFiles.find((f) => f.path === activeFile);
 
+  console.log("当前文件 openFiles：", openFiles);
+  console.log("当前文件：", currentFile);
+
   const renderEditableContent = () => {
     if (!currentFile) return null;
 

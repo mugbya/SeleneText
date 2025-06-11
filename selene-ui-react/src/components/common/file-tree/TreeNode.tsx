@@ -46,6 +46,8 @@ export default function TreeNode({
     handleDelete,
   } = useTreeNode(node, selectedPath, onFileClick);
 
+  console.log("TreeNode: ", node);
+
   return (
     <li>
       <ContextMenu>
