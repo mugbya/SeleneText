@@ -16,3 +16,18 @@ export interface FolderTree {
     basePath: string;       // 根目录路径
     contents: FileNode[];   // 根目录下的文件树结构
 }
+
+export type ProjectTab = {
+    // id: string; // 唯一标识，可用 uuid
+    // name: string; // 项目名（可从路径中提取）
+    // rootPath: string;
+    // openFiles: FileTab[];
+    // lastActiveFile: string | null;
+
+    id: string;
+    name: string;
+    path: string;
+    rootPath: string; // 项目根目录路径
+    openFiles?: FileTab[];
+    lastActiveFile?: string | null;
+};

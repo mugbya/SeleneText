@@ -25,6 +25,7 @@ export interface LeftPanelProps {
 
 export interface WorkspaceTreeProps {
     selectedPath: string | null;
+    rootPath?: string; // 添加rootPath作为可选属性
     onFileSelect: (filePath: string) => void;
 }
 

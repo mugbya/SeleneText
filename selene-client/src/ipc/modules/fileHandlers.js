@@ -164,7 +164,27 @@ function registerFileHandlers() {
     setRoots(basePaths); // ✅ 正确更新全局共享的根目录状态
   });
 
+  // 处理打开文件夹事件
+  ipcMain.on('open-folder', (event, folderPath) => {
+    console.log('Received request to open folder:', folderPath);
 
+    // 检查路径是否存在
+    if (!fs.existsSync(folderPath)) {
+      console.error('Folder path does not exist:', folderPath);
+      return;
+    }
+
+    // 读取文件夹结构
+    const folderContents = readDirRecursive(folderPath);
+
+    // 发送回渲染进程
+    event.sender.send('replace-folders', [
+      {
+        basePath: folderPath,
+        contents: folderContents
+      }
+    ]);
+  });
 
 
 

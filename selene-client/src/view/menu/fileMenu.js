@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const { dialog, BrowserWindow, ipcMain } = require('electron');
-const {readDirRecursive} = require(path.join(global.__root, 'src/utils/fsUtils'));
-const {addRoot, getRoots} = require(path.join(global.__root, 'src/ipc/data/state'));
+const { readDirRecursive } = require(path.join(global.__root, 'src/utils/fsUtils'));
+const { addRoot, getRoots } = require(path.join(global.__root, 'src/ipc/data/state'));
 const i18n = require(path.join(global.__root, 'src/i18n/i18n.main.js'));
 
 /**
@@ -64,15 +64,22 @@ function createFileMenu(win) {
 
           if (!result.canceled && result.filePaths.length > 0) {
             const dirPath = result.filePaths[0];
+
+            // 通知渲染进程创建项目标签
+            win.webContents.send('create-project-tab', dirPath);
+            // 然后加载文件夹内容
+            // handleLoadFolder(folderPath);
+
             const contents = readDirRecursive(dirPath);
             console.log("打开文件夹:", dirPath)
 
-           addRoot(dirPath);
+            addRoot(dirPath);
 
             win.webContents.send('replace-folders', [{
               basePath: dirPath,
               contents
             }]);
+
           }
         }
       },
@@ -104,13 +111,40 @@ function createFileMenu(win) {
           }
         }
       },
+      {
+        label: "在新项目标签页打开文件夹",
+        click: async () => {
+          const result = await dialog.showOpenDialog({
+            properties: ["openDirectory"],
+          });
+
+          if (!result.canceled && result.filePaths.length > 0) {
+            const dirPath = result.filePaths[0];
+            // 通知渲染进程创建项目标签
+            win?.webContents.send("open-project-tab", dirPath);
+
+
+            // 然后加载文件夹内容
+            const contents = readDirRecursive(dirPath);
+            console.log("打开文件夹:", dirPath)
+
+            addRoot(dirPath);
+
+            win.webContents.send('replace-folders', [{
+              basePath: dirPath,
+              contents
+            }]);
+
+          }
+        },
+      },
       { type: 'separator' },
       {
         label: '保存',
         accelerator: 'CmdOrCtrl+S',
         click: () => {
           const win = BrowserWindow.getFocusedWindow();
-          if (win){
+          if (win) {
             win.webContents.send('file-save');
           }
         },
@@ -128,4 +162,4 @@ function createFileMenu(win) {
 }
 
 
-module.exports =  createFileMenu ;
+module.exports = createFileMenu;
