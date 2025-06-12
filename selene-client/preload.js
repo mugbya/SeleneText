@@ -3,7 +3,7 @@ const fs = require('fs').promises;
 const path = require('path');
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  readFile: (filePath) => fs.readFile(filePath, 'utf-8'),
+  // readFile: (filePath) => fs.readFile(filePath, 'utf-8'),
 
   send: (channel, data) => ipcRenderer.send(channel, data),
 
@@ -22,6 +22,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel),
 
   resolvePath: (p) => path.resolve(p),
+
+  readFile: (filePath) =>
+    ipcRenderer.invoke('read-file', {filePath}),
 
   saveFileAs: (path, content) =>
     ipcRenderer.invoke('save-file-as', { path, content }),
@@ -44,7 +47,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // onOpenProjectTab: (callback: (folderPath: string) => void) => {
   //   ipcRenderer.on("open-project-tab", (_, folderPath) => callback(folderPath));
   // },
-  
+
 });
-
-

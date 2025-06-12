@@ -34,14 +34,14 @@ export default function MainContentTabs({
 }) {
   const currentFile = openFiles.find((f) => f.path === activeFile);
 
-  console.log("当前文件 openFiles：", openFiles);
-  console.log("当前文件：", currentFile);
+  // console.log("当前文件 openFiles：", openFiles);
+  // console.log("当前文件：", currentFile);
 
   const renderEditableContent = () => {
     if (!currentFile) return null;
 
     const fileType = getFileType(currentFile.path);
-    console.log("文件类型：", fileType);
+    // console.log("文件类型：", fileType);
     switch (fileType) {
       case "markdown":
         return (

@@ -51,6 +51,7 @@ export function useFileSaveListener(
   openFiles: FileTab[], 
   activeFile: string | null, 
   setOpenFiles: React.Dispatch<React.SetStateAction<FileTab[]>>, 
+  // setOpenFiles: (), 
   setActiveFile: (file: string | null) => void,
   addProject: (folderPath: string) => string,
   activeProjectId: string | null,
@@ -64,6 +65,12 @@ export function useFileSaveListener(
       console.warn("⚠️ electronAPI 未注入，请检查 preload 配置或 contextIsolation 设置");
       return;
     }
+
+    // 切换项目时，清空旧文件状态
+    //  useEffect(() => {
+    //   setOpenFiles([]);
+    //   setActiveFile(null);
+    // }, [activeProjectPath]);
 
     // 处理创建项目标签的事件
     const createProjectTabHandler = (folderPath: string) => {
@@ -105,13 +112,14 @@ export function useFileSaveListener(
     api.on('open-project-tab', openProjectTabHandler);
 
     // 如果切换了项目，更新UI状态
-    if (activeProjectId) {
-      const project = getActiveProject();
-      if (project && project.openFiles) {
-        setOpenFiles(project.openFiles);
-        setActiveFile(project.lastActiveFile ?? "");
-      }
-    }
+    // if (activeProjectId) {
+    //   const project = getActiveProject();
+    //   if (project && project.openFiles) {
+    //     console.log("[useFileSaveListener] activeProjectId: ", activeProjectId, ", project: ", project);
+    //     setOpenFiles(project.openFiles);
+    //     setActiveFile(project.lastActiveFile ?? "");
+    //   }
+    // }
     
     return () => {
       api.removeAllListeners("file-save");

@@ -12,8 +12,10 @@ function delay(ms) {
 
 function registerFileHandlers() {
 
-  ipcMain.handle('read-file', async (event, filePath) => {
-    return fs.promises.readFile(filePath, 'utf-8');
+  ipcMain.handle('read-file', async (event, {filePath}) => {
+    console.log("[registerFileHandlers] read-file filePath: %s", filePath);
+    const result = await fs.promises.readFile(filePath, 'utf-8');
+    return { success: true, content: result };
   });
 
   ipcMain.handle('save-file-as', async (event, { path, content }) => {

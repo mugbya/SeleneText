@@ -1,4 +1,5 @@
 import { FileNode } from "@/types";
+import React from "react";
 import { useTreeNode } from "./useTreeNode";
 import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu";
 import NodeContextMenu from "./NodeContextMenu";
@@ -14,7 +15,7 @@ import DeleteDialog from "./dialogs/DeleteDialog";
  * @param param
  * @returns 
  */
-export default function TreeNode({
+const TreeNode = React.memo(function TreeNode({
   node,
   selectedPath,
   onFileClick,
@@ -46,7 +47,7 @@ export default function TreeNode({
     handleDelete,
   } = useTreeNode(node, selectedPath, onFileClick);
 
-  console.log("TreeNode: ", node);
+  // console.log("TreeNode: ", node);
 
   return (
     <li>
@@ -93,6 +94,7 @@ export default function TreeNode({
       {isDir && expanded && node.children && (
         <ul className="pl-4 border-l border-zinc-300 dark:border-zinc-700 ml-1">
           {node.children.map((child) => (
+            // <li key={child.path}>{child.path} - {child.name}</li>
             <TreeNode
               key={child.path}
               node={child}
@@ -128,4 +130,5 @@ export default function TreeNode({
       />
     </li>
   );
-}
+});
+export default TreeNode;

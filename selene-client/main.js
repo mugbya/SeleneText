@@ -20,6 +20,7 @@ app.disableHardwareAcceleration(); // 👈 加这一行
 
 app.whenReady().then(() => {
   console.log('✅ Electron App Ready');
+
   registerAllIpcHandlers();
   // const venvPythonPath = path.join(__dirname, '../selene-server/.venv/bin/python')  // ⬅️ macOS/Linux
 
@@ -39,8 +40,7 @@ app.whenReady().then(() => {
   const win = createMainWindow('zh');
 });
 
+
 app.on('will-quit', () => {
   // pythonProcess.kill()
 });
-
-

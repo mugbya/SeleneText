@@ -4,9 +4,10 @@ import './index.css'
 import App from './App'
 import './i18n/index'; // 💡 添加这一行初始化 i18n
 
+
 // @ts-ignore
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
     <App />
-  </StrictMode>,
+  //  </StrictMode>,
 )

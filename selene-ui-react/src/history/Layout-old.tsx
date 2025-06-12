@@ -131,7 +131,7 @@ export default function Layout() {
                     window.electronAPI.readFile(filePath).then(setFileContent);
                   }}
                 /> */}
-                    <LeftPanel
+                    {/* <LeftPanel
                         selectedPath={selectedFile}
                         onFileSelect={(filePath) => {
                           window.electronAPI
@@ -145,7 +145,7 @@ export default function Layout() {
                                 setActiveFile(filePath);
                               });
                         }}
-                    />
+                    /> */}
                   </div>
                 </Panel>
 

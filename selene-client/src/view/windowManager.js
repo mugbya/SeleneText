@@ -20,6 +20,7 @@ function createMainWindow() {
             contextIsolation: true,  // ✅ 开启上下文隔离
             nodeIntegration: false,  // ✅ 禁用 Node 集成
             sandbox: false, // ✅ 必须显式关闭 sandbox
+            // devTools: true,
         },
         title: "Selene Text"
     });
@@ -48,7 +49,7 @@ function createMainWindow() {
 
     // 构建菜单
     buildAppMenu('zh');
-    
+
     // ready 后显示
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();

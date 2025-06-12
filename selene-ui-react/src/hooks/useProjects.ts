@@ -87,6 +87,7 @@ export default function useProjects() {
   };
 
   const closeProject = (projectId: string) => {
+    console.log("[useProjects] closeProject", projectId);
     setProjects(prev => prev.filter(p => p.id !== projectId));
 
     // 如果关闭的是当前活动项目，切换到另一个项目
