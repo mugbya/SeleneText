@@ -1,3 +1,4 @@
+import { FileNode } from "./file";
 
 export interface SettingsPageProps {
     onClose: () => void;
@@ -25,7 +26,9 @@ export interface LeftPanelProps {
 
 export interface WorkspaceTreeProps {
     selectedPath: string | null;
-    rootPath?: string; // 添加rootPath作为可选属性
+    name:string;
+    rootPath: string; // 添加rootPath作为可选属性
+    folderTree?: FileNode[];
     onFileSelect: (filePath: string) => void;
 }
 

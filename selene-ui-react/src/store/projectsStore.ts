@@ -1,10 +1,10 @@
-import { FileTab, ProjectTab } from '@/types';
+import { FileNode, FileTab, Folder, ProjectTab } from '@/types';
 import { create } from 'zustand';
 
 interface ProjectsStore {
   projects: ProjectTab[];
   activeProjectId: string | null;
-  addProject: (folderPath: string) => string;
+  addProject: (folder: Folder) => string;
   closeProject: (id: string) => void;
   setActiveProjectId: (id: string | null) => void;
   updateProjectFiles: (id: string, files: FileTab[], active: string | null) => void;
@@ -14,6 +14,7 @@ interface ProjectsStore {
     newId: string,
     currentOpenFiles: FileTab[],
     currentActiveFile: string | null,
+    // setFolderTree: (folderTree: FileNode[]) => void,
     setOpenFiles: (tabs: FileTab[]) => void,
     setActiveFile: (path: string | null) => void
   ) => void;
@@ -24,21 +25,22 @@ export const useProjectsStore = create<ProjectsStore>((set, get) => ({
   activeProjectId: null,
 
 
-  addProject: (folderPath) => {
-    const folderName = folderPath.split(/[/\\]/).pop() || '未命名项目';
+  addProject: (folder) => {
+    const folderName = folder.basePath.split(/[/\\]/).pop() || '未命名项目';
     const newProject: ProjectTab = {
       id: crypto.randomUUID(),
       name: folderName,
-      path: folderPath,
-      rootPath: folderPath,
+      // path: folderPath,
+      rootPath: folder.basePath,
       openFiles: [],
+      folderTree: folder.contents,
       lastActiveFile: null
     };
     set((state) => ({
       projects: [...state.projects, newProject],
       activeProjectId: newProject.id,
     }));
-    window.electronAPI.send("open-folder", folderPath);
+    // window.electronAPI.send("open-folder", folderPath);
     return newProject.id;
   },
 
@@ -64,9 +66,10 @@ export const useProjectsStore = create<ProjectsStore>((set, get) => ({
     const { projects, activeProjectId } = get();
     return projects.find(p => p.id === activeProjectId) || null;
   },
-  
+
   // ✅ 实现 switchProject 方法
-  switchProject: (newId, currentOpenFiles, currentActiveFile, setOpenFiles, setActiveFile) => {
+  // switchProject: (newId, currentOpenFiles, currentActiveFile, setFolderTree, setOpenFiles, setActiveFile) => {
+  switchProject: (newId, currentOpenFiles, currentActiveFile,  setOpenFiles, setActiveFile) => {
     const { activeProjectId, updateProjectFiles, setActiveProjectId, projects } = get();
 
     // 1. 保存当前项目的打开文件信息
@@ -80,6 +83,7 @@ export const useProjectsStore = create<ProjectsStore>((set, get) => ({
     // 3. 恢复新项目状态
     const newProject = projects.find((p) => p.id === newId);
     if (newProject) {
+      // setFolderTree(newProject.folderTree || []);
       setOpenFiles(newProject.openFiles || []);
       setActiveFile(newProject.lastActiveFile ?? null);
     }

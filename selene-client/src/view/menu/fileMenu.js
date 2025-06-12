@@ -66,7 +66,7 @@ function createFileMenu(win) {
             const dirPath = result.filePaths[0];
 
             // 通知渲染进程创建项目标签
-            win.webContents.send('create-project-tab', dirPath);
+            // win.webContents.send('create-project-tab', dirPath);
             // 然后加载文件夹内容
             // handleLoadFolder(folderPath);
 
@@ -75,10 +75,14 @@ function createFileMenu(win) {
 
             addRoot(dirPath);
 
-            win.webContents.send('replace-folders', [{
+            // win.webContents.send('replace-folders', [{
+            //   basePath: dirPath,
+            //   contents
+            // }]);
+            win.webContents.send('load-folder', {
               basePath: dirPath,
               contents
-            }]);
+            });
 
           }
         }
@@ -90,27 +94,27 @@ function createFileMenu(win) {
         },
       },
       { type: 'separator' },
-      {
-        // label: '将文件夹添加到工作区',
-        label: t("menu.addFoldersToWorkspace"),
-        click: async () => {
-          const result = await dialog.showOpenDialog({
-            properties: ['openDirectory']
-          });
-
-          if (!result.canceled && result.filePaths.length > 0) {
-            const dirPath = result.filePaths[0];
-            const contents = readDirRecursive(dirPath);
-
-            addRoot(dirPath);
-
-            win.webContents.send('append-folder', {
-              basePath: dirPath,
-              contents
-            });
-          }
-        }
-      },
+      // {
+      //   // label: '将文件夹添加到工作区',
+      //   label: t("menu.addFoldersToWorkspace"),
+      //   click: async () => {
+      //     const result = await dialog.showOpenDialog({
+      //       properties: ['openDirectory']
+      //     });
+      //
+      //     if (!result.canceled && result.filePaths.length > 0) {
+      //       const dirPath = result.filePaths[0];
+      //       const contents = readDirRecursive(dirPath);
+      //
+      //       addRoot(dirPath);
+      //
+      //       win.webContents.send('append-folder', {
+      //         basePath: dirPath,
+      //         contents
+      //       });
+      //     }
+      //   }
+      // },
       {
         label: "在新项目标签页打开文件夹",
         click: async () => {
@@ -122,7 +126,6 @@ function createFileMenu(win) {
             const dirPath = result.filePaths[0];
             // 通知渲染进程创建项目标签
             win?.webContents.send("open-project-tab", dirPath);
-
 
             // 然后加载文件夹内容
             const contents = readDirRecursive(dirPath);

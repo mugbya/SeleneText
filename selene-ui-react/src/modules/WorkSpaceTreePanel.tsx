@@ -1,83 +1,61 @@
-import { useEffect, useState } from "react";
-import { WorkspaceTreeProps, FileNode, FolderTree } from "@/types";
+import { WorkspaceTreeProps, FileNode } from "@/types";
 import FileTree from "@/components/common/file-tree/FileTree";
 import { useFileTreeStore } from "@/store/fileTreeStore";
+import { useRef } from "react";
+import { useProjectsStore } from "@/store/projectsStore";
 
 function WorkSpaceTreePanel({
   selectedPath,
+  name,
   rootPath,
+  folderTree,
   onFileSelect,
 }: WorkspaceTreeProps) {
- 
-  useEffect(() => {
-    const api = window.electronAPI;
+  
+  // const folder = useFileTreeStore((state) =>
+  //   rootPath ? state.trees[rootPath] : undefined
+  // );
 
-    if (!api || !api.on) {
-      console.warn(
-        "⚠️ electronAPI 未注入，请检查 preload 配置或 contextIsolation 设置"
-      );
-      return;
-    }
+  // const folder = useFileTreeStore((state) => {
+  //   return state.tree
+  // });
+  // const project = useProjectsStore((state) => {
+  //   return state.getActiveProject
+  // });
 
-    return () => {
-      api.removeAllListeners("replace-folders");
-      api.removeAllListeners("append-folder");
-      api.removeAllListeners("replace-folder");
-    };
-  }, []);
+  // const rootName = project?.name;
+  // const basePath = project?.rootPath;
 
-  // ✅ 创建文件/文件夹逻辑
-  const handleNewFile = async (dirPath: string) => {
-    const res = await window.electronAPI.createFile(dirPath, "新建文件.txt");
-    if (res.success) {
-      // 简单做法：重新加载整个目录
-      window.electronAPI.send("refresh-folder", dirPath);
-    }
+
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+  console.log("[WorkSpaceTreePanel] 渲染次数:", renderCount.current);
+
+  if (!folderTree) {
+    return (
+      <div className="flex items-center justify-center h-full text-gray-500">
+        加载中...
+      </div>
+    );
+  }
+
+  // const rootName = folder.basePath.split(/[/\\]/).filter(Boolean).pop() || folder.basePath;
+
+  const treeRoot: FileNode = {
+    name: name,
+    path: rootPath,
+    isDirectory: true,
+    children: folderTree,
   };
-
-  const handleNewFolder = async (dirPath: string) => {
-    const res = await window.electronAPI.createFolder(dirPath, "新建文件夹");
-    if (res.success) {
-      window.electronAPI.send("refresh-folder", dirPath);
-    }
-  };
-  const folders = Object.values(useFileTreeStore((state) => state.trees));
-  // 只取当前项目的 tree
-  // const tree = useFileTreeStore((state) => state.trees[projectId]);
-  console.log("[WorkSpaceTreePanel] 执行渲染")
-  console.log("[WorkSpaceTreePanel] rootPath: %s, folders:%o", rootPath, folders)
 
   return (
     <div className="left-panel p-2 space-y-2 text-sm h-full overflow-y-auto">
-      {rootPath && folders.length === 0 && (
-        <div className="flex items-center justify-center h-full text-gray-500">
-          加载中...
-        </div>
-      )}
-
-      {folders.map((folder) => {
-        const rootName =
-          folder.basePath.split(/[/\\]/).filter(Boolean).pop() ||
-          folder.basePath;
-
-        const treeRoot: FileNode = {
-          name: rootName || folder.basePath,
-          path: folder.basePath,
-          isDirectory: true,
-          children: folder.contents,
-        };
-
-        return (
-          <FileTree
-            key={folder.basePath}
-            nodes={[treeRoot]}
-            onFileClick={onFileSelect}
-            selectedPath={selectedPath || ""}
-            // onNewFile={handleNewFile}
-            // onNewFolder={handleNewFolder}
-          />
-        );
-      })}
+      <FileTree
+        key={rootPath}
+        nodes={[treeRoot]}
+        onFileClick={onFileSelect}
+        selectedPath={selectedPath || ""}
+      />
     </div>
   );
 }
