@@ -8,14 +8,16 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { useRef } from "react";
 import type { ImperativePanelHandle } from "react-resizable-panels";
 import ProjectTabs from "./modules/ProjectTabs";
-// import { useElectronEvents } from "./useElectronEvents";
+import { useElectronEvents } from "./useElectronEvents";
 import { useProjectsStore } from "./store/projectsStore";
-import { useFileTabsStore } from "./store/fileTabsStore";
+// import { useFileTabsStore } from "./store/fileTabsStore";
 import { usePanelsStore } from "./store/panelsStore";
 // import { useFileTreeStore } from "./store/fileTreeStore";
+import { Toaster } from "sonner";
+import { useFileTabsStore } from "./store/fileTabsStore";
 
 export default function Layout() {
-  // useElectronEvents();
+  useElectronEvents();
   const leftPanelRef = useRef<ImperativePanelHandle>(null);
 
   // Projects 状态
@@ -27,11 +29,13 @@ export default function Layout() {
   //  const addProject = useProjectsStore((s) => s.addProject);
   const closeProject = useProjectsStore((s) => s.closeProject); // 如果你在用
   const switchProject = useProjectsStore((s) => s.switchProject);
-
+  const setOpenFiles = useProjectsStore((s) => s.setOpenFiles);
+const setActiveFileForProject = useProjectsStore((s) => s.setActiveFileForProject);
+const closeFileForProject = useProjectsStore((s) => s.closeFileForProject);
   // FileTabs 状态
-  const openFiles = useFileTabsStore((s) => s.openFiles);
-  const activeFile = useFileTabsStore((s) => s.activeFile);
-  const setOpenFiles = useFileTabsStore((s) => s.setOpenFiles);
+  // const openFiles = useFileTabsStore((s) => s.openFiles);
+  // const activeFile = useFileTabsStore((s) => s.activeFile);
+  // // const setOpenFiles = useFileTabsStore((s) => s.setOpenFiles);
   const setActiveFile = useFileTabsStore((s) => s.setActiveFile);
   const addFile = useFileTabsStore((s) => s.addFile);
   const closeFile = useFileTabsStore((s) => s.closeFile);
@@ -51,12 +55,14 @@ export default function Layout() {
   //  const setTrees = useFileTreeStore((s) => s.setTrees);
 
   const activeProject = getActiveProject();
-  const rootPath = activeProject?.rootPath;
-  const name = activeProject?.name;
+
+  const projectId = activeProject?.id;
+  const projectRootPath = activeProject?.rootPath;
+  const projectName = activeProject?.name;
+  const projectOpenFiles = activeProject?.openFiles;
+  const projectActiveFile = activeProject?.lastActiveFile;
 
   const folderTree = activeProject?.folderTree;
-  
-
 
   const renderCount = useRef(0);
   renderCount.current += 1;
@@ -68,13 +74,17 @@ export default function Layout() {
   console.log(
     "[Layout] 当前项目数量：%s, rootPath: %s",
     projects.length,
-    rootPath
+    projectRootPath
   );
-  console.log("[Layout] openFiles：%o", openFiles);
+  console.log("[Layout] projectActiveFile: %o", projectActiveFile);
+  console.log("[Layout] projectOpenFiles: %o", projectOpenFiles);
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground">
       <Header toggleLeft={toggleLeftPanel} toggleRight={toggleRightPanel} />
+
+      {/* 消息提示 */}
+      <Toaster position="top-center" richColors />
 
       {/* 项目标签栏 - 只在有多个项目时显示 */}
       {shouldShowProjectTabs && (
@@ -84,11 +94,11 @@ export default function Layout() {
           onSwitch={(newId) =>
             switchProject(
               newId,
-              openFiles,
-              activeFile,
+              // openFiles ?? [],
+              // activeFile,
               // setFolderTree,
-              setOpenFiles,
-              setActiveFile
+              // setOpenFiles,
+              // setActiveFile
             )
           } // 使用新的处理函数
           onClose={(id) => closeProject(id)}
@@ -97,10 +107,7 @@ export default function Layout() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* 最左侧菜单栏 */}
-        <MenuPanel
-          openSettings={() => setShowRightPanel(true)}
-          toggleLeft={toggleLeftPanel}
-        />
+        <MenuPanel openSettings={() => setShowRightPanel(true)} toggleLeft={toggleLeftPanel} />
 
         {/* {isSettingsMode && (
           <SettingsPage onClose={() => setShowRightPanel(false)} />
@@ -117,14 +124,13 @@ export default function Layout() {
             onExpand={() => setShowLeftPanel(true)}
             className="border border-zinc-300 rounded-md overflow-hidden"
           >
-            {/* 工作区域 - 放目录树 - 避免空rootPath路径时渲染 WorkSpaceTreePanel 组件 */}
-            {rootPath && (
+            {/* 工作区域 - 放目录树 - 避免空projectRootPath路径时渲染 WorkSpaceTreePanel 组件 */}
+            {projectRootPath && (
               <WorkSpaceTreePanel
-                selectedPath={activeFile}
-                name={name? name:""}
-                rootPath={rootPath}
-                folderTree = {folderTree}
-
+                selectedPath={projectActiveFile ?? null}
+                name={projectName ? projectName : ""}
+                rootPath={projectRootPath}
+                folderTree={folderTree}
                 // 点击读取文件内容
                 onFileSelect={(filePath) => {
                   window.electronAPI
@@ -134,15 +140,17 @@ export default function Layout() {
                         console.error("读取文件失败！");
                         return;
                       }
-                      console.log("[Layout] 读取文件内容：%s", content);
-
-                      setOpenFiles((prev) => {
-                        const exists = prev.find((f) => f.path === filePath);
-                        if (exists) return prev;
-                        return [...prev, { path: filePath, content }];
-                      });
                       // console.log("[Layout] 读取文件内容：%s", content);
-                      setActiveFile(filePath);
+
+                      // setOpenFiles((prev) => {
+                      //   const exists = prev.find((f) => f.path === filePath);
+                      //   if (exists) return prev;
+                      //   return [...prev, { path: filePath, content }];
+                      // });
+                      setOpenFiles({ path: filePath, content })
+                      // console.log("[Layout] 读取文件内容：%s", content);
+                      console.log("[Layout] 激活当前文件: %s", filePath);
+                      setActiveFileForProject(projectId ?? null, filePath);
                     });
                 }}
               />
@@ -154,9 +162,10 @@ export default function Layout() {
           {/* 工作区域 - 放文件内容 */}
           <Panel minSize={30}>
             <MainContentTabs
-              openFiles={openFiles}
-              activeFile={activeFile}
+              openFiles={projectOpenFiles?? []}
+              activeFile={projectActiveFile?? null}
               onSwitchFile={setActiveFile}
+              // onSwitchFile={setActiveFileForProject}
               onCloseFile={closeFile}
               onAddFile={addFile}
               onChangeFileContent={changeFileContent}

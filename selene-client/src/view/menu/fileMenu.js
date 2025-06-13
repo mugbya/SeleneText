@@ -115,32 +115,32 @@ function createFileMenu(win) {
       //     }
       //   }
       // },
-      {
-        label: "在新项目标签页打开文件夹",
-        click: async () => {
-          const result = await dialog.showOpenDialog({
-            properties: ["openDirectory"],
-          });
-
-          if (!result.canceled && result.filePaths.length > 0) {
-            const dirPath = result.filePaths[0];
-            // 通知渲染进程创建项目标签
-            win?.webContents.send("open-project-tab", dirPath);
-
-            // 然后加载文件夹内容
-            const contents = readDirRecursive(dirPath);
-            console.log("打开文件夹:", dirPath)
-
-            addRoot(dirPath);
-
-            win.webContents.send('replace-folders', [{
-              basePath: dirPath,
-              contents
-            }]);
-
-          }
-        },
-      },
+      // {
+      //   label: "在新项目标签页打开文件夹",
+      //   click: async () => {
+      //     const result = await dialog.showOpenDialog({
+      //       properties: ["openDirectory"],
+      //     });
+      //
+      //     if (!result.canceled && result.filePaths.length > 0) {
+      //       const dirPath = result.filePaths[0];
+      //       // 通知渲染进程创建项目标签
+      //       win?.webContents.send("open-project-tab", dirPath);
+      //
+      //       // 然后加载文件夹内容
+      //       const contents = readDirRecursive(dirPath);
+      //       console.log("打开文件夹:", dirPath)
+      //
+      //       addRoot(dirPath);
+      //
+      //       win.webContents.send('replace-folders', [{
+      //         basePath: dirPath,
+      //         contents
+      //       }]);
+      //
+      //     }
+      //   },
+      // },
       { type: 'separator' },
       {
         label: '保存',

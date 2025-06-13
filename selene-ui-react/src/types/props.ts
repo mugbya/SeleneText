@@ -26,10 +26,10 @@ export interface LeftPanelProps {
 
 export interface WorkspaceTreeProps {
     selectedPath: string | null;
-    name:string;
+    name:string;    // 工作区名称
     rootPath: string; // 添加rootPath作为可选属性
-    folderTree?: FileNode[];
-    onFileSelect: (filePath: string) => void;
+    folderTree?: FileNode[]; // 文件树数据
+    onFileSelect: (filePath: string) => void; // 打开的文件阿胶
 }
 
 export interface ResizablePanelProps {

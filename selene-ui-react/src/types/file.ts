@@ -28,8 +28,8 @@ export type ProjectTab = {
     id: string;         // 唯一标识，可用 uuid 
     name: string;       // 项目名（可从路径中提取）
     // path: string;
-    rootPath: string;   // 项目根目录路径
-    folderTree?: FileNode[];
-    openFiles?: FileTab[];
-    lastActiveFile?: string | null;
+    rootPath: string;       // 项目根目录路径
+    folderTree: FileNode[];  // 项目的文件树结构
+    openFiles: FileTab[];   // 项目下打开的文件列表
+    lastActiveFile?: string | null; // 项目下当前的激活的文件
 };

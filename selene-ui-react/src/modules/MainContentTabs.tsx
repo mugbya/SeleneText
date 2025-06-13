@@ -18,6 +18,7 @@ function getFileType(filePath: string): "markdown" | "code" | "plain" {
 }
 
 export default function MainContentTabs({
+  // projectId,
   openFiles,
   activeFile,
   onSwitchFile,
@@ -25,13 +26,17 @@ export default function MainContentTabs({
   onAddFile,
   onChangeFileContent, // ✅ 新增：当用户编辑内容时触发
 }: {
+  // projectId: string | null;
   openFiles: FileTab[];
   activeFile: string | null;
   onSwitchFile: (path: string) => void;
+  // onSwitchFile: (projectId: string | null, path: string | null) => void;
+  // onCloseFile: (projectId: string | null, path: string | null) => void;
   onCloseFile: (path: string) => void;
   onAddFile: () => void;
   onChangeFileContent: (path: string, newContent: string) => void;
 }) {
+
   const currentFile = openFiles.find((f) => f.path === activeFile);
 
   // console.log("当前文件 openFiles：", openFiles);

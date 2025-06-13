@@ -44,6 +44,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   deletePath: (targetPath) =>
     ipcRenderer.invoke('delete-path', { targetPath }),
 
+  // showAlert: (msg) =>
+  //   ipcRenderer.invoke('show-alert', { msg }),
   // onOpenProjectTab: (callback: (folderPath: string) => void) => {
   //   ipcRenderer.on("open-project-tab", (_, folderPath) => callback(folderPath));
   // },

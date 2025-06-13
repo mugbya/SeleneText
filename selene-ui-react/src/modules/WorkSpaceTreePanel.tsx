@@ -1,8 +1,8 @@
 import { WorkspaceTreeProps, FileNode } from "@/types";
 import FileTree from "@/components/common/file-tree/FileTree";
-import { useFileTreeStore } from "@/store/fileTreeStore";
+// import { useFileTreeStore } from "@/store/fileTreeStore";
 import { useRef } from "react";
-import { useProjectsStore } from "@/store/projectsStore";
+// import { useProjectsStore } from "@/store/projectsStore";
 
 function WorkSpaceTreePanel({
   selectedPath,

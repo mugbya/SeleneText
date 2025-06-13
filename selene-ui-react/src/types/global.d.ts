@@ -17,6 +17,8 @@ declare global {
 
       deletePath: (path: string) => Promise<{ success: boolean}>;
       renamePath: (path: string, newName: string) => Promise<{ success: boolean}>;
+
+      // showAlert: (message: string) => Promise<void>;
     };
   }
 }
