@@ -42,6 +42,7 @@ export default function MainContentTabs({
 
   const changeFileContentForProject = useProjectsStore((s) => s.changeFileContentForProject);
   const getActiveProject = useProjectsStore((s) => s.getActiveProject);
+  const addOpenFileForProject = useProjectsStore((s) => s.addOpenFileForProject);
 
   const project = getActiveProject();
   // const content = useProjectsStore(() => {
@@ -49,6 +50,11 @@ export default function MainContentTabs({
   // }, [project]);
   // const currentFile = project?.openFiles.find((f) => f.path === activeFile);
   console.log("当前文件：", currentFile);
+
+  function addFile() {
+    console.log("新建文件");
+    const newPath = `Untitled-.txt`;
+  }
 
   // console.log("当前文件 openFiles：", openFiles);
   // console.log("当前文件：", currentFile);
@@ -110,22 +116,25 @@ export default function MainContentTabs({
       <Tabs value={activeFile || ""} onValueChange={onSwitchFile} className="h-full flex flex-col">
       <TabsList className="flex overflow-x-auto border-b bg-muted/40 px-2 py-1 space-x-2 rounded-t-md">
         {openFiles.map((file) => (
-          <div key={file.path} className="relative">
+          <div key={file.path} className="relative mr-2">
             <TabsTrigger
               value={file.path}
-              className="w-32 truncate px-3 py-1 rounded-md text-sm font-medium text-muted-foreground data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow transition-all"
+              className="w-32 truncate pl-3 pr-6 py-1 rounded-md text-sm font-medium text-muted-foreground 
+                        data-[state=active]:bg-background data-[state=active]:text-foreground 
+                        data-[state=active]:shadow transition-all"
             >
-              {/* {file.path.split("/").pop()} */}
               {(file.path.split("/").pop() || "").slice(0, 5)}{(file.path.split("/").pop() || "").length > 5 ? "…" : ""}
             </TabsTrigger>
+
             <X
-              className="w-4 h-4 absolute -right-2 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
+              className="w-4 h-4 absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
               onClick={() => onCloseFile(file.path)}
             />
           </div>
         ))}
         <button
-          onClick={onAddFile}
+          // onClick={onAddFile}
+          onClick={addFile}
           className="ml-2 p-1 text-muted-foreground hover:text-foreground"
           title="新建文件"
         >

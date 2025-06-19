@@ -30,7 +30,7 @@ interface ProjectsStore {
   setActiveProjectId: (projectId: string | null) => void; // 设置激活的项目 id
   getActiveProject: () => ProjectTab | null; // 获取激活的项目
 
-  addOpenFileForProject: (projectId: string | undefined, file: FileTab) => void; // 新增项目 下的文件
+  addOpenFileForProject: (projectId: string | undefined, file: FileTab) => void; // 项目 新增打开的文件
   changeFileContentForProject: (projectId: string | null, filePath: string, content: string) => void; // 更新项目 下的文件内容
   setActiveFileForProject: (projectId: string | null, filepath: string | null) => void; // 设置项目 下的激活文件
   closeFileForProject: (projectId: string, filePath: string) => void; // 关闭项目 下的文件
@@ -150,7 +150,7 @@ export const useProjectsStore = create<ProjectsStore>((set, get) => ({
   setActiveFileForProject: (projectId, filepath) => {
     set((state) => {
       if (!projectId) return {};
-      
+
       const project = state.projects[projectId];
       if (!project) return {};
       return {
