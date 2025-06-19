@@ -29,17 +29,23 @@ export default function Layout() {
   //  const addProject = useProjectsStore((s) => s.addProject);
   const closeProject = useProjectsStore((s) => s.closeProject); // 如果你在用
   const switchProject = useProjectsStore((s) => s.switchProject);
-  const setOpenFiles = useProjectsStore((s) => s.setOpenFiles);
-const setActiveFileForProject = useProjectsStore((s) => s.setActiveFileForProject);
-const closeFileForProject = useProjectsStore((s) => s.closeFileForProject);
+  // const setOpenFiles = useProjectsStore((s) => s.setOpenFiles);
+  // const setOpenFiles = useProjectsStore((s) => s.setOpenFilesWithContent);
+  const addOpenFileForProject = useProjectsStore((s) => s.addOpenFileForProject);
+  const changeFileContentForProject = useProjectsStore((s) => s.changeFileContentForProject);
+
+  const setActiveFileForProject = useProjectsStore(
+    (s) => s.setActiveFileForProject
+  );
+  const closeFileForProject = useProjectsStore((s) => s.closeFileForProject);
   // FileTabs 状态
   // const openFiles = useFileTabsStore((s) => s.openFiles);
   // const activeFile = useFileTabsStore((s) => s.activeFile);
   // // const setOpenFiles = useFileTabsStore((s) => s.setOpenFiles);
-  const setActiveFile = useFileTabsStore((s) => s.setActiveFile);
+  // const setActiveFile = useFileTabsStore((s) => s.setActiveFile);
   const addFile = useFileTabsStore((s) => s.addFile);
   const closeFile = useFileTabsStore((s) => s.closeFile);
-  const changeFileContent = useFileTabsStore((s) => s.changeFileContent);
+  // const changeFileContent = useFileTabsStore((s) => s.changeFileContent);
 
   // Panels 状态
   //  const showLeftPanel = usePanelsStore((s) => s.showLeftPanel);
@@ -68,12 +74,13 @@ const closeFileForProject = useProjectsStore((s) => s.closeFileForProject);
   renderCount.current += 1;
   console.log("\n[Layout] 执行渲染 count:", renderCount.current);
 
+  const projectsLength = Object.values(projects).length ;
   // 只有多个项目时才显示标签页
-  const shouldShowProjectTabs = projects.length > 1;
+  const shouldShowProjectTabs = projectsLength > 1;
   // console.log("\n[Layout] 执行渲染....");
   console.log(
     "[Layout] 当前项目数量：%s, rootPath: %s",
-    projects.length,
+    projectsLength,
     projectRootPath
   );
   console.log("[Layout] projectActiveFile: %o", projectActiveFile);
@@ -93,7 +100,7 @@ const closeFileForProject = useProjectsStore((s) => s.closeFileForProject);
           activeProjectId={activeProjectId || ""}
           onSwitch={(newId) =>
             switchProject(
-              newId,
+              newId
               // openFiles ?? [],
               // activeFile,
               // setFolderTree,
@@ -107,7 +114,10 @@ const closeFileForProject = useProjectsStore((s) => s.closeFileForProject);
 
       <div className="flex flex-1 overflow-hidden">
         {/* 最左侧菜单栏 */}
-        <MenuPanel openSettings={() => setShowRightPanel(true)} toggleLeft={toggleLeftPanel} />
+        <MenuPanel
+          openSettings={() => setShowRightPanel(true)}
+          toggleLeft={toggleLeftPanel}
+        />
 
         {/* {isSettingsMode && (
           <SettingsPage onClose={() => setShowRightPanel(false)} />
@@ -147,10 +157,18 @@ const closeFileForProject = useProjectsStore((s) => s.closeFileForProject);
                       //   if (exists) return prev;
                       //   return [...prev, { path: filePath, content }];
                       // });
-                      setOpenFiles({ path: filePath, content })
+                      // setOpenFiles({ path: filePath, content });
+                      addOpenFileForProject(projectId, {
+                        path: filePath,
+                        content: content
+                      })
+                      // addFileIfNotExists(projectId, {
+                      //   path: filePath,
+                      //   content: content
+                      // });
                       // console.log("[Layout] 读取文件内容：%s", content);
                       console.log("[Layout] 激活当前文件: %s", filePath);
-                      setActiveFileForProject(projectId ?? null, filePath);
+                      // setActiveFileForProject(projectId ?? null, filePath);
                     });
                 }}
               />
@@ -162,13 +180,14 @@ const closeFileForProject = useProjectsStore((s) => s.closeFileForProject);
           {/* 工作区域 - 放文件内容 */}
           <Panel minSize={30}>
             <MainContentTabs
-              openFiles={projectOpenFiles?? []}
-              activeFile={projectActiveFile?? null}
-              onSwitchFile={setActiveFile}
+              projectId={projectId?? null}
+              openFiles={projectOpenFiles ?? []}
+              activeFile={projectActiveFile ?? null}
+              onSwitchFile={e => setActiveFileForProject(projectId?? null, e)}
               // onSwitchFile={setActiveFileForProject}
               onCloseFile={closeFile}
               onAddFile={addFile}
-              onChangeFileContent={changeFileContent}
+              // onChangeFileContent={changeFileContentForProject}
             />
           </Panel>
 

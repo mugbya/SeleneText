@@ -4,13 +4,15 @@ import type { FileTab, Folder, ProjectTab } from "@/types";
 import { useProjectsStore } from "./store/projectsStore";
 // import { useFileTreeStore } from "./store/fileTreeStore";
 import { toast } from "sonner";
+import {handleFileSave} from "@/logic/fileSaver";
 
 export function useElectronEvents() {
 
   const addProject = useProjectsStore((s) => s.addProject);
-  // const projects = useProjectsStore((s) => s.projects);
-  const getProjects = useProjectsStore((s) => s.getProjects);
+  const projects = useProjectsStore((s) => s.projects);
+  // const getProjects = useProjectsStore((s) => s.getProjects);
   const setActiveProjectId = useProjectsStore((s) => s.setActiveProjectId);
+  const getActiveProject = useProjectsStore((s) => s.getActiveProject);
 
   // const setTrees = useFileTreeStore((s) => s.setTrees);
   // const setTree = useFileTreeStore((s) => s.setTree);
@@ -42,17 +44,30 @@ export function useElectronEvents() {
 
     // 文件保存处理
     const saveHandler = async () => {
-      // const current = openFiles.find((f) => f.path === activeFile);
-      // await handleFileSave(current, (oldPath, updated) => {
-      //   const newFiles = openFiles.map((f) => (f.path === oldPath ? updated : f));
-      //   setOpenFiles(newFiles);
-      //   setActiveFile(updated.path);
+      console.log("[useElectronEvents] saveHandler");
+      console.log("[useElectronEvents] saveHandler - 1");
 
-      //   // 保存项目状态
-      //   if (activeProjectId) {
-      //     useProjectsStore.getState().updateProjectFiles(activeProjectId, newFiles, updated.path);
-      //   }
-      // });
+      const openFiles = getActiveProject()?.openFiles;
+      if (!openFiles) return;
+
+      const activeFile = getActiveProject()?.lastActiveFile;
+      const current = openFiles.find((f) => f.path === activeFile);
+
+      // if (openFiles) {
+        console.log("[useElectronEvents] current: ", current);
+        await handleFileSave(current, (oldPath, updated) => {
+          const newFiles = openFiles.map((f) => (f.path === oldPath ? updated : f));
+
+          // setOpenFiles(newFiles);
+          // setActiveFile(updated.path);
+
+          // // 保存项目状态
+          // if (activeProjectId) {
+          //   useProjectsStore.getState().updateProjectFiles(activeProjectId, newFiles, updated.path);
+          // }
+        });
+      // }
+
     };
 
 
@@ -66,13 +81,14 @@ export function useElectronEvents() {
      */
     const loadFolder  = async (folder: Folder) => {
       console.log("[useElectronEvents] load-folder folder: ", folder);
-      const projects = getProjects();
-      const exists = projects.some(item => item.rootPath === folder.basePath);
+      // const projects = projects;
+      // const exists = projects.some(item => item.rootPath === folder.basePath);
+      const exists = Object.values(projects ?? {}).some(item => item.rootPath === folder.basePath);
       if (exists) {
         toast.info("项目已经被打开"); // 你用的 UI 通知组件
       } else {
         const projectId = addProject(folder);
-        setActiveProjectId(projectId);
+        // setActiveProjectId(projectId);
         // console.log("[useElectronEvents] load-folder addProject projectId:", projectId);
       }
     }

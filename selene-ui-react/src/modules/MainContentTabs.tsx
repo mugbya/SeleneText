@@ -6,6 +6,7 @@ import { X, Plus } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea"; // ✅ 用于简单编辑器
 import type { FileTab } from '@/types';
+import { useProjectsStore } from "@/store/projectsStore";
 
 
 function getFileType(filePath: string): "markdown" | "code" | "plain" {
@@ -18,15 +19,15 @@ function getFileType(filePath: string): "markdown" | "code" | "plain" {
 }
 
 export default function MainContentTabs({
-  // projectId,
+  projectId,
   openFiles,
   activeFile,
   onSwitchFile,
   onCloseFile,
   onAddFile,
-  onChangeFileContent, // ✅ 新增：当用户编辑内容时触发
+  // onChangeFileContent, // ✅ 新增：当用户编辑内容时触发
 }: {
-  // projectId: string | null;
+  projectId: string | null;
   openFiles: FileTab[];
   activeFile: string | null;
   onSwitchFile: (path: string) => void;
@@ -34,10 +35,20 @@ export default function MainContentTabs({
   // onCloseFile: (projectId: string | null, path: string | null) => void;
   onCloseFile: (path: string) => void;
   onAddFile: () => void;
-  onChangeFileContent: (path: string, newContent: string) => void;
+  // onChangeFileContent: (path: string, newContent: string) => void;
 }) {
 
   const currentFile = openFiles.find((f) => f.path === activeFile);
+
+  const changeFileContentForProject = useProjectsStore((s) => s.changeFileContentForProject);
+  const getActiveProject = useProjectsStore((s) => s.getActiveProject);
+
+  const project = getActiveProject();
+  // const content = useProjectsStore(() => {
+  //   return project?.openFiles[project.lastActiveFile || ""] ?? "";
+  // }, [project]);
+  // const currentFile = project?.openFiles.find((f) => f.path === activeFile);
+  console.log("当前文件：", currentFile);
 
   // console.log("当前文件 openFiles：", openFiles);
   // console.log("当前文件：", currentFile);
@@ -46,13 +57,18 @@ export default function MainContentTabs({
     if (!currentFile) return null;
 
     const fileType = getFileType(currentFile.path);
-    // console.log("文件类型：", fileType);
+    console.log("文件类型：", fileType);
     switch (fileType) {
       case "markdown":
         return (
           <Textarea
             value={currentFile.content}
-            onChange={(e) => onChangeFileContent(currentFile.path, e.target.value)}
+            // onChange={(e) => onChangeFileContent(currentFile.path, e.target.value)}
+            onChange={e => {
+              if (project && project.lastActiveFile) {
+                changeFileContentForProject(projectId, project.lastActiveFile, e.target.value);
+              }
+            }}
             className="w-full h-[60vh] resize-none font-mono text-sm"
           />
         );
@@ -74,9 +90,14 @@ export default function MainContentTabs({
           // />
           <Textarea
             autoFocus
-            onClick={(e) => e.currentTarget.focus()}
+            // onClick={(e) => e.currentTarget.focus()}
             value={currentFile.content}
-            onChange={(e) => onChangeFileContent(currentFile.path, e.target.value)}
+            onChange={(e) => {
+              console.log("文件内容改变：", "project:", project, "lastActiveFile:", project?.lastActiveFile);
+              if (project && project.lastActiveFile) {
+                changeFileContentForProject(projectId, project.lastActiveFile, e.target.value);
+              }
+            }}
             className="w-full h-[60vh] resize-none font-mono text-sm"
           />
         );

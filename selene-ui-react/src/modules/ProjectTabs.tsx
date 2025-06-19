@@ -9,7 +9,7 @@ export default function ProjectTabs({
   onSwitch,
   onClose,
 }: {
-  projects: ProjectTab[];
+  projects: Record<string, ProjectTab>;
   activeProjectId: string;
   onSwitch: (id: string) => void;
   onClose: (id: string) => void;
@@ -21,7 +21,7 @@ export default function ProjectTabs({
   // }
   return (
     <div className="flex border-b border-zinc-300 bg-zinc-50 px-2 py-1 space-x-1">
-      {projects.map((project) => (
+      {Object.values(projects).map((project) => (
         <div
           key={project.id}
           onClick={() => onSwitch(project.id)}

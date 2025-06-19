@@ -41,18 +41,18 @@ function WorkSpaceTreePanel({
 
   // const rootName = folder.basePath.split(/[/\\]/).filter(Boolean).pop() || folder.basePath;
 
-  const treeRoot: FileNode = {
-    name: name,
-    path: rootPath,
-    isDirectory: true,
-    children: folderTree,
-  };
+  // const treeRoot: FileNode = {
+  //   name: name,
+  //   path: rootPath,
+  //   isDirectory: true,
+  //   children: folderTree,
+  // };
 
   return (
     <div className="left-panel p-2 space-y-2 text-sm h-full overflow-y-auto">
       <FileTree
         key={rootPath}
-        nodes={[treeRoot]}
+        nodes={[folderTree]}
         onFileClick={onFileSelect}
         selectedPath={selectedPath || ""}
       />
