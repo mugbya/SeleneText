@@ -44,17 +44,15 @@ export default function MainContentTabs({
   const getActiveProject = useProjectsStore((s) => s.getActiveProject);
   const addOpenFileForProject = useProjectsStore((s) => s.addOpenFileForProject);
 
+  const createNewFileForProject = useProjectsStore(s => s.createNewFileForProject);
+  const activeProjectId = useProjectsStore(s => s.activeProjectId);
+
   const project = getActiveProject();
   // const content = useProjectsStore(() => {
   //   return project?.openFiles[project.lastActiveFile || ""] ?? "";
   // }, [project]);
   // const currentFile = project?.openFiles.find((f) => f.path === activeFile);
-  console.log("当前文件：", currentFile);
-
-  function addFile() {
-    console.log("新建文件");
-    const newPath = `Untitled-.txt`;
-  }
+  // console.log("当前文件：", currentFile);
 
   // console.log("当前文件 openFiles：", openFiles);
   // console.log("当前文件：", currentFile);
@@ -134,7 +132,7 @@ export default function MainContentTabs({
         ))}
         <button
           // onClick={onAddFile}
-          onClick={addFile}
+          onClick={() => createNewFileForProject(activeProjectId)}
           className="ml-2 p-1 text-muted-foreground hover:text-foreground"
           title="新建文件"
         >
