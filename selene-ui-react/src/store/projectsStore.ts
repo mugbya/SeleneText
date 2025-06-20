@@ -35,12 +35,21 @@ interface ProjectsStore {
   changeFileContentForProject: (projectId: string | null, filePath: string, content: string) => void; // 更新项目 下的文件内容
   setActiveFileForProject: (projectId: string | null, filepath: string | null) => void; // 设置项目 下的激活文件
   closeFileForProject: (projectId: string, filePath: string) => void; // 关闭项目 下的文件
+
+  orphanFiles: FileTab[]; // ✅ 无项目文件
+  activeOrphanFile: string | null; // ✅ 当前激活的无项目文件
+  createOrphanFile: () => void;
+  updateOrphanFileContent: (filePath: string, content: string) => void;
+  removeOrphanFile: (filePath: string) => void;
+  changeOrphanFileContent: (filePath: string, content: string) => void;
 }
 
 
 export const useProjectsStore = create<ProjectsStore>((set, get) => ({
   projects: {},
   activeProjectId: null,
+  orphanFiles: [],
+  activeOrphanFile: null, // ✅ 补上这一行
 
   // 添加新项目
   addProject: (folder: Folder) => {
@@ -125,6 +134,7 @@ export const useProjectsStore = create<ProjectsStore>((set, get) => ({
   },
 
   createNewFileForProject: (projectId) => {
+    console.log("createNewFileForProject");
     if (!projectId) return;
 
     set((state) => {
@@ -241,6 +251,46 @@ export const useProjectsStore = create<ProjectsStore>((set, get) => ({
       };
     });
   },
+
+  createOrphanFile: () => {
+    set((state) => {
+      const newPath = `untitled-${Date.now()}.txt`;
+  
+      const newFile: FileTab = {
+        path: newPath,
+        content: "",
+      };
+      console.log("createOrphanFile", newFile);
+      return {
+        orphanFiles: [...state.orphanFiles, newFile],
+        activeOrphanFile: newPath,
+      };
+    });
+  },
+  
+  updateOrphanFileContent: (filePath, content) => {
+    set((state) => ({
+      orphanFiles: state.orphanFiles.map((file) =>
+        file.path === filePath ? { ...file, content } : file
+      ),
+    }));
+  },
+  
+  removeOrphanFile: (filePath) => {
+    set((state) => ({
+      orphanFiles: state.orphanFiles.filter((f) => f.path !== filePath),
+      activeOrphanFile:
+        state.activeOrphanFile === filePath ? null : state.activeOrphanFile,
+    }));
+  },
+
+  changeOrphanFileContent: (filePath, content) =>
+    set((state) => ({
+      orphanFiles: state.orphanFiles.map((f) =>
+        f.path === filePath ? { ...f, content } : f
+      ),
+    })),
+
 }));
 
 

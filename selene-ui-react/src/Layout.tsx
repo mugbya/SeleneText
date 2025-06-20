@@ -181,8 +181,8 @@ export default function Layout() {
           <Panel minSize={30}>
             <MainContentTabs
               projectId={projectId?? null}
-              openFiles={projectOpenFiles ?? []}
-              activeFile={projectActiveFile ?? null}
+              // openFiles={projectOpenFiles ?? []}
+              // activeFile={projectActiveFile ?? null}
               onSwitchFile={e => setActiveFileForProject(projectId?? null, e)}
               // onSwitchFile={setActiveFileForProject}
               onCloseFile={closeFile}
