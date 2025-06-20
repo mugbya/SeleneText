@@ -24,7 +24,7 @@ export default function MainContentTabs({
   // openFiles,
   // activeFile,
   onSwitchFile,
-  onCloseFile,
+  // onCloseFile,
   onAddFile,
 }: // onChangeFileContent, // ✅ 新增：当用户编辑内容时触发
 {
@@ -34,7 +34,7 @@ export default function MainContentTabs({
   onSwitchFile: (path: string) => void;
   // onSwitchFile: (projectId: string | null, path: string | null) => void;
   // onCloseFile: (projectId: string | null, path: string | null) => void;
-  onCloseFile: (path: string) => void;
+  // onCloseFile: (path: string) => void;
   onAddFile: () => void;
   // onChangeFileContent: (path: string, newContent: string) => void;
 }) {
@@ -54,15 +54,18 @@ export default function MainContentTabs({
   const activeProjectId = useProjectsStore((s) => s.activeProjectId);
   const orphanFiles = useProjectsStore((s) => s.orphanFiles);
   const activeOrphanFile = useProjectsStore((s) => s.activeOrphanFile);
-  const changeOrphanFileContent = useProjectsStore((s) => s.changeOrphanFileContent);
+  const changeOrphanFileContent = useProjectsStore(
+    (s) => s.changeOrphanFileContent
+  );
   const createOrphanFile = useProjectsStore((s) => s.createOrphanFile);
+  const closeFileForProject = useProjectsStore((s) => s.closeFileForProject);
 
   const activeProject = useProjectsStore((s) => s.getActiveProject());
-// const orphanFiles = useProjectsStore((s) => s.orphanFiles);
-// const activeOrphanFile = useProjectsStore((s) => s.activeOrphanFile);
+  // const orphanFiles = useProjectsStore((s) => s.orphanFiles);
+  // const activeOrphanFile = useProjectsStore((s) => s.activeOrphanFile);
 
-const openFiles = activeProject?.openFiles ?? orphanFiles;
-const activeFile = activeProject?.lastActiveFile ?? activeOrphanFile;
+  const openFiles = activeProject?.openFiles ?? orphanFiles;
+  const activeFile = activeProject?.lastActiveFile ?? activeOrphanFile;
 
   const project = getActiveProject();
   // const content = useProjectsStore(() => {
@@ -78,27 +81,27 @@ const activeFile = activeProject?.lastActiveFile ?? activeOrphanFile;
     project?.openFiles.find((f) => f.path === project.lastActiveFile) ||
     orphanFiles.find((f) => f.path === activeOrphanFile);
 
-    const handleChange = useUnifiedFileChangeHandler({
-      project,
-      projectId,
-      activeOrphanFile,
-      orphanFiles,
-      changeFileContentForProject,
-      changeOrphanFileContent,
-    });
-    
-    const handleAddFile = () => {
-      console.log("handleAddFile 新建文件");
-      if (activeProjectId && project) {
-        // 有项目，新增项目下的文件
-        console.log("handleAddFile 有项目，新增项目下的文件");
-        createNewFileForProject(activeProjectId);
-      } else {
-        console.log("handleAddFile 无项目，新建孤立文件");
-        // 无项目，新建孤立文件
-        createOrphanFile();
-      }
-    };
+  const handleChange = useUnifiedFileChangeHandler({
+    project,
+    projectId,
+    activeOrphanFile,
+    orphanFiles,
+    changeFileContentForProject,
+    changeOrphanFileContent,
+  });
+
+  const handleAddFile = () => {
+    console.log("handleAddFile 新建文件");
+    if (activeProjectId && project) {
+      // 有项目，新增项目下的文件
+      console.log("handleAddFile 有项目，新增项目下的文件");
+      createNewFileForProject(activeProjectId);
+    } else {
+      console.log("handleAddFile 无项目，新建孤立文件");
+      // 无项目，新建孤立文件
+      createOrphanFile();
+    }
+  };
 
   const renderEditableContent = () => {
     if (!currentFile) return null;
@@ -119,7 +122,7 @@ const activeFile = activeProject?.lastActiveFile ?? activeOrphanFile;
               //     e.target.value
               //   );
               // }
-              handleChange(e.target.value)
+              handleChange(e.target.value);
             }}
             className="w-full h-[60vh] resize-none font-mono text-sm"
           />
@@ -154,9 +157,13 @@ const activeFile = activeProject?.lastActiveFile ?? activeOrphanFile;
               // }
               const content = e.target.value;
               const store = useProjectsStore.getState();
-      
+
               if (project?.id && project?.lastActiveFile) {
-                store.changeFileContentForProject(project.id, project.lastActiveFile, content);
+                store.changeFileContentForProject(
+                  project.id,
+                  project.lastActiveFile,
+                  content
+                );
               } else if (activeOrphanFile) {
                 store.changeOrphanFileContent(activeOrphanFile, content);
               }
@@ -175,35 +182,45 @@ const activeFile = activeProject?.lastActiveFile ?? activeOrphanFile;
         onValueChange={onSwitchFile}
         className="h-full flex flex-col"
       >
-        <TabsList className="flex overflow-x-auto border-b bg-muted/40 px-2 py-1 space-x-2 rounded-t-md">
-          {openFiles.map((file) => (
-            <div key={file.path} className="relative mr-2">
-              <TabsTrigger
-                value={file.path}
-                className="w-32 truncate pl-3 pr-6 py-1 rounded-md text-sm font-medium text-muted-foreground 
-                        data-[state=active]:bg-background data-[state=active]:text-foreground 
-                        data-[state=active]:shadow transition-all"
-              >
-                {(file.path.split("/").pop() || "").slice(0, 5)}
-                {(file.path.split("/").pop() || "").length > 5 ? "…" : ""}
-              </TabsTrigger>
+ 
+ <TabsList className="flex overflow-x-auto border-b bg-muted/40 px-2 py-1 space-x-2 rounded-t-md">
+  {openFiles.map((file) => (
+    <div key={file.path} className="relative mr-2">
+      <TabsTrigger
+        value={file.path}
+        className="pl-2 pr-6 py-1 max-w-[128px] truncate rounded-md text-sm font-medium text-muted-foreground
+                  data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow transition-all"
+      >
+        {(file.path.split("/").pop() || "").slice(0, 10)}
+        {(file.path.split("/").pop() || "").length > 10 ? "…" : ""}
+      </TabsTrigger>
 
-              <X
-                className="w-4 h-4 absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
-                onClick={() => onCloseFile(file.path)}
-              />
-            </div>
-          ))}
-          <button
-            // onClick={onAddFile}
-            // onClick={() => createNewFileForProject(activeProjectId)}
-            onClick={() => handleAddFile()}
-            className="ml-2 p-1 text-muted-foreground hover:text-foreground"
-            title="新建文件"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
-        </TabsList>
+      <X
+        className="w-4 h-4 absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
+        onClick={(e) => {
+          e.stopPropagation(); // 防止点击触发 tab 切换
+          closeFileForProject(projectId, file.path);
+        }}
+      />
+    </div>
+  ))}
+
+  <button
+    onClick={() => handleAddFile()}
+    className="ml-2 p-1 text-muted-foreground hover:text-foreground"
+    title="新建文件"
+  >
+    <Plus className="w-4 h-4" />
+  </button>
+</TabsList>
+
+
+
+
+
+
+
+
 
         {openFiles.map((file) => (
           <TabsContent

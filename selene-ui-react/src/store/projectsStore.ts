@@ -34,7 +34,7 @@ interface ProjectsStore {
   addOpenFileForProject: (projectId: string | undefined, file: FileTab) => void; // 项目 新增打开的文件
   changeFileContentForProject: (projectId: string | null, filePath: string, content: string) => void; // 更新项目 下的文件内容
   setActiveFileForProject: (projectId: string | null, filepath: string | null) => void; // 设置项目 下的激活文件
-  closeFileForProject: (projectId: string, filePath: string) => void; // 关闭项目 下的文件
+  closeFileForProject: (projectId: string | null, filePath: string) => void; // 关闭项目 下的文件
 
   orphanFiles: FileTab[]; // ✅ 无项目文件
   activeOrphanFile: string | null; // ✅ 当前激活的无项目文件
@@ -232,6 +232,12 @@ export const useProjectsStore = create<ProjectsStore>((set, get) => ({
   // 关闭文件
   closeFileForProject: (projectId, filePath) => {
     set((state) => {
+      console.log("closeFileForProject", projectId, filePath);
+      if (!projectId)  {
+        state.removeOrphanFile(filePath)
+        return {};
+      };
+
       const project = state.projects[projectId];
       if (!project) return {};
 

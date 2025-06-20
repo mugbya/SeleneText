@@ -185,7 +185,7 @@ export default function Layout() {
               // activeFile={projectActiveFile ?? null}
               onSwitchFile={e => setActiveFileForProject(projectId?? null, e)}
               // onSwitchFile={setActiveFileForProject}
-              onCloseFile={closeFile}
+              // onCloseFile={closeFile}
               onAddFile={addFile}
               // onChangeFileContent={changeFileContentForProject}
             />
