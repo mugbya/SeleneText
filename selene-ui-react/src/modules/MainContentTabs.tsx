@@ -74,7 +74,7 @@ export default function MainContentTabs({
   // const currentFile = project?.openFiles.find((f) => f.path === activeFile);
   // console.log("当前文件：", currentFile);
 
-  // console.log("当前文件 openFiles：", openFiles);
+  console.log("当前文件 openFiles：", openFiles);
   // console.log("当前文件：", currentFile);
 
   const currentFile =

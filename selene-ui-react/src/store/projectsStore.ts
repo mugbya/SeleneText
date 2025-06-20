@@ -233,10 +233,17 @@ export const useProjectsStore = create<ProjectsStore>((set, get) => ({
   closeFileForProject: (projectId, filePath) => {
     set((state) => {
       console.log("closeFileForProject", projectId, filePath);
-      if (!projectId)  {
-        state.removeOrphanFile(filePath)
-        return {};
-      };
+
+      // 解决无项目文件的关闭 - 关闭到最后还剩一个文件标签页时，TabsContent 没有，但是文件标签页却还有一个
+      if (!projectId) {
+        const newOrphanFiles = state.orphanFiles.filter((f) => f.path !== filePath);
+        const isClosedActive = state.activeOrphanFile === filePath;
+        const newActive = isClosedActive ? (newOrphanFiles.at(-1)?.path ?? null) : state.activeOrphanFile;
+        return {
+          orphanFiles: newOrphanFiles,
+          activeOrphanFile: newActive,
+        };
+      }
 
       const project = state.projects[projectId];
       if (!project) return {};
