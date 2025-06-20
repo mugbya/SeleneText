@@ -182,45 +182,36 @@ export default function MainContentTabs({
         onValueChange={onSwitchFile}
         className="h-full flex flex-col"
       >
- 
- <TabsList className="flex overflow-x-auto border-b bg-muted/40 px-2 py-1 space-x-2 rounded-t-md">
-  {openFiles.map((file) => (
-    <div key={file.path} className="relative mr-2">
-      <TabsTrigger
-        value={file.path}
-        className="pl-2 pr-6 py-1 max-w-[128px] truncate rounded-md text-sm font-medium text-muted-foreground
+        <TabsList className="flex overflow-x-auto border-b bg-muted/40 px-2 py-1 space-x-2 rounded-t-md">
+          {openFiles.map((file) => (
+            <div key={file.path} className="relative mr-2">
+              <TabsTrigger
+                value={file.path}
+                className="pl-2 pr-6 py-1 max-w-[128px] truncate rounded-md text-sm font-medium text-muted-foreground
                   data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow transition-all"
-      >
-        {(file.path.split("/").pop() || "").slice(0, 10)}
-        {(file.path.split("/").pop() || "").length > 10 ? "…" : ""}
-      </TabsTrigger>
+              >
+                {(file.path.split("/").pop() || "").slice(0, 10)}
+                {(file.path.split("/").pop() || "").length > 10 ? "…" : ""}
+              </TabsTrigger>
 
-      <X
-        className="w-4 h-4 absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
-        onClick={(e) => {
-          e.stopPropagation(); // 防止点击触发 tab 切换
-          closeFileForProject(projectId, file.path);
-        }}
-      />
-    </div>
-  ))}
+              <X
+                className="w-4 h-4 absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
+                onClick={(e) => {
+                  e.stopPropagation(); // 防止点击触发 tab 切换
+                  closeFileForProject(projectId, file.path);
+                }}
+              />
+            </div>
+          ))}
 
-  <button
-    onClick={() => handleAddFile()}
-    className="ml-2 p-1 text-muted-foreground hover:text-foreground"
-    title="新建文件"
-  >
-    <Plus className="w-4 h-4" />
-  </button>
-</TabsList>
-
-
-
-
-
-
-
-
+          <button
+            onClick={() => handleAddFile()}
+            className="ml-2 p-1 text-muted-foreground hover:text-foreground"
+            title="新建文件"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+        </TabsList>
 
         {openFiles.map((file) => (
           <TabsContent

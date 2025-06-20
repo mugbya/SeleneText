@@ -61,6 +61,8 @@
     }
   },
   "dependencies": {
-    "i18next": "^25.2.1"
+    "chokidar": "^4.0.3",
+    "i18next": "^25.2.1",
+    "lodash": "^4.17.21"
   }
 }
