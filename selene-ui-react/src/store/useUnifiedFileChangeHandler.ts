@@ -1,6 +1,15 @@
 import { useCallback } from "react";
 import type { ProjectTab, FileTab } from "@/types";
 
+/**
+ * 文件变动的监听处理
+ * @param project
+ * @param projectId
+ * @param activeOrphanFile
+ * @param orphanFiles
+ * @param changeFileContentForProject
+ * @param changeOrphanFileContent
+ */
 export function useUnifiedFileChangeHandler({
   project,
   projectId,

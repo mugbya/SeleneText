@@ -1,18 +1,6 @@
-import { FileNode, FileTab, Folder, ProjectTab } from '@/types';
+import { FileTab, Folder, ProjectTab } from '@/types';
 import { create } from 'zustand';
 
-// addProject: (project: Omit<ProjectTab, 'expandedKeys' | 'openFiles' | 'lastActiveFile' | 'filesContent'>) => string;
-// projects: ProjectTab[];
-// getProjects: () => ProjectTab[];
-// setOpenFilesWithContent: (
-//   // projectId: string,
-//   files: { path: string; content: string }[],
-//   activeFile?: string
-// ) => void;
-// setOpenFiles: (tabs: FileTab[]) => void;
-// setOpenFiles: (tabs: FileTab[]) => void;        // 设置项目 下的打开文件列表
-// updateProjectFiles: (projectId: string, files: FileTab[], active: string | null) => void; //  更新项目下的打开文件列表
- // setOpenFiles: (tabs: FileTab[]) => void;        // 设置项目 下的打开文件列表
 
 interface ProjectsStore {
   projects: Record<string, ProjectTab>; // 项目字典
@@ -36,12 +24,11 @@ interface ProjectsStore {
   setActiveFileForProject: (projectId: string | null, filepath: string | null) => void; // 设置项目 下的激活文件
   closeFileForProject: (projectId: string | null, filePath: string) => void; // 关闭项目 下的文件
 
-  orphanFiles: FileTab[]; // ✅ 无项目文件
-  activeOrphanFile: string | null; // ✅ 当前激活的无项目文件
-  createOrphanFile: () => void;
-  updateOrphanFileContent: (filePath: string, realPath: string, isTemporary:boolean) => void;
-  removeOrphanFile: (filePath: string) => void;
-  changeOrphanFileContent: (filePath: string, content: string) => void;
+  orphanFiles: FileTab[]; // ✅ 临时文件列表
+  activeOrphanFile: string | null; // ✅ 当前激活的临时文件
+  createOrphanFile: () => void; // 创建临时文件
+  removeOrphanFile: (filePath: string) => void; //  ✅ 移除临时文件
+  changeOrphanFileContent: (filePath: string, content: string) => void; // 更新临时文件内容
 }
 
 
@@ -282,14 +269,7 @@ export const useProjectsStore = create<ProjectsStore>((set, get) => ({
       };
     });
   },
-  
-  updateOrphanFileContent: (filePath,  content) => {
-    set((state) => ({
-      orphanFiles: state.orphanFiles.map((file) =>
-        file.path === filePath ? { ...file, content } : file
-      ),
-    }));
-  },
+
   
   removeOrphanFile: (filePath) => {
     set((state) => ({

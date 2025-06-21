@@ -2,11 +2,11 @@ import CodeMirror from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 
 export default function CodeMirrorViewer({
-  code,
-  language,
-  editable,
-  onChange,
-}: {
+                                           code,
+                                           language,
+                                           editable,
+                                           onChange,
+                                         }: {
   code: string;
   language: string;
   editable: boolean;
@@ -15,13 +15,19 @@ export default function CodeMirrorViewer({
   const extensions = language === 'javascript' ? [javascript()] : [];
 
   return (
-    <CodeMirror
-        className="text-left"  // Tailwind 用户
-      value={code}
-      height="400px"
-      editable={editable}
-      extensions={extensions}
-      onChange={(value) => onChange(value)}
-    />
+      <CodeMirror
+          className="text-left"  // Tailwind 用户
+          value={code}
+          height="100%"
+          // basicSetup={{
+          //   lineNumbers: true,
+          //   highlightActiveLine: true,
+          //   lineWrapping: false, // ✅ 禁用自动换行，允许横向滚动
+          // }}
+          basicSetup={true} // 或直接设为 true 使用默认配置
+          editable={editable}
+          extensions={extensions}
+          onChange={(value) => onChange(value)}
+      />
   );
 }

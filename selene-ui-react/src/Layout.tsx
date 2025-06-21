@@ -14,7 +14,7 @@ import { useProjectsStore } from "./store/projectsStore";
 import { usePanelsStore } from "./store/panelsStore";
 // import { useFileTreeStore } from "./store/fileTreeStore";
 import { Toaster } from "sonner";
-import { useFileTabsStore } from "./store/fileTabsStore";
+// import { useFileTabsStore } from "./store/fileTabsStore";
 
 export default function Layout() {
   useElectronEvents();
@@ -43,8 +43,8 @@ export default function Layout() {
   // const activeFile = useFileTabsStore((s) => s.activeFile);
   // // const setOpenFiles = useFileTabsStore((s) => s.setOpenFiles);
   // const setActiveFile = useFileTabsStore((s) => s.setActiveFile);
-  const addFile = useFileTabsStore((s) => s.addFile);
-  const closeFile = useFileTabsStore((s) => s.closeFile);
+  // const addFile = useFileTabsStore((s) => s.addFile);
+  // const closeFile = useFileTabsStore((s) => s.closeFile);
   // const changeFileContent = useFileTabsStore((s) => s.changeFileContent);
 
   // Panels 状态
@@ -186,7 +186,7 @@ export default function Layout() {
               onSwitchFile={e => setActiveFileForProject(projectId?? null, e)}
               // onSwitchFile={setActiveFileForProject}
               // onCloseFile={closeFile}
-              onAddFile={addFile}
+              // onAddFile={addFile}
               // onChangeFileContent={changeFileContentForProject}
             />
           </Panel>
