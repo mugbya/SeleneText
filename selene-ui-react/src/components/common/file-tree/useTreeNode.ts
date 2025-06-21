@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { FileNode } from "@/types";
 import { toast } from "sonner";
+import { useProjectsStore } from "@/store/projectsStore";
 
 type DialogType = "create" | "rename" | "delete" | null;
 
@@ -93,6 +94,18 @@ export function useTreeNode(node: FileNode, selectedPath?: string, onFileClick?:
       const parentPath = node.path.substring(0, node.path.lastIndexOf("/"));
       console.log("[useTreeNode] parentPath", parentPath)
       window.electronAPI.send("refresh-folder", parentPath);
+
+      const {
+        removeOrphanFile,
+        closeFileForProject,
+        activeProjectId
+      } = useProjectsStore.getState(); // 💥 get 最新状态
+      
+      if (activeProjectId) {
+        closeFileForProject(activeProjectId, node.path);
+      } else{
+        removeOrphanFile(node.path);
+      }
     } else {
       toast.error("删除失败");
     }
