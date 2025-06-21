@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import type { Folder } from "@/types";
-import { useProjectsStore } from "./store/projectsStore";
 import { toast } from "sonner";
 import { handleFileSave } from "@/logic/fileSaver";
+import { useProjectsStore } from "./store/useProjectStore";
 
 export function useElectronEvents() {
 
@@ -35,9 +35,7 @@ export function useElectronEvents() {
 
     const { basePath, contents } = folder;
 
-    const {
-      projects,
-    } = useProjectsStore.getState(); // 💥 get 最新状态
+    const {projects,} = useProjectsStore.getState(); // 💥 get 最新状态
 
     // 查找已存在的项目 ID（根据 basePath 匹配）
     const existingProject = Object.values(projects).find(

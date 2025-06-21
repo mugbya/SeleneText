@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { FileNode } from "@/types";
 import { toast } from "sonner";
-import { useProjectsStore } from "@/store/projectsStore";
+import {useProjectsStore} from "@/store/useProjectStore";
 
 type DialogType = "create" | "rename" | "delete" | null;
 

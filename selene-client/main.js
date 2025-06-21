@@ -1,5 +1,5 @@
 // electron/main.js
-const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron')
+const { app } = require('electron')
 const path = require('path')
 const fs = require('fs');
 const { spawn } = require('child_process')
@@ -7,9 +7,10 @@ const { spawn } = require('child_process')
 // 定义全局根路径变量
 global.__root = app.getAppPath(); // 一般返回项目根目录，放到导入其他模块前面
 
-
-const { registerAllIpcHandlers } = require(path.join(__dirname, 'src/ipc'));        // 所有 ipc 处理器
-const { createMainWindow } = require(path.join(__dirname, 'src/view/windowManager'));
+// const { registerAllIpcHandlers } = require(path.join(__dirname, 'src/ipc'));        // 所有 ipc 处理器
+// const { createMainWindow } = require(path.join(__dirname, 'src/view/windowManager'));
+const { registerAllIpcHandlers } = require(path.join(global.__root, 'src/ipc'));        // 所有 ipc 处理器
+const { createMainWindow } = require(path.join(global.__root, 'src/view/windowManager'));
 
 
 let pythonProcess

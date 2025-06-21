@@ -9,12 +9,9 @@ import { useRef } from "react";
 import type { ImperativePanelHandle } from "react-resizable-panels";
 import ProjectTabs from "./modules/ProjectTabs";
 import { useElectronEvents } from "./useElectronEvents";
-import { useProjectsStore } from "./store/projectsStore";
-// import { useFileTabsStore } from "./store/fileTabsStore";
 import { usePanelsStore } from "./store/panelsStore";
-// import { useFileTreeStore } from "./store/fileTreeStore";
 import { Toaster } from "sonner";
-// import { useFileTabsStore } from "./store/fileTabsStore";
+import { useProjectsStore } from "./store/useProjectStore";
 
 export default function Layout() {
   useElectronEvents();
@@ -23,29 +20,14 @@ export default function Layout() {
   // Projects 状态
   const projects = useProjectsStore((s) => s.projects);
   const activeProjectId = useProjectsStore((s) => s.activeProjectId);
-  //  const setActiveProjectId = useProjectsStore((s) => s.setActiveProjectId);
   const getActiveProject = useProjectsStore((s) => s.getActiveProject);
-  //  const updateProjectFiles = useProjectsStore((s) => s.updateProjectFiles);
-  //  const addProject = useProjectsStore((s) => s.addProject);
   const closeProject = useProjectsStore((s) => s.closeProject); // 如果你在用
   const switchProject = useProjectsStore((s) => s.switchProject);
-  // const setOpenFiles = useProjectsStore((s) => s.setOpenFiles);
-  // const setOpenFiles = useProjectsStore((s) => s.setOpenFilesWithContent);
   const addOpenFileForProject = useProjectsStore((s) => s.addOpenFileForProject);
-  const changeFileContentForProject = useProjectsStore((s) => s.changeFileContentForProject);
 
   const setActiveFileForProject = useProjectsStore(
     (s) => s.setActiveFileForProject
   );
-  const closeFileForProject = useProjectsStore((s) => s.closeFileForProject);
-  // FileTabs 状态
-  // const openFiles = useFileTabsStore((s) => s.openFiles);
-  // const activeFile = useFileTabsStore((s) => s.activeFile);
-  // // const setOpenFiles = useFileTabsStore((s) => s.setOpenFiles);
-  // const setActiveFile = useFileTabsStore((s) => s.setActiveFile);
-  // const addFile = useFileTabsStore((s) => s.addFile);
-  // const closeFile = useFileTabsStore((s) => s.closeFile);
-  // const changeFileContent = useFileTabsStore((s) => s.changeFileContent);
 
   // Panels 状态
   //  const showLeftPanel = usePanelsStore((s) => s.showLeftPanel);
@@ -55,10 +37,6 @@ export default function Layout() {
   const toggleRightPanel = usePanelsStore((s) => s.toggleRightPanel);
   const setShowRightPanel = usePanelsStore((s) => s.setShowRightPanel);
   const setShowLeftPanel = usePanelsStore((s) => s.setShowLeftPanel);
-
-  // FileTreeState
-  //  const trees = useFileTreeStore((s) => s.trees);
-  //  const setTrees = useFileTreeStore((s) => s.setTrees);
 
   const activeProject = getActiveProject();
 
@@ -77,7 +55,7 @@ export default function Layout() {
   const projectsLength = Object.values(projects).length ;
   // 只有多个项目时才显示标签页
   const shouldShowProjectTabs = projectsLength > 1;
-  // console.log("\n[Layout] 执行渲染....");
+
   console.log(
     "[Layout] 当前项目数量：%s, rootPath: %s",
     projectsLength,

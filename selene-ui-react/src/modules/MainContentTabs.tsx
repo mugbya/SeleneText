@@ -4,9 +4,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { X, Plus } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea"; // ✅ 用于简单编辑器
-import { useProjectsStore } from "@/store/projectsStore";
 import { useUnifiedFileChangeHandler } from "@/store/useUnifiedFileChangeHandler";
 import CodeMirrorViewer from "./viewer/CodeMirrorViewer";
+import {useProjectsStore} from "@/store/useProjectStore";
 
 function getFileType(filePath: string): "markdown" | "code" | "plain" {
   if (!filePath) return "plain";
