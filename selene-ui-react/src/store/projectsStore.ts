@@ -39,7 +39,7 @@ interface ProjectsStore {
   orphanFiles: FileTab[]; // ✅ 无项目文件
   activeOrphanFile: string | null; // ✅ 当前激活的无项目文件
   createOrphanFile: () => void;
-  updateOrphanFileContent: (filePath: string, content: string) => void;
+  updateOrphanFileContent: (filePath: string, realPath: string, isTemporary:boolean) => void;
   removeOrphanFile: (filePath: string) => void;
   changeOrphanFileContent: (filePath: string, content: string) => void;
 }
@@ -147,6 +147,7 @@ export const useProjectsStore = create<ProjectsStore>((set, get) => ({
       const newFile: FileTab = {
         path: newFilePath,
         content: "", // 新建为空
+        isTemporary: true
       };
   
       return {
@@ -272,6 +273,7 @@ export const useProjectsStore = create<ProjectsStore>((set, get) => ({
       const newFile: FileTab = {
         path: newPath,
         content: "",
+        isTemporary: true,
       };
       console.log("createOrphanFile", newFile);
       return {
@@ -281,7 +283,7 @@ export const useProjectsStore = create<ProjectsStore>((set, get) => ({
     });
   },
   
-  updateOrphanFileContent: (filePath, content) => {
+  updateOrphanFileContent: (filePath,  content) => {
     set((state) => ({
       orphanFiles: state.orphanFiles.map((file) =>
         file.path === filePath ? { ...file, content } : file

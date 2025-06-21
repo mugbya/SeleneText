@@ -5,6 +5,11 @@ const path = require('path');
 contextBridge.exposeInMainWorld('electronAPI', {
   // readFile: (filePath) => fs.readFile(filePath, 'utf-8'),
 
+  dirname: (filePath) => path.dirname(filePath),
+  basename: (filePath) => path.basename(filePath),
+  join: (...args) => path.join(...args),
+  resolvePath: (p) => path.resolve(p),
+
   send: (channel, data) => ipcRenderer.send(channel, data),
 
   // on: (channel, callback) => {
@@ -21,7 +26,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel),
 
-  resolvePath: (p) => path.resolve(p),
+
 
   readFile: (filePath) =>
     ipcRenderer.invoke('read-file', {filePath}),
@@ -43,6 +48,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   deletePath: (targetPath) =>
     ipcRenderer.invoke('delete-path', { targetPath }),
+
+  loadFolder: ()  =>
+    ipcRenderer.invoke('delete-path', { targetPath }),
+
+
+  // showSaveDialog: (options) => ipcRenderer.invoke('show-save-dialog', options),
+  // writeFile: (filePath, content) => ipcRenderer.invoke('write-file', filePath, content),
 
   // showAlert: (msg) =>
   //   ipcRenderer.invoke('show-alert', { msg }),

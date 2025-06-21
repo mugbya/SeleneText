@@ -47,7 +47,7 @@ const TreeNode = React.memo(function TreeNode({
     handleDelete,
   } = useTreeNode(node, selectedPath, onFileClick);
 
-  console.log("TreeNode: ", node);
+  // console.log("TreeNode: ", node);
 
   return (
     <li>

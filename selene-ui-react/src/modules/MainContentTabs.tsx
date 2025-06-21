@@ -64,6 +64,7 @@ export default function MainContentTabs({
   // const orphanFiles = useProjectsStore((s) => s.orphanFiles);
   // const activeOrphanFile = useProjectsStore((s) => s.activeOrphanFile);
 
+  console.log("[useElectronEvents] project: ", activeProject, "orphanFiles: ", orphanFiles);
   const openFiles = activeProject?.openFiles ?? orphanFiles;
   const activeFile = activeProject?.lastActiveFile ?? activeOrphanFile;
 

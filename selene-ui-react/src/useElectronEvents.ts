@@ -1,8 +1,6 @@
 import { useEffect } from "react";
-// import { handleFileSave } from "@/logic/fileSaver";
 import type { FileTab, Folder, ProjectTab } from "@/types";
 import { useProjectsStore } from "./store/projectsStore";
-// import { useFileTreeStore } from "./store/fileTreeStore";
 import { toast } from "sonner";
 import { handleFileSave } from "@/logic/fileSaver";
 
@@ -11,12 +9,11 @@ export function useElectronEvents() {
   const addProject = useProjectsStore((s) => s.addProject);
   const projects = useProjectsStore((s) => s.projects);
   const updateProject = useProjectsStore((s) => s.updateProject);
-  // const getProjects = useProjectsStore((s) => s.getProjects);
   const setActiveProjectId = useProjectsStore((s) => s.setActiveProjectId);
   const getActiveProject = useProjectsStore((s) => s.getActiveProject);
-
-  // const setTrees = useFileTreeStore((s) => s.setTrees);
-  // const setTree = useFileTreeStore((s) => s.setTree);
+  const updateOrphanFileContent = useProjectsStore((s) => s.updateOrphanFileContent);
+  const orphanFiles = useProjectsStore((s) => s.orphanFiles);
+  const activeOrphanFile = useProjectsStore((s) => s.activeOrphanFile);
 
   /**
     * 监听打开文件夹操作，加载文件夹
@@ -63,6 +60,57 @@ export function useElectronEvents() {
     }));
   };
 
+
+    // 文件保存处理
+    const saveHandler = async () => {
+      console.log("[useElectronEvents] saveHandler");
+
+      const {
+        orphanFiles,
+        activeOrphanFile,
+        getActiveProject,
+      } = useProjectsStore.getState(); // 💥 get 最新状态
+      
+      const project =  getActiveProject();
+
+      console.log("[useElectronEvents] project: ", project, "orphanFiles: ", orphanFiles);
+      const openFiles = project?.openFiles ?? orphanFiles;
+    
+      console.log("[useElectronEvents] openFiles: ", openFiles);
+
+      const currentFile =
+      project?.openFiles.find((f) => f.path === project.lastActiveFile) ||
+      orphanFiles.find((f) => f.path === activeOrphanFile);
+
+      // const currentFile =
+      // project?.openFiles.find((f) => f.path === project.lastActiveFile) ||
+      // orphanFiles.find((f) => f.path === activeOrphanFile);
+
+      // console.log("[useElectronEvents] saveHandler openFiles: ", openFiles);
+      // if (!openFiles) {
+      //   console.warn("❌ saveHandler 调用失败：openFiles is null or undefined");
+      //   return;
+      // };
+
+      // const activeFile = getActiveProject()?.lastActiveFile;
+      // const current = openFiles.find((f) => f.path === activeFile);
+
+      // if (openFiles) {
+      console.log("[useElectronEvents] current: ", currentFile);
+      await handleFileSave(currentFile, (oldPath, updated) => {
+        // const newFiles = openFiles.map((f) => (f.path === oldPath ? updated : f));
+
+        // setOpenFiles(newFiles);
+        // setActiveFile(updated.path);
+
+        // // 保存项目状态
+        // if (activeProjectId) {
+        //   useProjectsStore.getState().updateProjectFiles(activeProjectId, newFiles, updated.path);
+        // }
+      });
+      // }
+    };
+
   useEffect(() => {
     console.log(`[useElectronEvents] 执行....`);
     const api = window.electronAPI;
@@ -88,42 +136,38 @@ export function useElectronEvents() {
       }
     };
 
-    // 文件保存处理
-    const saveHandler = async () => {
-      console.log("[useElectronEvents] saveHandler");
-      console.log("[useElectronEvents] saveHandler - 1");
-
-      const openFiles = getActiveProject()?.openFiles;
-      if (!openFiles) return;
-
-      const activeFile = getActiveProject()?.lastActiveFile;
-      const current = openFiles.find((f) => f.path === activeFile);
-
-      // if (openFiles) {
-      console.log("[useElectronEvents] current: ", current);
-      await handleFileSave(current, (oldPath, updated) => {
-        const newFiles = openFiles.map((f) => (f.path === oldPath ? updated : f));
-
-        // setOpenFiles(newFiles);
-        // setActiveFile(updated.path);
-
-        // // 保存项目状态
-        // if (activeProjectId) {
-        //   useProjectsStore.getState().updateProjectFiles(activeProjectId, newFiles, updated.path);
-        // }
-      });
-      // }
-
-    };
 
 
+    // const handleSaveFile = async (file: FileTab) => {
+    //   console.log("[useElectronEvents] handleSaveFile file: ", file);
+    //   if (file.isTemporary || !file.realPath) {
+    //     // 调用 Electron 的 save dialog，让用户选择保存路径
+    //     const { filePath } = await window.electronAPI.showSaveDialog({
+    //       defaultPath: file.path,
+    //     });
+    
+    //     if (filePath) {
+    //       // 写入文件
+    //       await window.electronAPI.writeFile(filePath, file.content);
+    
+    //       // 更新 file 实例的状态
+    //       // updateOrphanFileContent(file.path, filePath, false);
+    //       // updateOrphanFileContent(
+    //       //   filePath: file.path, 
+    //       //   realPath: filePath,
+    //       //   isTemporary: false,
+    //       // );
+    //     }
+    //   } else {
+    //     // 已有路径，直接保存
+    //     await window.electronAPI.writeFile(file.realPath, file.content);
+    //   }
+    // };
+    
     // 监听主程序发送的 replace-folders 事件。 刷新整个工作区域 放置 打开的文件夹
-    // api.on("load-folder", (folder) => {
-    // })
-
-
     api.on("load-folder", loadFolder); //  监听打开文件夹操作，加载文件夹
     api.on("file-save", saveHandler);
+    // api.on("file-save", handleSaveFile);
     api.on("folder-changed", folderChangedHandler);
 
     // api.on('folder-changed', (_, folderPath: string) => {

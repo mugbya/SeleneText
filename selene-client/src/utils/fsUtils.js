@@ -21,6 +21,13 @@ function isTextFile(filePath) {
 function readDirRecursive(dirPath, depth = 0, maxDepth = 10) {
     if (depth > maxDepth) return [];
 
+    // 🛡️ 如果不是目录，直接返回空数组
+    if (!fs.statSync(dirPath).isDirectory()) {
+      // dirPath = path.dirname(dirPath)
+      console.log("给的是文件: ", dirPath)
+      return;
+    }
+
     const entries = fs.readdirSync(dirPath, { withFileTypes: true });
     const result = [];
 

@@ -152,11 +152,11 @@ function registerFileHandlers() {
     }
   });
 
-  // ✅ 刷新目录结构
+  // 响应UI发起的请求刷新文件夹
   ipcMain.on("refresh-folder", (event, dirPath) => {
     const contents = readDirRecursive(dirPath);
     const win = BrowserWindow.getAllWindows()[0];
-    win?.webContents.send("replace-folder", { basePath: dirPath, contents });
+    win?.webContents.send("load-folder", { basePath: dirPath, contents });
   });
 
 
@@ -188,7 +188,14 @@ function registerFileHandlers() {
     ]);
   });
 
-
+  // ipcMain.handle('show-save-dialog', async (event, options) => {
+  //   const result = await dialog.showSaveDialog(BrowserWindow.getFocusedWindow(), options);
+  //   return result;
+  // });
+  //
+  // ipcMain.handle('write-file', async (event, filePath, content) => {
+  //   fs.writeFileSync(filePath, content, 'utf-8');
+  // });
 
 }
 
