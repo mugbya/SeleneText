@@ -1,6 +1,5 @@
 import React from "react";
 import MarkdownViewer from "./viewer/MarkdownViewer";
-import CodeViewer from "./viewer/CodeViewer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { X, Plus } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -8,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea"; // ✅ 用于简单编辑�
 import type { FileTab } from "@/types";
 import { useProjectsStore } from "@/store/projectsStore";
 import { useUnifiedFileChangeHandler } from "@/store/useUnifiedFileChangeHandler";
+import CodeMirrorViewer from "./viewer/CodeMirrorViewer";
 
 function getFileType(filePath: string): "markdown" | "code" | "plain" {
   if (!filePath) return "plain";
@@ -130,12 +130,33 @@ export default function MainContentTabs({
         );
       case "code":
         return (
-          <CodeViewer
+          // <CodeViewer
+          //   code={currentFile.content}
+          //   language={currentFile.path.split(".").pop() || "txt"}
+          //   editable={true}
+          //   onChange={(newCode) => onChangeFileContent(currentFile.path, newCode)}
+          // />
+          <CodeMirrorViewer 
             code={currentFile.content}
             language={currentFile.path.split(".").pop() || "txt"}
-            // editable={true}
-            // onChange={(newCode) => onChangeFileContent(currentFile.path, newCode)}
+            editable={true}
+            onChange={(newCode) => {
+              // console.log("CodeEditor onChange: ", newCode)
+              const store = useProjectsStore.getState();
+
+              if (project?.id && project?.lastActiveFile) {
+                store.changeFileContentForProject(
+                  project.id,
+                  project.lastActiveFile,
+                  newCode
+                );
+              } else if (activeOrphanFile) {
+                store.changeOrphanFileContent(activeOrphanFile, newCode);
+              }
+            }}
           />
+
+         
         );
       default:
         return (

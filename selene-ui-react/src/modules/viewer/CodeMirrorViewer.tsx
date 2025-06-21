@@ -1,0 +1,27 @@
+import CodeMirror from '@uiw/react-codemirror';
+import { javascript } from '@codemirror/lang-javascript';
+
+export default function CodeMirrorViewer({
+  code,
+  language,
+  editable,
+  onChange,
+}: {
+  code: string;
+  language: string;
+  editable: boolean;
+  onChange: (newCode: string) => void;
+}) {
+  const extensions = language === 'javascript' ? [javascript()] : [];
+
+  return (
+    <CodeMirror
+        className="text-left"  // Tailwind 用户
+      value={code}
+      height="400px"
+      editable={editable}
+      extensions={extensions}
+      onChange={(value) => onChange(value)}
+    />
+  );
+}
