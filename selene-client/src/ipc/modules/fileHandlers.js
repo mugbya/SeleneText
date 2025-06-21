@@ -156,9 +156,15 @@ function registerFileHandlers() {
   ipcMain.on("refresh-folder", (event, dirPath) => {
     const contents = readDirRecursive(dirPath);
     const win = BrowserWindow.getAllWindows()[0];
-    win?.webContents.send("load-folder", { basePath: dirPath, contents });
+    win?.webContents.send("folder-changed", { basePath: dirPath, contents });
   });
 
+  // 响应UI发起的请求打开文件夹
+  ipcMain.on("load-folder", (event, dirPath) => {
+    const contents = readDirRecursive(dirPath);
+    const win = BrowserWindow.getAllWindows()[0];
+    win?.webContents.send("load-folder", { basePath: dirPath, contents });
+  });
 
   ipcMain.on("replace-folders", (event, folders) => {
     // currentFolders = folders.map(f => f.basePath);

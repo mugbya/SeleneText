@@ -16,7 +16,7 @@ function watchFolder(folderPath, window) {
     ignoreInitial: true,
     depth: 99
   });
-  
+
   /**
    * 发送文件夹变化
    *  需要考虑触发太频繁的情况

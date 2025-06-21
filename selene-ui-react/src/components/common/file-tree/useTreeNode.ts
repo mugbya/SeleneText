@@ -86,10 +86,12 @@ export function useTreeNode(node: FileNode, selectedPath?: string, onFileClick?:
   };
 
   const handleDelete = async () => {
+    console.log("[useTreeNode] handleDelete ....", node)
     const res = await window.electronAPI.deletePath(node.path);
     if (res.success) {
       toast.success("已删除");
       const parentPath = node.path.substring(0, node.path.lastIndexOf("/"));
+      console.log("[useTreeNode] parentPath", parentPath)
       window.electronAPI.send("refresh-folder", parentPath);
     } else {
       toast.error("删除失败");

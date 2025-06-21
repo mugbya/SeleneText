@@ -36,7 +36,7 @@ export async function handleFileSave(
             // ✅ 自动添加一个新项目（如果这个文件不在已有项目中）
             // const basePath = path.dirname(res.filePath); // 从文件路径中提取文件夹路径
             // const basePath = res.filePath; // 从文件路径中提取文件夹路径
-            window.electronAPI.send("refresh-folder", window.electronAPI.dirname(res.filePath));
+            window.electronAPI.send("load-folder", window.electronAPI.dirname(res.filePath));
 
             // const alreadyExists = Object.values(projects).some(
             //     (p) => p.rootPath === basePath

@@ -26,6 +26,7 @@ export function useElectronEvents() {
     if (exists) {
       toast.info("项目已经被打开"); // 你用的 UI 通知组件
     } else {
+      console.log("新增文件夹.....");
       addProject(folder);
     }
   }
@@ -38,6 +39,10 @@ export function useElectronEvents() {
     }
 
     const { basePath, contents } = folder;
+
+    const {
+      projects,
+    } = useProjectsStore.getState(); // 💥 get 最新状态
 
     // 查找已存在的项目 ID（根据 basePath 匹配）
     const existingProject = Object.values(projects).find(
@@ -70,7 +75,7 @@ export function useElectronEvents() {
         activeOrphanFile,
         getActiveProject,
       } = useProjectsStore.getState(); // 💥 get 最新状态
-      
+
       const project =  getActiveProject();
 
       console.log("[useElectronEvents] project: ", project, "orphanFiles: ", orphanFiles);
