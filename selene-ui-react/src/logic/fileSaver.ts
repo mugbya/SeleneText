@@ -1,4 +1,3 @@
-import { useProjectsStore } from "@/store/projectsStore";
 import {FileTab} from "@/types";
 
 export async function handleFileSave(

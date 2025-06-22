@@ -3,8 +3,21 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface ProjectsStore {
+    /**
+     * 项目字典
+     */
     projects: Record<string, ProjectTab>;
+
+    /**
+     * 当前激活的项目ID
+     */
     activeProjectId: string | null;
+
+    /**
+     * 目录的是否展开: key 是绝对路径
+     */
+    expandedDirs: Record<string, boolean>;
+
     addProject: (folder: Folder) => string;
     updateProject: (projectId: string, updater: (p: ProjectTab) => Partial<ProjectTab>) => void;
     switchProject: (projectId: string) => void;
@@ -18,6 +31,13 @@ interface ProjectsStore {
     setActiveFileForProject: (projectId: string | null, filepath: string | null) => void;
     closeFileForProject: (projectId: string | null, filePath: string) => void;
 
+    toggleExpanded: (path: string) => void;
+    setExpanded: (path: string, expanded: boolean) => void;
+    resetExpanded: () => void;
+
+    /**
+     * 临时文件列表
+     */
     orphanFiles: FileTab[];
     activeOrphanFile: string | null;
     createOrphanFile: () => void;
@@ -30,6 +50,7 @@ export const useProjectsStore = create<ProjectsStore>()(
         (set, get) => ({
             projects: {},
             activeProjectId: null,
+            expandedDirs: {},
             orphanFiles: [],
             activeOrphanFile: null,
 
@@ -197,6 +218,32 @@ export const useProjectsStore = create<ProjectsStore>()(
                 });
             },
 
+            toggleExpanded: (path) => {
+                set((state) => {
+                    const isExpanded = state.expandedDirs[path];
+                    return {
+                        expandedDirs: {
+                            ...state.expandedDirs,
+                            [path]: !isExpanded,
+                        },
+                    };
+                });
+            },
+
+            setExpanded: (path, expanded) => {
+                set((state) => {
+                    const updated = { ...state.expandedDirs };
+                    if (expanded) {
+                        updated[path] = true;
+                    } else {
+                        delete updated[path];
+                    }
+                    return { expandedDirs: updated };
+                });
+            },
+
+            resetExpanded: () => set({ expandedDirs: {} }),
+
             closeFileForProject: (projectId, filePath) => {
                 set((state) => {
                     if (!projectId) {
@@ -266,6 +313,7 @@ export const useProjectsStore = create<ProjectsStore>()(
                 activeProjectId: state.activeProjectId,
                 orphanFiles: state.orphanFiles,
                 activeOrphanFile: state.activeOrphanFile,
+                expandedDirs: state.expandedDirs, // ✅ 加上这个
             }),
         }
     )

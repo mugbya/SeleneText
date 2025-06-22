@@ -5,13 +5,13 @@ import { useRef } from "react";
 // import { useProjectsStore } from "@/store/projectsStore";
 
 function WorkSpaceTreePanel({
-  selectedPath,
-  name,
-  rootPath,
-  folderTree,
-  onFileSelect,
-}: WorkspaceTreeProps) {
-  
+                              selectedPath,
+                              name,
+                              rootPath,
+                              folderTree,
+                              onFileSelect,
+                            }: WorkspaceTreeProps) {
+
   // const folder = useFileTreeStore((state) =>
   //   rootPath ? state.trees[rootPath] : undefined
   // );
@@ -33,9 +33,9 @@ function WorkSpaceTreePanel({
 
   if (!folderTree) {
     return (
-      <div className="flex items-center justify-center h-full text-gray-500">
-        加载中...
-      </div>
+        <div className="flex items-center justify-center h-full text-gray-500">
+          加载中...
+        </div>
     );
   }
 
@@ -49,14 +49,14 @@ function WorkSpaceTreePanel({
   // };
 
   return (
-    <div className="left-panel p-2 space-y-2 text-sm h-full overflow-y-auto">
-      <FileTree
-        key={rootPath}
-        nodes={[folderTree]}
-        onFileClick={onFileSelect}
-        selectedPath={selectedPath || ""}
-      />
-    </div>
+      <div className="left-panel p-2 space-y-2 text-sm h-full overflow-y-auto">
+        <FileTree
+            folderPath={rootPath}
+            folderTree={folderTree}
+            onFileClick={onFileSelect}
+            selectedPath={selectedPath || ""}
+        />
+      </div>
   );
 }
 
