@@ -1,7 +1,7 @@
 // electron/main.js
 const { app } = require('electron')
 const path = require('path')
-const fs = require('fs');
+// const fs = require('fs');
 const { spawn } = require('child_process')
 
 // 定义全局根路径变量

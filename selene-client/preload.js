@@ -12,6 +12,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   send: (channel, data) => ipcRenderer.send(channel, data),
 
+  toggleDevTools: () => ipcRenderer.send('toggle-devtools'),
+
   // on: (channel, callback) => {
   //   ipcRenderer.on(channel, (event, data) => {
   //     if (data) callback(data);

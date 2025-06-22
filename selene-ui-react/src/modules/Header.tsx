@@ -17,6 +17,10 @@ export default function Head({toggleLeft, toggleRight}: HeadProps) {
             <div className="flex-1"/>
 
             <div className="flex gap-1">
+                <button onClick={() => window.electronAPI.toggleDevTools()}>
+                    切换 DevTools
+                </button>
+
                 <Button className="p-1 h-7 w-7" variant="ghost" size="sm" onClick={toggleLeft}>
                     <PanelLeft className="w-5 h-5"/>
                 </Button>
@@ -25,8 +29,6 @@ export default function Head({toggleLeft, toggleRight}: HeadProps) {
                 </Button>
 
                 <div className="p-1 h-7 w-7"/>
-
-
             </div>
 
         </div>
