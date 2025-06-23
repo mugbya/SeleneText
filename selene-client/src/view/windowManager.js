@@ -37,7 +37,7 @@ function createMainWindow() {
         app.setPath("userData", path.join(app.getPath("appData"), mainWindow.title.concat("-dev")));
         console.log("userData: ", app.getPath("userData"));
         mainWindow.loadURL('http://localhost:5173'); // ✅ 重要 开发时加载 Vite，本地页面
-        // mainWindow.webContents.openDevTools();
+        mainWindow.webContents.openDevTools();
     } else {
         // 注意这里路径要正确指向 `selene-ui-react` 打包产物
         mainWindow.loadFile(path.join(global.__root, 'renderer/index.html'));
