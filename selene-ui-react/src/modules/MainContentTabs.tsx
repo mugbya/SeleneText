@@ -157,9 +157,15 @@ export default function MainContentTabs({
     }
   };
 
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+  console.log("[MainContentTabs] 渲染次数:", renderCount.current);
+
   return (
+    // left-panel p-2 space-y-2 text-sm h-full overflow-y-auto
       // <main className="flex-1 flex flex-col overflow-hidden">
-      <main className="flex-1 flex flex-col">
+      // <main className="flex-1 flex flex-col"> 
+      <main className="flex-1 flex flex-col h-full overflow-y-auto">
         {/* 标签页 */}
         <Tabs
             value={activeFile || ""}
@@ -225,7 +231,7 @@ export default function MainContentTabs({
           {/*  </div>*/}
 
 
-            <div className="relative border-b bg-muted/40 rounded-t-md overflow-hidden">
+            <div className="relative border-b-0 bg-muted/40 rounded-t-md overflow-hidden">
                 {/* 滚动按钮 - 左 */}
                 {/*<button*/}
                 {/*    className="absolute left-0 top-0 bottom-0 z-10 w-8 bg-gradient-to-r from-muted/40 to-transparent flex items-center justify-center"*/}
@@ -257,6 +263,7 @@ export default function MainContentTabs({
                                 />
                             </div>
                         ))}
+
                         <button
                             onClick={() => handleAddFile()}
                             className="ml-2 p-1 text-muted-foreground hover:text-foreground"
