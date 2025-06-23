@@ -1,17 +1,27 @@
 const path = require('path');
 const { throttle } = require('lodash');
-const { BrowserWindow } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const chokidarLib = require('chokidar'); // ✅ 只写一次
 const { readDirRecursive } = require(path.join(global.__root, 'src/utils/fsUtils'));
 const watchers = new Map(); // ✅ JS 里不写泛型
 
+const isDev = !app.isPackaged;
+const myTag = isDev ? '.dev_' : '.prod_';
+const ignoreTag = isDev ? '.prod_' : '.dev_';
+const logTag = isDev ? '[DEV]' : '[PROD]';
+
+/**
+ * @param {string} folderPath - 要监听的目录
+ * @param {BrowserWindow} window - Electron 窗口
+ */
 function watchFolder(folderPath, window) {
   if (watchers.has(folderPath)) {
     watchers.get(folderPath).close();
   }
 
   const watcher = chokidarLib.watch(folderPath, {
-    ignored: /(^|[/\\])\../, // 忽略 .git 等隐藏文件
+    // ignored: /(^|[/\\])\../, // 忽略 .git 等隐藏文件
+    ignored: (filePath) => filePath.includes(ignoreTag) || /(^|[/\\])\../.test(filePath),
     persistent: true,
     ignoreInitial: true,
     depth: 99
@@ -30,6 +40,7 @@ function watchFolder(folderPath, window) {
    */
   const throttledSendUpdate = throttle(() => {
     // console.log('发送文件夹变化, 路径: ', folderPath);
+    console.log(`${logTag} 文件夹变化: ${folderPath}`);
     const contents = readDirRecursive(folderPath);
     // console.log('目录结构：', contents); // 👈 添加这行
     window.webContents.send('folder-changed', {

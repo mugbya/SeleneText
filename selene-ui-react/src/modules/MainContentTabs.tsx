@@ -118,14 +118,16 @@ export default function MainContentTabs({
     switch (fileType) {
       case "markdown":
         return (
+          <div className="w-full h-[70vh] resize-none font-mono text-sm">
           <Textarea
             value={currentFile.content}
             // onChange={(e) => onChangeFileContent(currentFile.path, e.target.value)}
             onChange={(e) => {
               handleChange(e.target.value);
             }}
-            className="w-full h-[70vh] resize-none font-mono text-sm"
+            // className="w-full h-[70vh] resize-none font-mono text-sm"
           />
+          </div>
         );
       case "code":
         return (
