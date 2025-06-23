@@ -58,12 +58,40 @@ const TreeNode = React.memo(function TreeNode({
     const isExpanded = useProjectsStore((s) => s.expandedDirs[node.path]);
     const toggleExpanded = () => useProjectsStore.getState().toggleExpanded(node.path);
 
+    // console.log("isDir: %o", isDir, "isExpanded: %o", isExpanded);
+
     return (
         <li>
             <ContextMenu>
                 <ContextMenuTrigger>
+                    {/*<div*/}
+                    {/*    onClick={toggleExpanded}*/}
+                    {/*    className={cn(*/}
+                    {/*        "flex items-center gap-1 px-2 py-1 rounded-md cursor-pointer",*/}
+                    {/*        "hover:bg-zinc-100 dark:hover:bg-zinc-800",*/}
+                    {/*        isSelected && "bg-zinc-200 dark:bg-zinc-700 font-semibold"*/}
+                    {/*    )}*/}
+                    {/*    title={node.path}*/}
+                    {/*>*/}
+                    {/*    {isDir ? (*/}
+                    {/*        isExpanded ? (*/}
+                    {/*            <FolderOpen className="w-4 h-4 text-yellow-500" />*/}
+                    {/*        ) : (*/}
+                    {/*            <Folder className="w-4 h-4 text-yellow-500" />*/}
+                    {/*        )*/}
+                    {/*    ) : (*/}
+                    {/*        <File className="w-4 h-4 text-zinc-500" />*/}
+                    {/*    )}*/}
+                    {/*    <span className="truncate">{node.name}</span>*/}
+                    {/*</div>*/}
                     <div
-                        onClick={toggleExpanded}
+                        onClick={() => {
+                            if (isDir) {
+                                toggleExpanded(); // 目录点击展开/折叠
+                            } else {
+                                onFileClick(node.path); // 文件点击，打开文件
+                            }
+                        }}
                         className={cn(
                             "flex items-center gap-1 px-2 py-1 rounded-md cursor-pointer",
                             "hover:bg-zinc-100 dark:hover:bg-zinc-800",
@@ -101,6 +129,7 @@ const TreeNode = React.memo(function TreeNode({
             </ContextMenu>
 
             {isDir && isExpanded && node.children && (
+
                 <ul className="pl-4 border-l border-zinc-300 dark:border-zinc-700 ml-1">
                     {node.children.map((child) => (
                         // <li key={child.path}>{child.path} - {child.name}</li>

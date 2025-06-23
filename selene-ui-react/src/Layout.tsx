@@ -121,6 +121,7 @@ export default function Layout() {
                 folderTree={folderTree}
                 // 点击读取文件内容
                 onFileSelect={(filePath) => {
+                  // console.log("读取文件内容：", filePath);
                   window.electronAPI
                     .readFile(filePath)
                     .then(({ success, content }) => {
