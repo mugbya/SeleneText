@@ -1,7 +1,7 @@
-import React from "react";
+import React, {useRef} from "react";
 import MarkdownViewer from "./viewer/MarkdownViewer";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { X, Plus } from "lucide-react";
+import {X, Plus, ChevronLeft, ChevronRight} from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea"; // ✅ 用于简单编辑器
 import { useUnifiedFileChangeHandler } from "@/store/useUnifiedFileChangeHandler";
@@ -95,6 +95,16 @@ export default function MainContentTabs({
     }
   };
 
+    // 文件标签页左右滑动
+    const tabScrollContainerRef = useRef<HTMLDivElement>(null);
+
+    const scrollLeft = () => {
+        tabScrollContainerRef.current?.scrollBy({ left: -150, behavior: "smooth" });
+    };
+    const scrollRight = () => {
+        tabScrollContainerRef.current?.scrollBy({ left: 150, behavior: "smooth" });
+    };
+
   const renderEditableContent = () => {
     if (!currentFile) return null;
 
@@ -148,43 +158,132 @@ export default function MainContentTabs({
   };
 
   return (
-      <main className="flex-1 flex flex-col overflow-hidden">
+      // <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col">
         {/* 标签页 */}
         <Tabs
             value={activeFile || ""}
             onValueChange={onSwitchFile}
             className="h-full flex flex-col"
         >
-          <TabsList className="flex overflow-x-auto border-b bg-muted/40 px-2 py-1 space-x-2 rounded-t-md">
-            {openFiles.map((file) => (
-                <div key={file.path} className="relative mr-2">
-                  <TabsTrigger
-                      value={file.path}
-                      className="pl-2 pr-6 py-1 max-w-[128px] truncate rounded-md text-sm font-medium text-muted-foreground
-                  data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow transition-all"
-                  >
-                    {(file.path.split("/").pop() || "").slice(0, 10)}
-                    {(file.path.split("/").pop() || "").length > 10 ? "…" : ""}
-                  </TabsTrigger>
+            {/*<div className="relative border-b bg-muted/40 rounded-t-md">*/}
+          {/*  <div className="relative border-b bg-muted/40 rounded-t-md overflow-hidden">*/}
+          {/*      /!* 滚动按钮 - 左 *!/*/}
+          {/*      <button*/}
+          {/*          className="absolute left-0 top-0 bottom-0 z-10 w-6 bg-gradient-to-r from-muted/40 to-transparent flex items-center justify-center"*/}
+          {/*          onClick={scrollLeft}*/}
+          {/*      >*/}
+          {/*          <ChevronLeft className="w-4 h-4" />*/}
+          {/*      </button>*/}
 
-                  <X
-                      className="w-4 h-4 absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
-                      onClick={(e) => {
-                        e.stopPropagation(); // 防止点击触发 tab 切换
-                        closeFileForProject(projectId, file.path);
-                      }}
-                  />
+          {/*      /!* 标签列表滚动区域 *!/*/}
+          {/*      <TabsList*/}
+          {/*          ref={tabListRef}*/}
+          {/*          // className="flex min-w-max overflow-x-auto no-scrollbar px-6 py-1 space-x-2"*/}
+          {/*          // className="flex min-w-max overflow-x-auto no-scrollbar px-6 py-1 space-x-2 items-center"*/}
+          {/*          className="overflow-x-auto no-scrollbar space-x-2 px-6 items-center"*/}
+          {/*          // style={{ width: "30px" }}*/}
+          {/*      >*/}
+          {/*          {openFiles.map((file) => (*/}
+          {/*              <div key={file.path} className="relative mr-2">*/}
+          {/*                  <TabsTrigger*/}
+          {/*                      value={file.path}*/}
+          {/*                      //*/}
+          {/*                      className="pl-2 pr-6 py-1 max-w-[160px] truncate rounded-md text-sm font-medium text-muted-foreground*/}
+          {/*data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow transition-all"*/}
+          {/*                  >*/}
+          {/*                      {(file.path.split("/").pop() || "").slice(0, 10)}*/}
+          {/*                      {(file.path.split("/").pop() || "").length > 10 ? "…" : ""}*/}
+          {/*                  </TabsTrigger>*/}
+
+          {/*                  <X*/}
+          {/*                      className="w-4 h-4 absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"*/}
+          {/*                      onClick={(e) => {*/}
+          {/*                          e.stopPropagation();*/}
+          {/*                          closeFileForProject(projectId, file.path);*/}
+          {/*                      }}*/}
+          {/*                  />*/}
+          {/*              </div>*/}
+          {/*          ))}*/}
+
+          {/*          <button*/}
+          {/*              onClick={() => handleAddFile()}*/}
+          {/*              className="ml-2 p-1 text-muted-foreground hover:text-foreground"*/}
+          {/*              title="新建文件"*/}
+          {/*          >*/}
+          {/*              <Plus className="w-4 h-4" />*/}
+          {/*          </button>*/}
+          {/*      </TabsList>*/}
+
+          {/*      /!* 滚动按钮 - 右 *!/*/}
+          {/*      <button*/}
+          {/*          className="absolute right-0 top-0 bottom-0 z-10 w-6 bg-gradient-to-l from-muted/40 to-transparent flex items-center justify-center"*/}
+          {/*          onClick={scrollRight}*/}
+          {/*      >*/}
+          {/*          <ChevronRight className="w-4 h-4" />*/}
+          {/*      </button>*/}
+          {/*  </div>*/}
+
+
+            <div className="relative border-b bg-muted/40 rounded-t-md overflow-hidden">
+                {/* 滚动按钮 - 左 */}
+                {/*<button*/}
+                {/*    className="absolute left-0 top-0 bottom-0 z-10 w-8 bg-gradient-to-r from-muted/40 to-transparent flex items-center justify-center"*/}
+                {/*    onClick={scrollLeft}*/}
+                {/*>*/}
+                {/*    <ChevronLeft className="w-4 h-4" />*/}
+                {/*</button>*/}
+
+                {/* ✅ 真正的滚动容器 */}
+                <div className="overflow-x-auto no-scrollbar" ref={tabScrollContainerRef}>
+                {/*<div className="overflow-x-auto no-scrollbar pl-8 pr-8" ref={tabScrollContainerRef}>*/}
+                    <TabsList className="flex w-max items-center space-x-2 h-12">
+                        {openFiles.map((file) => (
+                            <div key={file.path} className="relative mr-2">
+                                <TabsTrigger
+                                    value={file.path}
+                                    className="pl-2 pr-6 py-1 max-w-[160px] truncate rounded-md text-sm font-medium text-muted-foreground
+              data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow transition-all"
+                                >
+                                    {(file.path.split("/").pop() || "").slice(0, 10)}
+                                    {(file.path.split("/").pop() || "").length > 10 ? "…" : ""}
+                                </TabsTrigger>
+                                <X
+                                    className="w-4 h-4 absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        closeFileForProject(projectId, file.path);
+                                    }}
+                                />
+                            </div>
+                        ))}
+                        <button
+                            onClick={() => handleAddFile()}
+                            className="ml-2 p-1 text-muted-foreground hover:text-foreground"
+                            title="新建文件"
+                        >
+                            <Plus className="w-4 h-4" />
+                        </button>
+                    </TabsList>
                 </div>
-            ))}
 
-            <button
-                onClick={() => handleAddFile()}
-                className="ml-2 p-1 text-muted-foreground hover:text-foreground"
-                title="新建文件"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-          </TabsList>
+                {/* 滚动按钮 - 右 */}
+                {/*<button*/}
+                {/*    className="absolute right-0 top-0 bottom-0 z-10 w-8 bg-gradient-to-l from-muted/40 to-transparent flex items-center justify-center"*/}
+                {/*    onClick={scrollRight}*/}
+                {/*>*/}
+                {/*    <ChevronRight className="w-4 h-4" />*/}
+                {/*</button>*/}
+            </div>
+
+
+
+
+
+
+
+
+
 
           {openFiles.map((file) => (
               <TabsContent

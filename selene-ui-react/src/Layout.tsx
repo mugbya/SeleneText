@@ -90,7 +90,8 @@ export default function Layout() {
         />
       )}
 
-      <div className="flex flex-1 overflow-hidden">
+      {/*<div className="flex flex-1 overflow-hidden">*/}
+      <div className="flex flex-1">
         {/* 最左侧菜单栏 */}
         <MenuPanel
           openSettings={() => setShowRightPanel(true)}

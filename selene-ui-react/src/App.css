@@ -54,3 +54,12 @@
 .read-the-docs {
   color: #888;
 }
+
+/* 全局 css */
+/*.no-scrollbar::-webkit-scrollbar {*/
+/*  display: none;*/
+/*}*/
+/*.no-scrollbar {*/
+/*  -ms-overflow-style: none;*/
+/*  scrollbar-width: none;*/
+/*}*/
