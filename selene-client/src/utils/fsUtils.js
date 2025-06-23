@@ -1,69 +1,69 @@
 const fs = require("fs");
 const path = require("path");
 
-
-// 实现一个白名单文件类型后缀，只允许打开 这些文件，目前支持   .txt .md
 const EXCLUDED_FILES = ['.DS_Store'];
 const EXCLUDED_DIRS = ['node_modules', '.git'];
 
-// const allowedTextExtensions = ['.txt', '.md', '.js', '.ts', '.json', '.html', '.css'];
-const allowedTextExtensions = ['.txt', '.md', '.json', '.js', '.ts', '.jsx', '.tsx', '.html', '.css', '.scss', '.yml', '.yaml', '.xml', '.csv', '.env']; // 可自行扩展
+const allowedTextExtensions = [
+  '.txt', '.md', '.json', '.js', '.ts', '.jsx', '.tsx',
+  '.html', '.css', '.scss', '.yml', '.yaml', '.xml', '.csv', '.env'
+];
 
 function isHidden(name) {
-    return name.startsWith('.');
+  return name.startsWith('.');
 }
 
 function isTextFile(filePath) {
-    return allowedTextExtensions.includes(path.extname(filePath).toLowerCase());
+  return allowedTextExtensions.includes(path.extname(filePath).toLowerCase());
 }
 
-// 递归读取文件夹
 function readDirRecursive(dirPath, depth = 0, maxDepth = 10) {
-    if (depth > maxDepth) return [];
+  if (depth > maxDepth) return [];
 
-    // 🛡️ 如果不是目录，直接返回空数组
-    if (!fs.statSync(dirPath).isDirectory()) {
-      // dirPath = path.dirname(dirPath)
-      console.log("给的是文件: ", dirPath)
-      return;
+  if (!fs.statSync(dirPath).isDirectory()) {
+    console.log("给的是文件: ", dirPath);
+    return [];
+  }
+
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+
+  const dirs = [];
+  const files = [];
+
+  for (const entry of entries) {
+    const name = entry.name;
+
+    if (
+      EXCLUDED_FILES.includes(name) ||
+      EXCLUDED_DIRS.includes(name) ||
+      isHidden(name)
+    ) {
+      continue;
     }
 
-    const entries = fs.readdirSync(dirPath, { withFileTypes: true });
-    const result = [];
+    const fullPath = path.join(dirPath, name);
+    const isDir = entry.isDirectory();
 
-    for (const entry of entries) {
-        const name = entry.name;
-
-        if (
-            EXCLUDED_FILES.includes(name) ||
-            EXCLUDED_DIRS.includes(name) ||
-            isHidden(name)
-        ) {
-            continue;
-        }
-
-        const fullPath = path.join(dirPath, name);
-        const isDir = entry.isDirectory();
-
-        // ✅ 文件类型过滤
-        if (!isDir && !isTextFile(fullPath)) {
-            continue;
-        }
-
-        const node = {
-            name,
-            path: fullPath,
-            isDirectory: isDir,
-        };
-
-        if (isDir) {
-            node.children = readDirRecursive(fullPath, depth + 1, maxDepth);
-        }
-
-        result.push(node);
+    // 文件过滤
+    if (!isDir && !isTextFile(fullPath)) {
+      continue;
     }
 
-    return result;
+    const node = {
+      name,
+      path: fullPath,
+      isDirectory: isDir,
+    };
+
+    if (isDir) {
+      node.children = readDirRecursive(fullPath, depth + 1, maxDepth);
+      dirs.push(node);
+    } else {
+      files.push(node);
+    }
+  }
+
+  return [...dirs, ...files];
 }
 
 module.exports = {
