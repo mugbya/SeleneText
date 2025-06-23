@@ -55,6 +55,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.invoke('delete-path', { targetPath }),
 
 
+  /**
+   * 提供 IPC 读写接口
+   */
+  getProjectsStore: () => ipcRenderer.invoke('get-projects-store'),
+  setProjectsStore: (data) => ipcRenderer.invoke('set-projects-store', data)
+
   // showSaveDialog: (options) => ipcRenderer.invoke('show-save-dialog', options),
   // writeFile: (filePath, content) => ipcRenderer.invoke('write-file', filePath, content),
 

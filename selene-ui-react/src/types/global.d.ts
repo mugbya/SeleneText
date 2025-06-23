@@ -1,3 +1,5 @@
+import { ProjectTab } from "./file";
+
 export {};
 
 
@@ -22,6 +24,9 @@ declare global {
       deletePath: (path: string) => Promise<{ success: boolean}>;
       renamePath: (path: string, newName: string) => Promise<{ success: boolean}>;
 
+      getProjectsStore: () => Promise<any>;
+      setProjectsStore: (data: any) => Promise<void>;
+      
       // showSaveDialog: (options: any) => Promise<{ filePath?: string }>;
       // writeFile: (filePath: string, content: string) => Promise<void>;
 

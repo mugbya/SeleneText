@@ -1,19 +1,24 @@
-import './App.css'
+import "./App.css";
 import "./index.css";
-import Layout from './Layout'
-import {ThemeProvider} from "@/lib/theme-provider";
+import Layout from "./Layout";
+import { useEffect } from "react";
+import { ThemeProvider } from "@/lib/theme-provider";
+import { initProjectsStoreFromElectronStore } from "./store/useProjectStore";
 // import { useElectronEvents } from './useElectronEvents';
 
 function App() {
-    console.log("[App]  NODE_ENV: ", import.meta.env.MODE)
-    // useElectronEvents(); // 👈 只在应用初始化时注册
+  useEffect(() => {
+    initProjectsStoreFromElectronStore();
+  }, []);
 
-    return (
-        <ThemeProvider>
-            
-            <Layout/>
-        </ThemeProvider>
-    )
+  console.log("[App]  NODE_ENV: ", import.meta.env.MODE);
+  // useElectronEvents(); // 👈 只在应用初始化时注册
+
+  return (
+    <ThemeProvider>
+      <Layout />
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;

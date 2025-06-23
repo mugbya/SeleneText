@@ -35,7 +35,7 @@ function createMainWindow() {
     if (isDev) {
         // 隔离不同环境的 localStorage / 渲染进程缓存
         app.setPath("userData", path.join(app.getPath("appData"), mainWindow.title.concat("-dev")));
-        // console.log("userData: ", app.getPath("userData"));
+        console.log("userData: ", app.getPath("userData"));
         mainWindow.loadURL('http://localhost:5173'); // ✅ 重要 开发时加载 Vite，本地页面
         // mainWindow.webContents.openDevTools();
     } else {

@@ -318,3 +318,28 @@ export const useProjectsStore = create<ProjectsStore>()(
         }
     )
 );
+
+// 初始化时读取
+export async function initProjectsStoreFromElectronStore() {
+    if (window.electronAPI) {
+        const data = await window.electronAPI.getProjectsStore()
+        if (data) {
+            useProjectsStore.setState(data)
+        }
+    }
+}
+
+
+// 👇 持久化到 electron-store 的同步监听器
+if (typeof window !== 'undefined' && window.electronAPI) {
+    useProjectsStore.subscribe((state) => {
+        const persistData = {
+            projects: state.projects,
+            activeProjectId: state.activeProjectId,
+            expandedDirs: state.expandedDirs,
+            orphanFiles: state.orphanFiles,
+            activeOrphanFile: state.activeOrphanFile,
+        };
+        window.electronAPI.setProjectsStore(persistData);
+    });
+}
