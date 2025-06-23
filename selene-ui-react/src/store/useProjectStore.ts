@@ -21,7 +21,7 @@ interface ProjectsStore {
     addProject: (folder: Folder) => string;
     updateProject: (projectId: string, updater: (p: ProjectTab) => Partial<ProjectTab>) => void;
     switchProject: (projectId: string) => void;
-    closeProject: (projectId: string) => void;
+    closeProject: (projectId: string | null) => void;
     setActiveProjectId: (projectId: string | null) => void;
     getActiveProject: () => ProjectTab | null;
 
@@ -116,6 +116,8 @@ export const useProjectsStore = create<ProjectsStore>()(
 
             closeProject: (projectId) => {
                 set((state) => {
+                    if (!projectId) return {};
+                    
                     const newProjects = { ...state.projects };
                     delete newProjects[projectId];
                     const newActiveId =

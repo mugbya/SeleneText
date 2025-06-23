@@ -7,6 +7,7 @@ import { useProjectsStore } from "./store/useProjectStore";
 export function useElectronEvents() {
 
   const addProject = useProjectsStore((s) => s.addProject);
+  const closeProject = useProjectsStore((s) => s.closeProject);
   const projects = useProjectsStore((s) => s.projects);
   const updateProject = useProjectsStore((s) => s.updateProject);
 
@@ -24,6 +25,14 @@ export function useElectronEvents() {
       console.log("新增文件夹.....");
       addProject(folder);
     }
+  }
+
+  /**
+   * 关闭文件夹
+   */
+  const closeFolderHandler = async () => {
+    const {activeProjectId} = useProjectsStore.getState(); // 💥 get 最新状态
+    closeProject(activeProjectId);
   }
 
   const folderChangedHandler = async (folder: Folder) => {
@@ -115,8 +124,10 @@ export function useElectronEvents() {
 
     // 监听主程序发送的 replace-folders 事件。 刷新整个工作区域 放置 打开的文件夹
     api.on("load-folder", loadFolder); //  监听打开文件夹操作，加载文件夹
-    api.on("file-save", saveHandler);
+    api.on("close-folder", closeFolderHandler);
     api.on("folder-changed", folderChangedHandler);
+    api.on("file-save", saveHandler);
+    
 
     // api.on('folder-changed', (_, folderPath: string) => {
     //   console.log("监听到文件变化，刷新文件树：", folderPath);

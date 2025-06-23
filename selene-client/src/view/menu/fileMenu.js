@@ -148,8 +148,15 @@ function createFileMenu(win) {
       { type: 'separator' },
       {
         label: '关闭文件夹',
+        accelerator: 'CmdOrCtrl+W',
         click: () => {
           console.log('关闭文件夹');
+          // 获取当前主窗口
+          const win = BrowserWindow.getFocusedWindow()
+          if (win) {
+            // 通过 IPC 发送关闭文件夹命令给渲染进程
+            win.webContents.send('close-folder')
+          }
         },
       },
     ],
