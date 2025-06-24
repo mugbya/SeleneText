@@ -6,7 +6,7 @@ const EXCLUDED_DIRS = ['node_modules', '.git'];
 
 const allowedTextExtensions = [
   '.txt', '.md', '.json', '.js', '.ts', '.jsx', '.tsx',
-  '.html', '.css', '.scss', '.yml', '.yaml', '.xml', '.csv', '.env'
+  '.html', '.css', '.scss', '.yml', '.yaml', '.xml', '.csv', '.env', '.sql', '.ini', '.conf', '.log', '.properties', '.conf', '.cfg', '.ini'
 ];
 
 function isHidden(name) {
@@ -20,10 +20,10 @@ function isTextFile(filePath) {
 function readDirRecursive(dirPath, depth = 0, maxDepth = 10) {
   if (depth > maxDepth) return [];
 
-  if (!fs.statSync(dirPath).isDirectory()) {
-    console.log("给的是文件: ", dirPath);
-    return [];
-  }
+  // if (!fs.statSync(dirPath).isDirectory()) {
+  //   console.log("给的是文件: ", dirPath);
+  //   return [];
+  // }
 
   const entries = fs.readdirSync(dirPath, { withFileTypes: true });
 
@@ -58,7 +58,9 @@ function readDirRecursive(dirPath, depth = 0, maxDepth = 10) {
     if (isDir) {
       node.children = readDirRecursive(fullPath, depth + 1, maxDepth);
       dirs.push(node);
+      // console.log("目录: ", fullPath, " 深度: ", depth);
     } else {
+      // console.log("文件: ", fullPath);
       files.push(node);
     }
   }
