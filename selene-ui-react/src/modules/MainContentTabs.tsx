@@ -7,7 +7,9 @@ import { Textarea } from "@/components/ui/textarea"; // ✅ 用于简单编辑�
 import { useUnifiedFileChangeHandler } from "@/store/useUnifiedFileChangeHandler";
 import CodeMirrorViewer from "./viewer/CodeMirrorViewer";
 import { useProjectsStore } from "@/store/useProjectStore";
-import { MilkdownEditorWrapper } from "./viewer/MilkdownEditorViewer";
+import { MilkdownEditorWrapper } from "./viewer/MarkdownEditor";
+// import { MilkdownEditorWrapper } from "./viewer/MilkdownEditorViewer";
+// import { MilkdownEditorWrapper } from "./viewer/MilkdownEditorViewer";
 
 function getFileType(filePath: string): "markdown" | "code" | "plain" {
   if (!filePath) return "plain";
@@ -133,13 +135,23 @@ export default function MainContentTabs({
                 // setState 或 dispatch 更新 currentFile.content
               }}
             /> */}
-            <MilkdownEditorWrapper
+            {/* <MilkdownEditorWrapper
               value={currentFile.content}
               onChange={(newCode) => {
                 console.log("handleChange", newCode);
                 handleChange(newCode);
               }}
-            />
+            /> */}
+
+          <MilkdownEditorWrapper
+            value={currentFile.content}
+            onChange={(newCode) => {
+              // console.log("handleChange", newCode);
+              handleChange(newCode);
+            }}
+            // onFocus={() => console.log("聚焦")}
+            // onBlur={() => console.log("失焦")}
+          />
           </div>
         );
       case "code":
@@ -175,16 +187,10 @@ export default function MainContentTabs({
 
           // <div className="w-full h-[70vh] resize-none font-mono text-sm">
           <div className="flex-1 flex flex-col h-full overflow-y-auto text-left">
-            {/* <CodeMirrorViewer
+            <CodeMirrorViewer
               code={currentFile.content}
               language={currentFile.path.split(".").pop() || "txt"}
               editable={true}
-              onChange={(newCode) => {
-                handleChange(newCode);
-              }}
-            /> */}
-            <MilkdownEditorWrapper
-              value={currentFile.content}
               onChange={(newCode) => {
                 handleChange(newCode);
               }}
