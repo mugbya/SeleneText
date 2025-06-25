@@ -45,7 +45,7 @@ export default function ProjectTabs({
     //     </div>
     //   ))}
     // </div>
-<div className="flex border-b border-zinc-300 bg-zinc-50 px-2 py-1 space-x-1">
+<div className="flex border-b border-zinc-300 bg-zinc-50 px-2 py-1 space-x-1 overflow-x-auto no-scrollbar">
   {Object.values(projects).map((project) => (
     <div
       key={project.id}

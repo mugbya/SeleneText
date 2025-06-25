@@ -19,6 +19,7 @@ export default function CodeMirrorViewer({
           className="text-left"  // Tailwind 用户
           value={code}
           height="100%"
+          // height="30rem" // 每行大约 1rem 高
           // basicSetup={{
           //   lineNumbers: true,
           //   highlightActiveLine: true,
