@@ -15,7 +15,8 @@ type DialogType = "create" | "rename" | "delete" | null;
  * @param onFileClick 
  * @returns 
  */
-export function useTreeNode(node: FileNode, selectedPath?: string, onFileClick?: (path: string) => void) {
+// export function useTreeNode(node: FileNode, selectedPath?: string, onFileClick?: (path: string) => void) {
+export function useTreeNode(node: FileNode, selectedPath?: string) {
   const [expanded, setExpanded] = useState(false);
   const [dialog, setDialog] = useState<DialogType>(null);
   const [newType, setNewType] = useState<"file" | "folder">("file");
@@ -25,13 +26,13 @@ export function useTreeNode(node: FileNode, selectedPath?: string, onFileClick?:
   const isDir = node.isDirectory;
   const isSelected = node.path === selectedPath;
 
-  const toggle = () => {
-    if (isDir) {
-      setExpanded((prev) => !prev);
-    } else {
-      onFileClick?.(node.path);
-    }
-  };
+  // const toggle = () => {
+  //   if (isDir) {
+  //     setExpanded((prev) => !prev);
+  //   } else {
+  //     onFileClick?.(node.path);
+  //   }
+  // };
 
   const openDialog = (type: DialogType) => {
     setDialog(type);
@@ -116,7 +117,7 @@ export function useTreeNode(node: FileNode, selectedPath?: string, onFileClick?:
     expanded,
     isDir,
     isSelected,
-    toggle,
+    // toggle,
 
     dialog,
     openDialog,

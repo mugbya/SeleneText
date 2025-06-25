@@ -1,62 +1,62 @@
-import { WorkspaceTreeProps, FileNode } from "@/types";
+import { WorkspaceTreeProps } from "@/types";
 import FileTree from "@/components/common/file-tree/FileTree";
-// import { useFileTreeStore } from "@/store/fileTreeStore";
 import { useRef } from "react";
-// import { useProjectsStore } from "@/store/projectsStore";
+import { useProjectsStore } from "@/store/useProjectStore";
+import { getFileType } from "@/utils/fileUtil";
 
 function WorkSpaceTreePanel({
-                              selectedPath,
-                              name,
-                              rootPath,
-                              folderTree,
-                              onFileSelect,
-                            }: WorkspaceTreeProps) {
-
-  // const folder = useFileTreeStore((state) =>
-  //   rootPath ? state.trees[rootPath] : undefined
-  // );
-
-  // const folder = useFileTreeStore((state) => {
-  //   return state.tree
-  // });
-  // const project = useProjectsStore((state) => {
-  //   return state.getActiveProject
-  // });
-
-  // const rootName = project?.name;
-  // const basePath = project?.rootPath;
-
+  projectId,
+  activeFilePath,
+  rootPath,
+  folderTree,
+}: WorkspaceTreeProps) {
 
   const renderCount = useRef(0);
   renderCount.current += 1;
   console.log("[WorkSpaceTreePanel] 渲染次数:", renderCount.current);
 
-  if (!folderTree) {
+  if (!projectId || !folderTree) {
     return (
-        <div className="flex items-center justify-center h-full text-gray-500">
-          加载中...
-        </div>
+      <div className="flex items-center justify-center h-full text-gray-500">
+        加载中...
+      </div>
     );
   }
 
-  // const rootName = folder.basePath.split(/[/\\]/).filter(Boolean).pop() || folder.basePath;
+  const handlerOpenFile = (projectId: string, filePath: string) => {
+    // console.log("读取文件内容：", filePath);
+    const fileType = getFileType(filePath);
+    if (fileType === "image"){
+        // 如果是图片类型，直接添加到 openFiles 中
+        useProjectsStore.getState().addOpenFileForProject(projectId, {
+          path: filePath,
+          content: "",
+        });
+        return
+    }
 
-  // const treeRoot: FileNode = {
-  //   name: name,
-  //   path: rootPath,
-  //   isDirectory: true,
-  //   children: folderTree,
-  // };
+    window.electronAPI.readFile(filePath).then(({ success, content }) => {
+      if (!success) {
+        console.error("读取文件失败！");
+        return;
+      }
+      useProjectsStore.getState().addOpenFileForProject(projectId, {
+        path: filePath,
+        content: content,
+      });
+    });
+  };
 
   return (
-      <div className="left-panel p-2 space-y-2 text-sm h-full overflow-y-auto">
-        <FileTree
-            folderPath={rootPath}
-            folderTree={folderTree}
-            onFileClick={onFileSelect}
-            selectedPath={selectedPath || ""}
-        />
-      </div>
+    <div className="left-panel p-2 space-y-2 text-sm h-full overflow-y-auto">
+      <FileTree
+        projectId={projectId}
+        folderPath={rootPath}
+        folderTree={folderTree}
+        onFileClick={handlerOpenFile}
+        activeFilePath={activeFilePath || ""}
+      />
+    </div>
   );
 }
 

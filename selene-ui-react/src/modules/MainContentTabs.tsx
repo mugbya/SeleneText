@@ -9,38 +9,11 @@ import CodeMirrorViewer from "./viewer/CodeMirrorViewer";
 import { useProjectsStore } from "@/store/useProjectStore";
 import { MilkdownEditorWrapper } from "./viewer/MarkdownEditor";
 import { ImagePreview } from "@/components/common/ImagePreview";
+import { getFileType } from "@/utils/fileUtil";
 // import { MilkdownEditorWrapper } from "./viewer/MilkdownEditorViewer";
 // import { MilkdownEditorWrapper } from "./viewer/MilkdownEditorViewer";
 
-// function getFileType(filePath: string): "markdown" | "code" | "plain" {
-//   if (!filePath) return "plain";
-//   const ext = filePath.split(".").pop()?.toLowerCase();
-//   if (!ext) return "plain";
-//   if (["md", "markdown"].includes(ext)) return "markdown";
-//   if (["ts", "tsx", "js", "jsx", "json", "css", "html"].includes(ext))
-//     return "code";
-//   return "plain";
-// }
-type FileType = "image" | "markdown" | "code" | "plain" | "unknown";
 
-function getFileType(filePath: string): FileType {
-  const ext = filePath.split(".").pop()?.toLowerCase();
-
-  if (!ext) return "unknown";
-
-  const imageExtensions = new Set([
-    "jpg", "jpeg", "png", "gif", "bmp", "webp", "svg", "ico", "tiff", "avif",
-  ]);
-  const markdownExtensions = new Set(["md", "markdown"]);
-  const codeExtensions = new Set(["ts", "js", "tsx", "jsx", "json", "html", "css"]);
-
-  if (imageExtensions.has(ext)) return "image";
-  if (markdownExtensions.has(ext)) return "markdown";
-  if (codeExtensions.has(ext)) return "code";
-  if (ext === "txt") return "plain";
-
-  return "unknown";
-}
 
 export default function MainContentTabs({
   projectId,
@@ -193,7 +166,7 @@ export default function MainContentTabs({
     case "image":
       console.log("这是图片类型");
       return (
-        <div className="w-full h-[70vh] resize-none font-mono text-sm">
+        <div className="w-full h-[90vh] resize-none font-mono text-sm">
           <ImagePreview path={currentFile.path} />
          </div>
       );

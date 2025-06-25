@@ -44,7 +44,7 @@ export default function Layout() {
   const projectRootPath = activeProject?.rootPath;
   const projectName = activeProject?.name;
   const projectOpenFiles = activeProject?.openFiles;
-  const projectActiveFile = activeProject?.lastActiveFile;
+  const projectActiveFilePath = activeProject?.lastActiveFile;
 
   const folderTree = activeProject?.folderTree;
 
@@ -61,7 +61,7 @@ export default function Layout() {
     projectsLength,
     projectRootPath
   );
-  console.log("[Layout] projectActiveFile: %o", projectActiveFile);
+  console.log("[Layout] projectActiveFilePath: %o", projectActiveFilePath);
   console.log("[Layout] projectOpenFiles: %o", projectOpenFiles);
 
   return (
@@ -116,41 +116,11 @@ export default function Layout() {
             {/* 工作区域 - 放目录树 - 避免空projectRootPath路径时渲染 WorkSpaceTreePanel 组件 */}
             {projectRootPath && (
               <WorkSpaceTreePanel
-                selectedPath={projectActiveFile ?? null}
-                name={projectName ? projectName : ""}
+                projectId={projectId??null}
+                activeFilePath={projectActiveFilePath ?? null}
+                // name={projectName ? projectName : ""}
                 rootPath={projectRootPath}
                 folderTree={folderTree}
-                // 点击读取文件内容
-                onFileSelect={(filePath) => {
-                  // console.log("读取文件内容：", filePath);
-                  window.electronAPI
-                    .readFile(filePath)
-                    .then(({ success, content }) => {
-                      if (!success) {
-                        console.error("读取文件失败！");
-                        return;
-                      }
-                      // console.log("[Layout] 读取文件内容：%s", content);
-
-                      // setOpenFiles((prev) => {
-                      //   const exists = prev.find((f) => f.path === filePath);
-                      //   if (exists) return prev;
-                      //   return [...prev, { path: filePath, content }];
-                      // });
-                      // setOpenFiles({ path: filePath, content });
-                      addOpenFileForProject(projectId, {
-                        path: filePath,
-                        content: content
-                      })
-                      // addFileIfNotExists(projectId, {
-                      //   path: filePath,
-                      //   content: content
-                      // });
-                      // console.log("[Layout] 读取文件内容：%s", content);
-                      console.log("[Layout] 激活当前文件: %s", filePath);
-                      // setActiveFileForProject(projectId ?? null, filePath);
-                    });
-                }}
               />
             )}
           </Panel>

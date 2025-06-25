@@ -1,7 +1,6 @@
 // file-tree/FileTree.tsx
 import { FileNode } from "@/types";
 import TreeNode from "./TreeNode";
-import {useProjectsStore} from "@/store/useProjectStore";
 
 /**
  * 仅遍历渲染 TreeNode
@@ -10,32 +9,29 @@ import {useProjectsStore} from "@/store/useProjectStore";
  * @returns
  */
 export default function FileTree({
-                                   folderPath,
-                                   folderTree,
-                                   onFileClick,
-                                   selectedPath,
-                                 }: {
+  projectId,
+  folderPath,
+  folderTree,
+  onFileClick,
+  activeFilePath,
+}: {
+  projectId: string;
   folderPath: string;
   folderTree: FileNode;
-  onFileClick: (filePath: string) => void;
-  selectedPath?: string;
+  onFileClick: (projectId: string, filePath: string) => void;
+  activeFilePath?: string;
 }) {
-
-  // const isExpanded = useProjectsStore((s) => s.expandedDirs[folderPath]);
-  // const toggleExpanded = useProjectsStore((s) => s.toggleExpanded);
-
   return (
-      <ul className="pl-2 text-sm space-y-1">
-        {/*{nodes.map((node) => (*/}
-        <TreeNode
-            key={folderPath}
-            node={folderTree}
-            onFileClick={onFileClick}
-            selectedPath={selectedPath}
-            // expanded={isExpanded}
-            // onToggle={() => toggleExpanded(folderPath)}
-        />
-        {/*))}*/}
-      </ul>
+    <ul className="pl-2 text-sm space-y-1">
+      {/*{nodes.map((node) => (*/}
+      <TreeNode
+        projectId={projectId}
+        key={folderPath}
+        node={folderTree}
+        onFileClick={onFileClick}
+        activeFilePath={activeFilePath}
+      />
+      {/*))}*/}
+    </ul>
   );
 }
