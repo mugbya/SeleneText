@@ -1,82 +1,54 @@
 import React, { useRef } from "react";
-import MarkdownViewer from "./viewer/MarkdownViewer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { X, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea"; // ✅ 用于简单编辑器
 import { useUnifiedFileChangeHandler } from "@/store/useUnifiedFileChangeHandler";
-import CodeMirrorViewer from "./viewer/CodeMirrorViewer";
 import { useProjectsStore } from "@/store/useProjectStore";
-import { MilkdownEditorWrapper } from "./viewer/MarkdownEditor";
-import { ImagePreview } from "@/components/common/ImagePreview";
-import { getFileType } from "@/utils/fileUtil";
-// import { MilkdownEditorWrapper } from "./viewer/MilkdownEditorViewer";
-// import { MilkdownEditorWrapper } from "./viewer/MilkdownEditorViewer";
-
-
+import { FileContentViewer } from "@/components/common/content-viewer/FileContentViewer";
 
 export default function MainContentTabs({
   projectId,
-  // openFiles,
-  // activeFile,
-  onSwitchFile,
-}: // onCloseFile,
-// onAddFile,
-// onChangeFileContent, // ✅ 新增：当用户编辑内容时触发
-{
+}: {
   projectId: string | null;
-  // openFiles: FileTab[];
-  // activeFile: string | null;
-  onSwitchFile: (path: string) => void;
-  // onSwitchFile: (projectId: string | null, path: string | null) => void;
-  // onCloseFile: (projectId: string | null, path: string | null) => void;
-  // onCloseFile: (path: string) => void;
-  // onAddFile: () => void;
-  // onChangeFileContent: (path: string, newContent: string) => void;
 }) {
-  // const currentFile = openFiles.find((f) => f.path === activeFile);
-
   const changeFileContentForProject = useProjectsStore(
     (s) => s.changeFileContentForProject
   );
-  const getActiveProject = useProjectsStore((s) => s.getActiveProject);
-  const addOpenFileForProject = useProjectsStore(
-    (s) => s.addOpenFileForProject
+  const setActiveFileForProject = useProjectsStore(
+    (s) => s.setActiveFileForProject
   );
+
+  const { orphanFiles, activeOrphanFile, getActiveProject } =
+    useProjectsStore.getState();
 
   const createNewFileForProject = useProjectsStore(
     (s) => s.createNewFileForProject
   );
   const activeProjectId = useProjectsStore((s) => s.activeProjectId);
-  const orphanFiles = useProjectsStore((s) => s.orphanFiles);
-  const activeOrphanFile = useProjectsStore((s) => s.activeOrphanFile);
+  // const orphanFiles = useProjectsStore((s) => s.orphanFiles);
+  // const activeOrphanFile = useProjectsStore((s) => s.activeOrphanFile);
   const changeOrphanFileContent = useProjectsStore(
     (s) => s.changeOrphanFileContent
   );
   const createOrphanFile = useProjectsStore((s) => s.createOrphanFile);
   const closeFileForProject = useProjectsStore((s) => s.closeFileForProject);
 
-  const activeProject = useProjectsStore((s) => s.getActiveProject());
+  // const activeProject = useProjectsStore((s) => s.getActiveProject());
   // const orphanFiles = useProjectsStore((s) => s.orphanFiles);
   // const activeOrphanFile = useProjectsStore((s) => s.activeOrphanFile);
 
-  console.log(
-    "[useElectronEvents] project: ",
-    activeProject,
-    "orphanFiles: ",
-    orphanFiles
-  );
+  const activeProject = getActiveProject();
   const openFiles = activeProject?.openFiles ?? orphanFiles;
   const activeFile = activeProject?.lastActiveFile ?? activeOrphanFile;
 
-  const project = getActiveProject();
-
   const currentFile =
-    project?.openFiles.find((f) => f.path === project.lastActiveFile) ||
-    orphanFiles.find((f) => f.path === activeOrphanFile);
+    activeProject?.openFiles.find(
+      (f) => f.path === activeProject.lastActiveFile
+    ) || orphanFiles.find((f) => f.path === activeOrphanFile);
 
+  // 处理文件内容变化
   const handleChange = useUnifiedFileChangeHandler({
-    project,
+    activeProject,
     projectId,
     activeOrphanFile,
     orphanFiles,
@@ -84,14 +56,14 @@ export default function MainContentTabs({
     changeOrphanFileContent,
   });
 
+  // 从文件标签页的 +图标 新增文件
   const handleAddFile = () => {
-    console.log("handleAddFile 新建文件");
-    if (activeProjectId && project) {
+    if (activeProjectId && activeProject) {
       // 有项目，新增项目下的文件
-      console.log("handleAddFile 有项目，新增项目下的文件");
+      // console.log("handleAddFile 有项目，新增项目下的文件");
       createNewFileForProject(activeProjectId);
     } else {
-      console.log("handleAddFile 无项目，新建孤立文件");
+      // console.log("handleAddFile 无项目，新建孤立文件");
       // 无项目，新建孤立文件
       createOrphanFile();
     }
@@ -100,107 +72,13 @@ export default function MainContentTabs({
   // 文件标签页左右滑动
   const tabScrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const scrollLeft = () => {
-    tabScrollContainerRef.current?.scrollBy({ left: -150, behavior: "smooth" });
-  };
-  const scrollRight = () => {
-    tabScrollContainerRef.current?.scrollBy({ left: 150, behavior: "smooth" });
-  };
-
-  const renderEditableContent = () => {
-    if (!currentFile) return null;
-
-    const fileType = getFileType(currentFile.path);
-    console.log("文件类型：", fileType);
-    switch (fileType) {
-      case "markdown":
-        return (
-          <div className="w-full h-[70vh] resize-none font-mono text-sm text-left">
-            {/* <Textarea
-              value={currentFile.content}
-              onChange={(e) => {
-                handleChange(e.target.value);
-              }}
-            /> */}
-            {/* <MarkdownEditor
-              mode={mode} // 'markdown' 或 'wysiwyg'
-              currentFile={currentFile}
-              handleChange={val => {
-                // setState 或 dispatch 更新 currentFile.content
-              }}
-            /> */}
-            {/* <MilkdownEditorWrapper
-              value={currentFile.content}
-              onChange={(newCode) => {
-                console.log("handleChange", newCode);
-                handleChange(newCode);
-              }}
-            /> */}
-
-          <MilkdownEditorWrapper
-            value={currentFile.content}
-            onChange={(newCode) => {
-              // console.log("handleChange", newCode);
-              handleChange(newCode);
-            }}
-            // onFocus={() => console.log("聚焦")}
-            // onBlur={() => console.log("失焦")}
-          />
-          </div>
-        );
-      case "code":
-        return (
-          // <div className="flex-1 overflow-auto w-full h-full">
-          <div className="w-full h-[70vh] resize-none font-mono text-sm">
-            <CodeMirrorViewer
-              code={currentFile.content}
-              language={currentFile.path.split(".").pop() || "txt"}
-              editable={true}
-              onChange={(newCode) => {
-                handleChange(newCode);
-              }}
-            />
-          </div>
-        );
-        break
-    case "image":
-      console.log("这是图片类型");
-      return (
-        <div className="w-full h-[90vh] resize-none font-mono text-sm">
-          <ImagePreview path={currentFile.path} />
-         </div>
-      );
-    default:
-        return (
-          // <Textarea
-          //   value={currentFile.content}
-          //   onChange={(e) => onChangeFileContent(currentFile.path, e.target.value)}
-          //   className="w-full h-[60vh] resize-none font-mono text-sm"
-          // />
-          // <Textarea
-          //   autoFocus
-          //   // onClick={(e) => e.currentTarget.focus()}
-          //   value={currentFile.content}
-          //   onChange={(e) => {
-          //     handleChange(e.target.value);
-          //   }}
-          //   className="w-full h-[70vh] resize-none font-mono text-sm"
-          // />
-
-          // <div className="w-full h-[70vh] resize-none font-mono text-sm">
-          <div className="flex-1 flex flex-col h-full overflow-y-auto text-left">
-            <CodeMirrorViewer
-              code={currentFile.content}
-              language={currentFile.path.split(".").pop() || "txt"}
-              editable={true}
-              onChange={(newCode) => {
-                handleChange(newCode);
-              }}
-            />
-          </div>
-        );
-    }
-  };
+  // ✅ 左右滑动按钮 目前不用
+  // const scrollLeft = () => {
+  //   tabScrollContainerRef.current?.scrollBy({ left: -150, behavior: "smooth" });
+  // };
+  // const scrollRight = () => {
+  //   tabScrollContainerRef.current?.scrollBy({ left: 150, behavior: "smooth" });
+  // };
 
   const renderCount = useRef(0);
   renderCount.current += 1;
@@ -217,7 +95,9 @@ export default function MainContentTabs({
       {/* 标签页 */}
       <Tabs
         value={activeFile || ""}
-        onValueChange={onSwitchFile}
+        onValueChange={(filepath) => {
+          setActiveFileForProject(projectId, filepath);
+        }}
         className="h-full flex flex-col"
       >
         <div className="relative border-b-0 bg-muted/40 rounded-t-md overflow-hidden">
@@ -279,17 +159,19 @@ export default function MainContentTabs({
           <TabsContent
             key={file.path}
             value={file.path}
-            // className="flex-1 overflow-auto p-4 bg-muted rounded"
             className="flex-1 flex-col h-full overflow-auto p-4 bg-muted rounded"
           >
             <ScrollArea className="h-full">
               <div className="space-y-4">
-                {/* <h2 className="text-base font-semibold text-muted-foreground"> */}
-                {/* <h2 className="w-full text-base font-semibold text-muted-foreground text-center"> */}
                 <h2 className="w-full text-base font-semibold text-muted-foreground text-left">
                   {file.path}
                 </h2>
-                {renderEditableContent()}
+
+                {/* 文件内容展示区域 */}
+                <FileContentViewer
+                  currentFile={currentFile ?? null}
+                  handleChange={handleChange}
+                />
               </div>
             </ScrollArea>
           </TabsContent>

@@ -23,11 +23,8 @@ export default function Layout() {
   const getActiveProject = useProjectsStore((s) => s.getActiveProject);
   const closeProject = useProjectsStore((s) => s.closeProject); // 如果你在用
   const switchProject = useProjectsStore((s) => s.switchProject);
-  const addOpenFileForProject = useProjectsStore((s) => s.addOpenFileForProject);
 
-  const setActiveFileForProject = useProjectsStore(
-    (s) => s.setActiveFileForProject
-  );
+
 
   // Panels 状态
   //  const showLeftPanel = usePanelsStore((s) => s.showLeftPanel);
@@ -42,7 +39,7 @@ export default function Layout() {
 
   const projectId = activeProject?.id;
   const projectRootPath = activeProject?.rootPath;
-  const projectName = activeProject?.name;
+  // const projectName = activeProject?.name;
   const projectOpenFiles = activeProject?.openFiles;
   const projectActiveFilePath = activeProject?.lastActiveFile;
 
@@ -118,7 +115,6 @@ export default function Layout() {
               <WorkSpaceTreePanel
                 projectId={projectId??null}
                 activeFilePath={projectActiveFilePath ?? null}
-                // name={projectName ? projectName : ""}
                 rootPath={projectRootPath}
                 folderTree={folderTree}
               />
@@ -131,13 +127,6 @@ export default function Layout() {
           <Panel minSize={30}>
             <MainContentTabs
               projectId={projectId?? null}
-              // openFiles={projectOpenFiles ?? []}
-              // activeFile={projectActiveFile ?? null}
-              onSwitchFile={e => setActiveFileForProject(projectId?? null, e)}
-              // onSwitchFile={setActiveFileForProject}
-              // onCloseFile={closeFile}
-              // onAddFile={addFile}
-              // onChangeFileContent={changeFileContentForProject}
             />
           </Panel>
 

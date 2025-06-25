@@ -11,14 +11,14 @@ import type { ProjectTab, FileTab } from "@/types";
  * @param changeOrphanFileContent
  */
 export function useUnifiedFileChangeHandler({
-  project,
+  activeProject,
   projectId,
   activeOrphanFile,
   orphanFiles,
   changeFileContentForProject,
   changeOrphanFileContent,
 }: {
-  project: ProjectTab | null;
+  activeProject: ProjectTab | null;
   projectId: string | null;
   activeOrphanFile: string | null;
   orphanFiles: FileTab[];
@@ -27,8 +27,8 @@ export function useUnifiedFileChangeHandler({
 }) {
   const onChange = useCallback(
     (newContent: string) => {
-      if (project && projectId && project.lastActiveFile) {
-        changeFileContentForProject(projectId, project.lastActiveFile, newContent);
+      if (activeProject && projectId && activeProject.lastActiveFile) {
+        changeFileContentForProject(projectId, activeProject.lastActiveFile, newContent);
       } else if (activeOrphanFile) {
         const exists = orphanFiles.some((f) => f.path === activeOrphanFile);
         if (exists) {
@@ -39,7 +39,7 @@ export function useUnifiedFileChangeHandler({
       }
     },
     [
-      project,
+      activeProject,
       projectId,
       activeOrphanFile,
       orphanFiles,
