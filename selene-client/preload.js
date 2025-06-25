@@ -3,7 +3,6 @@ const fs = require('fs').promises;
 const path = require('path');
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  // readFile: (filePath) => fs.readFile(filePath, 'utf-8'),
 
   dirname: (filePath) => path.dirname(filePath),
   basename: (filePath) => path.basename(filePath),
@@ -14,20 +13,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   toggleDevTools: () => ipcRenderer.send('toggle-devtools'),
 
-  // on: (channel, callback) => {
-  //   ipcRenderer.on(channel, (event, data) => {
-  //     if (data) callback(data);
-  //   });
-  // },
+  getImageBase64: (imagePath) => 
+    ipcRenderer.invoke('image-base64', imagePath),
 
   on: (channel, callback) => {
     ipcRenderer.on(channel, (event, ...args) => callback(...args));
   },
 
-  // invoke: (channel, data) => ipcRenderer.invoke(channel, data),
-
   removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel),
-
 
 
   readFile: (filePath) =>

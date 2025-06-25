@@ -5,8 +5,9 @@ const EXCLUDED_FILES = ['.DS_Store'];
 const EXCLUDED_DIRS = ['node_modules', '.git'];
 
 const allowedTextExtensions = [
-  '.txt', '.md', '.json', '.js', '.ts', '.jsx', '.tsx',
-  '.html', '.css', '.scss', '.yml', '.yaml', '.xml', '.csv', '.env', '.sql', '.ini', '.conf', '.log', '.properties', '.conf', '.cfg', '.ini'
+  '.txt', '.md', '.json', '.js', '.ts', '.jsx', '.tsx', '.html', '.css', '.scss', '.yml', 
+  '.yaml', '.xml', '.csv', '.env', '.sql', '.ini', '.conf', '.log', '.properties', '.conf', '.cfg', '.ini',
+  '.png', '.jpg', '.svg', '.gif', '.ico', '.webp', '.bmp', '.tif', '.tiff', '.psd',  '.eps', '.raw', '.indd', 
 ];
 
 function isHidden(name) {

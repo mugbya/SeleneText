@@ -14,6 +14,7 @@ declare global {
       dirname: (path: string) => string;
 
       toggleDevTools: () => void;
+      getImageBase64: (filePath: string) => Promise<string>;
 
       removeAllListeners: (channel: string) => void;
       saveFile: (filePath: string, data: string) => Promise<void>;

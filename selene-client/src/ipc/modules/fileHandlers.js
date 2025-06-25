@@ -1,7 +1,7 @@
 // 💡 主进程接收渲染进程请求并保存文件内容 - 新增保存
 const { dialog, ipcMain, BrowserWindow } = require('electron');
 const fs = require('fs');
-const path = require('path')
+const path = require('path');
 const { readDirRecursive } = require(path.join(global.__root, 'src/utils/fsUtils'));
 const { addRoot, removeRoot, getRoots } = require(path.join(global.__root, 'src/ipc/data/state'));
 

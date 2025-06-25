@@ -25,14 +25,23 @@ function createMainWindow() {
         title: "Selene Text"
     });
 
-    // 加载页面
-    //   if (process.env.VITE_DEV_SERVER_URL) {
-    //     mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
-    //   } else {
-    //     mainWindow.loadFile(path.join(__dirname, '../../dist/index.html'));
-    //   }
-
     if (isDev) {
+        // 仅开发时动态注入 CSP
+        // mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+        //     if (details.url.startsWith("http://localhost:5173")) {
+        //       callback({
+        //         responseHeaders: {
+        //           ...details.responseHeaders,
+        //           "Content-Security-Policy": [
+        //             "default-src 'self' http: https: data: blob: 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: blob: file: http: https:;",
+        //           ],
+        //         },
+        //       });
+        //     } else {
+        //       callback({ responseHeaders: details.responseHeaders });
+        //     }
+        //   });
+
         // 隔离不同环境的 localStorage / 渲染进程缓存
         app.setPath("userData", path.join(app.getPath("appData"), mainWindow.title.concat("-dev")));
         console.log("userData: ", app.getPath("userData"));
