@@ -1,4 +1,3 @@
-import React from "react";
 import {Button} from "@/components/ui/button";
 import {PanelLeft, PanelRight} from 'lucide-react';
 import { HeadProps } from '@/types';
@@ -11,13 +10,12 @@ export default function Head({toggleLeft, toggleRight}: HeadProps) {
 
             <div className="flex gap-1 items-center">
                 <div className="p-1 h-7 w-7"/>
-
             </div>
 
             <div className="flex-1"/>
 
             <div className="flex gap-1">
-                <button onClick={() => window.electronAPI.toggleDevTools()}>
+                <button  onClick={() => window.electronAPI.toggleDevTools()}>
                     切换 DevTools
                 </button>
 

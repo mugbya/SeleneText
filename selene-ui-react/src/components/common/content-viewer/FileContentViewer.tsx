@@ -33,7 +33,8 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
 
     case "code":
       return (
-        <div className="w-full h-[70vh] resize-none font-mono text-sm">
+        // <div className="w-full h-[70vh] resize-none font-mono text-sm">
+        <div className="flex flex-col flex-1 overflow-hidden resize-none font-mono text-sm">
           <CodeMirrorViewer
             code={currentFile.content}
             language={language}

@@ -91,7 +91,7 @@ export default function MainContentTabs({
   );
 
   return (
-    <main className="flex-1 flex flex-col h-full overflow-y-auto">
+    <main className="flex flex-col flex-1 h-full ">
       {/* 标签页 */}
       <Tabs
         value={activeFile || ""}
@@ -159,21 +159,25 @@ export default function MainContentTabs({
           <TabsContent
             key={file.path}
             value={file.path}
-            className="flex-1 flex-col h-full overflow-auto p-4 bg-muted rounded"
+            className="flex-1 flex flex-col h-full overflow-auto pb-3 pr-3 bg-muted rounded"
+            // className="flex-1 flex flex-col h-full overflow-auto bg-muted rounded"
           >
-            <ScrollArea className="h-full">
-              <div className="space-y-4">
-                <h2 className="w-full text-base font-semibold text-muted-foreground text-left">
+            <div className="p-3 pl-12">
+            <h2 className="w-full text-base font-semibold text-muted-foreground text-left">
                   {file.path}
                 </h2>
-
+            </div>
+                
+            {/* <ScrollArea className="h-full"> */}
+              <div className="space-y-4 overflow-auto">
+        
                 {/* 文件内容展示区域 */}
                 <FileContentViewer
                   currentFile={currentFile ?? null}
                   handleChange={handleChange}
                 />
               </div>
-            </ScrollArea>
+            {/* </ScrollArea> */}
           </TabsContent>
         ))}
       </Tabs>

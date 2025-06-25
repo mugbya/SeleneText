@@ -62,7 +62,8 @@ export default function Layout() {
   console.log("[Layout] projectOpenFiles: %o", projectOpenFiles);
 
   return (
-    <div className="flex flex-col h-screen bg-background text-foreground">
+    <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden">
+    {/* <div className="flex flex-col h-screen bg-background text-foreground">  */}
       <Header toggleLeft={toggleLeftPanel} toggleRight={toggleRightPanel} />
 
       {/* 消息提示 */}
@@ -87,8 +88,7 @@ export default function Layout() {
         />
       )}
 
-      {/*<div className="flex flex-1 overflow-hidden">*/}
-      <div className="flex flex-1">
+      <div className="flex flex-1 overflow-hidden pt-2">
         {/* 最左侧菜单栏 */}
         <MenuPanel
           openSettings={() => setShowRightPanel(true)}
@@ -100,7 +100,7 @@ export default function Layout() {
         )} */}
 
         {/* {!isSettingsMode && ( */}
-        <PanelGroup direction="horizontal" className="flex-1">
+        <PanelGroup direction="horizontal" className="flex-1 overflow-scroll">
           <Panel
             ref={leftPanelRef}
             minSize={10}
@@ -108,7 +108,9 @@ export default function Layout() {
             collapsible
             onCollapse={() => setShowLeftPanel(false)}
             onExpand={() => setShowLeftPanel(true)}
-            className="border border-zinc-300 rounded-md overflow-hidden"
+            className="flex flex-col h-full border border-zinc-300 rounded-md overflow-hidden"
+            // className="flex flex-col h-full border border-zinc-300 rounded-md overflow-scroll"
+            // className="border border-zinc-300 rounded-md "
           >
             {/* 工作区域 - 放目录树 - 避免空projectRootPath路径时渲染 WorkSpaceTreePanel 组件 */}
             {projectRootPath && (
@@ -119,15 +121,17 @@ export default function Layout() {
                 folderTree={folderTree}
               />
             )}
+            
           </Panel>
 
-          <PanelResizeHandle className="w-1 cursor-col-resize" />
+          <PanelResizeHandle className="w-1 cursor-col-resize overflow-scroll" />
 
           {/* 工作区域 - 放文件内容 */}
-          <Panel minSize={30}>
-            <MainContentTabs
-              projectId={projectId?? null}
-            />
+          <Panel 
+            minSize={30}
+            className="flex flex-col flex-1 h-full overflow-hidden"
+          >
+            <MainContentTabs projectId={projectId?? null} />
           </Panel>
 
           {/* 右侧面板 */}

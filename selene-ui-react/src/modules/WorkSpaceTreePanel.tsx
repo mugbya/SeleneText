@@ -48,7 +48,7 @@ function WorkSpaceTreePanel({
   };
 
   return (
-    <div className="left-panel p-2 space-y-2 text-sm h-full overflow-y-auto">
+    <div className="flex-1 left-panel p-2 space-y-2 text-sm h-full overflow-y-auto">
       <FileTree
         projectId={projectId}
         folderPath={rootPath}

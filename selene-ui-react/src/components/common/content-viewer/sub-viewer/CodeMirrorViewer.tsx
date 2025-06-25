@@ -22,7 +22,6 @@ export default function CodeMirrorViewer({
           // basicSetup={{
           //   lineNumbers: true,
           //   highlightActiveLine: true,
-          //   lineWrapping: false, // ✅ 禁用自动换行，允许横向滚动
           // }}
           basicSetup={true} // 或直接设为 true 使用默认配置
           editable={editable}
