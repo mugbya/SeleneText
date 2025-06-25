@@ -4,6 +4,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogFooter,
+    DialogDescription,
   } from "@/components/ui/dialog";
   import { Button } from "@/components/ui/button";
   
@@ -23,8 +24,11 @@ import {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>确认删除</DialogTitle>
+            <DialogDescription>
+              <div>确定要删除「{name}」吗？此操作不可恢复。</div>
+            </DialogDescription>
           </DialogHeader>
-          <div>确定要删除「{name}」吗？此操作不可恢复。</div>
+          {/* <div>确定要删除「{name}」吗？此操作不可恢复。</div> */}
           <DialogFooter>
             <Button variant="outline" onClick={onClose}>
               取消

@@ -16,7 +16,7 @@ type DialogType = "create" | "rename" | "delete" | null;
  * @returns 
  */
 // export function useTreeNode(node: FileNode, selectedPath?: string, onFileClick?: (path: string) => void) {
-export function useTreeNode(node: FileNode, selectedPath?: string) {
+export function useTreeNode(rootPath: string, node: FileNode, selectedPath?: string) {
   const [expanded, setExpanded] = useState(false);
   const [dialog, setDialog] = useState<DialogType>(null);
   const [newType, setNewType] = useState<"file" | "folder">("file");
@@ -64,7 +64,7 @@ export function useTreeNode(node: FileNode, selectedPath?: string) {
 
     if (res?.success) {
       toast.success(`${newType === "file" ? "文件" : "文件夹"}创建成功`);
-      window.electronAPI.send("refresh-folder", node.path);
+      window.electronAPI.send("refresh-folder", rootPath ); // 刷新文件夹需要给项目的根路径
       closeDialog();
     } else {
       toast.error("创建失败");
@@ -92,9 +92,9 @@ export function useTreeNode(node: FileNode, selectedPath?: string) {
     const res = await window.electronAPI.deletePath(node.path);
     if (res.success) {
       toast.success("已删除");
-      const parentPath = node.path.substring(0, node.path.lastIndexOf("/"));
-      console.log("[useTreeNode] parentPath", parentPath)
-      window.electronAPI.send("refresh-folder", parentPath);
+      // const parentPath = node.path.substring(0, node.path.lastIndexOf("/"));
+      // console.log("[useTreeNode] parentPath", parentPath)
+      window.electronAPI.send("refresh-folder", rootPath ); // 刷新文件夹需要给项目的根路径
 
       const {
         removeOrphanFile,

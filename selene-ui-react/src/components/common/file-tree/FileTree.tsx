@@ -26,7 +26,7 @@ export default function FileTree({
       {/*{nodes.map((node) => (*/}
       <TreeNode
         projectId={projectId}
-        key={folderPath}
+        rootPath={folderPath}
         node={folderTree}
         onFileClick={onFileClick}
         activeFilePath={activeFilePath}

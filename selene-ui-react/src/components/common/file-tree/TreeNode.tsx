@@ -17,11 +17,13 @@ import { useProjectsStore } from "@/store/useProjectStore";
  */
 const TreeNode = React.memo(function TreeNode({
   projectId,
+  rootPath,
   node,
   activeFilePath,
   onFileClick,
 }: {
   projectId: string;
+  rootPath:string;
   node: FileNode;
   activeFilePath?: string;
   onFileClick: (projectId: string, filePath: string) => void;
@@ -47,7 +49,7 @@ const TreeNode = React.memo(function TreeNode({
     handleRename,
 
     handleDelete,
-  } = useTreeNode(node, activeFilePath);
+  } = useTreeNode(rootPath, node, activeFilePath);
 
 //   console.log("TreeNode: ", node);
 
@@ -114,6 +116,7 @@ const TreeNode = React.memo(function TreeNode({
             // <li key={child.path}>{child.path} - {child.name}</li>
             <TreeNode
               projectId={projectId}
+              rootPath={rootPath}
               key={child.path}
               node={child}
               activeFilePath={activeFilePath}
