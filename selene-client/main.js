@@ -13,10 +13,17 @@ let pythonProcess
 // 避免  Electron / Chromium 在初始化图形（GPU）渲染环境时的 OpenGL 或 EGL 报错
 app.disableHardwareAcceleration(); // 👈 加这一行
 
+const isDev = !app.isPackaged;
+// 提前设置！⚠️一定在其他任何地方用 app.getPath 之前调用！
+const userDataDir = isDev
+  ? path.join(app.getPath("appData"), "SeleneText-dev")
+  : path.join(app.getPath("appData"), "SeleneText");
+// 隔离不同环境的 localStorage / 渲染进程缓存
+app.setPath("userData", userDataDir);
 
 app.whenReady().then(() => {
   console.log('✅ Electron App Ready');
-
+  console.log("实际使用的 userData 路径:", app.getPath("userData"));
   registerAllIpcHandlers();
   // const venvPythonPath = path.join(__dirname, '../selene-server/.venv/bin/python')  // ⬅️ macOS/Linux
 

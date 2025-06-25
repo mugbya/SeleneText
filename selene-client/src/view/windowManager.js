@@ -5,6 +5,7 @@ const { buildAppMenu } = require(path.join(global.__root, 'src/view/menu/buildMe
 let mainWindow = null;
 const isDev = !app.isPackaged;
 
+
 /**
  * 创建主窗口
  */
@@ -16,6 +17,7 @@ function createMainWindow() {
         minHeight: 600,
         show: false, // 等 ready-to-show 再显示
         webPreferences: {
+            // partition: isDev ? 'persist:SeleneText-dev' : 'persist:SeleneText-prod',
             preload: path.join(__dirname, '../../preload.js'),
             contextIsolation: true,  // ✅ 开启上下文隔离
             nodeIntegration: false,  // ✅ 禁用 Node 集成
@@ -24,6 +26,7 @@ function createMainWindow() {
         },
         title: "Selene Text"
     });
+
 
     if (isDev) {
         // 仅开发时动态注入 CSP
@@ -42,9 +45,6 @@ function createMainWindow() {
         //     }
         //   });
 
-        // 隔离不同环境的 localStorage / 渲染进程缓存
-        app.setPath("userData", path.join(app.getPath("appData"), mainWindow.title.concat("-dev")));
-        console.log("userData: ", app.getPath("userData"));
         mainWindow.loadURL('http://localhost:5173'); // ✅ 重要 开发时加载 Vite，本地页面
         mainWindow.webContents.openDevTools();
     } else {
