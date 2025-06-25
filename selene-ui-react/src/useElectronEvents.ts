@@ -20,7 +20,8 @@ export function useElectronEvents() {
     console.log("[useElectronEvents] load-folder folder: ", folder);
     const exists = Object.values(projects ?? {}).some(item => item.rootPath === folder.basePath);
     if (exists) {
-      toast.info("项目已经被打开"); // 你用的 UI 通知组件
+      folderChangedHandler(folder);
+      // toast.info("项目已经被打开"); // 你用的 UI 通知组件
     } else {
       console.log("新增文件夹.....");
       addProject(folder);
