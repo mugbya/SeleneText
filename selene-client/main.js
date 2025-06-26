@@ -6,7 +6,7 @@ const path = require('path')
 global.__root = app.getAppPath(); // 一般返回项目根目录，放到导入其他模块前面
 const { registerAllIpcHandlers } = require(path.join(global.__root, 'src/ipc'));        // 所有 ipc 处理器
 const { createMainWindow } = require(path.join(global.__root, 'src/view/windowManager'));
-
+const { restoreWatchedFolders } = require(path.join(global.__root, 'src/data/state'));
 
 let pythonProcess
 
@@ -41,6 +41,9 @@ app.whenReady().then(() => {
   // createWindow()
 
   const win = createMainWindow('zh');
+
+  // 窗口 ready 后恢复监听的文件夹
+  restoreWatchedFolders(win);
 });
 
 

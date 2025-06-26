@@ -3,10 +3,9 @@ const { throttle } = require('lodash');
 const { app, BrowserWindow } = require('electron');
 const chokidarLib = require('chokidar'); // ✅ 只写一次
 const { readDirRecursive } = require(path.join(global.__root, 'src/utils/fsUtils'));
-const watchers = new Map(); // ✅ JS 里不写泛型
+const folderWatchers = new Map(); // ✅ JS 里不写泛型 允许动态 watch 多个文件夹 防止重复监听
 
 const isDev = !app.isPackaged;
-const myTag = isDev ? '.dev_' : '.prod_';
 const ignoreTag = isDev ? '.prod_' : '.dev_';
 const logTag = isDev ? '[DEV]' : '[PROD]';
 
@@ -15,8 +14,10 @@ const logTag = isDev ? '[DEV]' : '[PROD]';
  * @param {BrowserWindow} window - Electron 窗口
  */
 function watchFolder(folderPath, window) {
-  if (watchers.has(folderPath)) {
-    watchers.get(folderPath).close();
+  // console.log('[watchFolder] 📁 已经监听的文件夹数据: ', folderWatchers);
+  console.log(`[watchFolder] ${logTag} 监听文件夹: ${folderPath}`);
+  if (folderWatchers.has(folderPath)) {
+    folderWatchers.get(folderPath).close();
   }
 
   const watcher = chokidarLib.watch(folderPath, {
@@ -55,7 +56,7 @@ function watchFolder(folderPath, window) {
   watcher.on('addDir', throttledSendUpdate);
   watcher.on('unlinkDir', throttledSendUpdate);
 
-  watchers.set(folderPath, watcher);
+  folderWatchers.set(folderPath, watcher);
 }
 
 module.exports = {

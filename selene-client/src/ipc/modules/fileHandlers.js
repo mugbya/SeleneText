@@ -3,7 +3,7 @@ const { dialog, ipcMain, BrowserWindow } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const { readDirRecursive } = require(path.join(global.__root, 'src/utils/fsUtils'));
-const { addRoot, removeRoot, getRoots } = require(path.join(global.__root, 'src/ipc/data/state'));
+const { addRoot, removeRoot, getRoots } = require(path.join(global.__root, 'src/data/state'));
 
 // 加一个 delay 函数
 function delay(ms) {

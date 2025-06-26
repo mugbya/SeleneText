@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
-const { dialog, BrowserWindow, ipcMain } = require('electron');
+const { dialog, BrowserWindow } = require('electron');
 const { watchFolder } = require(path.join(global.__root, 'src/utils/watchFolder'));
 const { readDirRecursive } = require(path.join(global.__root, 'src/utils/fsUtils'));
-const { addRoot, getRoots } = require(path.join(global.__root, 'src/ipc/data/state'));
+const { addRoot } = require(path.join(global.__root, 'src/data/state'));
 const i18n = require(path.join(global.__root, 'src/i18n/i18n.main.js'));
 
 /**
@@ -75,6 +75,7 @@ function createFileMenu(win) {
             });
 
             // 监听文件夹变化
+            console.log('监听文件夹变化:', dirPath);
             watchFolder(dirPath, win);
           }
         }

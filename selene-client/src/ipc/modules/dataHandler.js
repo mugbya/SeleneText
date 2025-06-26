@@ -1,7 +1,7 @@
-const { contextBridge, ipcMain } = require('electron')
-// const Store = require('electron-store')
-const Store = require('electron-store').default
-const store = new Store({ name: 'SeleneText-store' })
+const path = require("path");
+const { ipcMain } = require('electron')
+const { store } = require(path.join(global.__root, 'src/data/state'));
+
 
 function registerDataHandlers() {
 
@@ -14,8 +14,8 @@ function registerDataHandlers() {
         store.set('projectsData', data)
         return true
     })
-
 }
+
 module.exports = {
     registerDataHandlers,
 }

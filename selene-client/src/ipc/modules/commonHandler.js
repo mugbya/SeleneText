@@ -1,4 +1,4 @@
-const { dialog, ipcMain, BrowserWindow } = require('electron');
+const { ipcMain, BrowserWindow } = require('electron');
 const path = require('path');
 const fs = require("fs");
 const { getMainWindow } = require(path.join(global.__root, 'src/view/windowManager'));
