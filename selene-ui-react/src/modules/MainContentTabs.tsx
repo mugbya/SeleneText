@@ -91,7 +91,7 @@ export default function MainContentTabs({
   );
 
   return (
-    <main className="flex flex-col flex-1 h-full ">
+    <main className="flex flex-col flex-1 h-full pr-1.5">
       {/* 标签页 */}
       <Tabs
         value={activeFile || ""}
@@ -159,7 +159,7 @@ export default function MainContentTabs({
           <TabsContent
             key={file.path}
             value={file.path}
-            className="flex-1 flex flex-col h-full overflow-auto pb-3 pr-3 bg-muted rounded"
+            className="flex-1 flex flex-col h-full overflow-auto  pb-3 pr-0 border border-[var(--color-border)] rounded-[var(--radius)]"
             // className="flex-1 flex flex-col h-full overflow-auto bg-muted rounded"
           >
             {/* <div className="p-3 pl-12">

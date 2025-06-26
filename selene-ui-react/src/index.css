@@ -259,3 +259,14 @@ button:focus-visible {
   border: 1px solid #ccc;
   padding: 8px;
 }
+
+
+/* // 上 右 下 左 */
+.milkdown .ProseMirror {
+  /* border: var(--radius) solid var(--color-border); */
+  /* border: 1px solid var(--color-border);   实线边框
+  border-radius: var(--radius);            圆角 */
+  padding: 1px 10px 1px 80px !important; 
+  background-color: white;
+  font-size: 1rem;
+}
