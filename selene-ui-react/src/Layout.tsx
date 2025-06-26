@@ -3,7 +3,7 @@ import WorkSpaceTreePanel from "./modules/WorkSpaceTreePanel";
 import MainContentTabs from "./modules/MainContentTabs";
 import RightPanel from "./modules/RightPanel";
 import Footer from "./modules/Footer";
-import MenuPanel from "@/modules/MenuPanel";
+import MenuPanel from "./modules/MenuPanel";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { useRef } from "react";
 import type { ImperativePanelHandle } from "react-resizable-panels";
@@ -12,6 +12,7 @@ import { useElectronEvents } from "./useElectronEvents";
 import { usePanelsStore } from "./store/panelsStore";
 import { Toaster } from "sonner";
 import { useProjectsStore } from "./store/useProjectStore";
+import React from "react";
 
 export default function Layout() {
   useElectronEvents();
@@ -24,10 +25,8 @@ export default function Layout() {
   const closeProject = useProjectsStore((s) => s.closeProject); // 如果你在用
   const switchProject = useProjectsStore((s) => s.switchProject);
 
-
-
   // Panels 状态
-  //  const showLeftPanel = usePanelsStore((s) => s.showLeftPanel);
+  const showLeftPanel = usePanelsStore((s) => s.showLeftPanel);
   const showRightPanel = usePanelsStore((s) => s.showRightPanel);
   //  const rightMode = usePanelsStore((s) => s.rightMode);
   const toggleLeftPanel = usePanelsStore((s) => s.toggleLeftPanel);
@@ -39,7 +38,7 @@ export default function Layout() {
 
   const projectId = activeProject?.id;
   const projectRootPath = activeProject?.rootPath;
-  // const projectName = activeProject?.name;
+
   const projectOpenFiles = activeProject?.openFiles;
   const projectActiveFilePath = activeProject?.lastActiveFile;
 
@@ -49,7 +48,7 @@ export default function Layout() {
   renderCount.current += 1;
   console.log("\n[Layout] 执行渲染 count:", renderCount.current);
 
-  const projectsLength = Object.values(projects).length ;
+  const projectsLength = Object.values(projects).length;
   // 只有多个项目时才显示标签页
   const shouldShowProjectTabs = projectsLength > 1;
 
@@ -62,8 +61,7 @@ export default function Layout() {
   console.log("[Layout] projectOpenFiles: %o", projectOpenFiles);
 
   return (
-    <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden">
-    {/* <div className="flex flex-col h-screen bg-background text-foreground">  */}
+    <div className="flex flex-col h-screen bg-background text-foreground ">
       <Header toggleLeft={toggleLeftPanel} toggleRight={toggleRightPanel} />
 
       {/* 消息提示 */}
@@ -100,46 +98,62 @@ export default function Layout() {
         )} */}
 
         {/* {!isSettingsMode && ( */}
-        <PanelGroup direction="horizontal" className="flex-1 overflow-scroll">
-          <Panel
-            ref={leftPanelRef}
-            minSize={10}
-            defaultSize={20}
-            collapsible
-            onCollapse={() => setShowLeftPanel(false)}
-            onExpand={() => setShowLeftPanel(true)}
-            className="flex flex-col h-full border border-zinc-300 rounded-md overflow-hidden"
-            // className="flex flex-col h-full border border-zinc-300 rounded-md overflow-scroll"
-            // className="border border-zinc-300 rounded-md "
-          >
-            {/* 工作区域 - 放目录树 - 避免空projectRootPath路径时渲染 WorkSpaceTreePanel 组件 */}
-            {projectRootPath && (
-              <WorkSpaceTreePanel
-                projectId={projectId??null}
-                activeFilePath={projectActiveFilePath ?? null}
-                rootPath={projectRootPath}
-                folderTree={folderTree}
+        <PanelGroup id="panelGroup" direction="horizontal" className="flex-1">
+          {showLeftPanel ? (
+            <>
+              <Panel
+                id="left"
+                order={0}
+                // onResize={(size) => console.log("Left panel size:", size)}
+                ref={leftPanelRef}
+                minSize={10}
+                defaultSize={20}
+                collapsible
+                onCollapse={() => setShowLeftPanel(false)}
+                onExpand={() => setShowLeftPanel(true)}
+                className="border border-zinc-300 rounded-md overflow-hidden"
+              >
+                {/* 工作区域 - 放目录树 - 避免空projectRootPath路径时渲染 WorkSpaceTreePanel 组件 */}
+                {projectRootPath && (
+                  <div className="flex flex-col h-full">
+                    <WorkSpaceTreePanel
+                      projectId={projectId ?? null}
+                      activeFilePath={projectActiveFilePath ?? null}
+                      rootPath={projectRootPath}
+                      folderTree={folderTree}
+                    />
+                  </div>
+                )}
+              </Panel>
+              <PanelResizeHandle
+                id="resize-left"
+                className="w-1 cursor-col-resize"
               />
-            )}
-            
-          </Panel>
-
-          <PanelResizeHandle className="w-1 cursor-col-resize overflow-scroll" />
+            </>
+          ) : null}
 
           {/* 工作区域 - 放文件内容 */}
-          <Panel 
+          <Panel
+            id="main"
+            order={2} // 明确设置order
+            // onResize={(size) => console.log("Left panel size:", size)}
             minSize={30}
-            className="flex flex-col flex-1 h-full overflow-hidden"
           >
-            <MainContentTabs projectId={projectId?? null} />
+            <MainContentTabs projectId={projectId ?? null} />
           </Panel>
 
           {/* 右侧面板 */}
           {/* {showRightPanel && !isSettingsMode && ( */}
-          {showRightPanel && (
+          {showRightPanel ? (
             <>
-              <PanelResizeHandle className="w-1 cursor-col-resize" />
+              <PanelResizeHandle
+                id="resize-right"
+                className="w-1 cursor-col-resize"
+              />
               <Panel
+                id="right"
+                order={3} // 明确设置order
+                // onResize={(size) => console.log("Left panel size:", size)}
                 className="border border-zinc-300 rounded-md overflow-hidden overflow-y-auto"
                 minSize={10}
                 defaultSize={25}
@@ -147,10 +161,12 @@ export default function Layout() {
                 onCollapse={() => setShowRightPanel(false)}
                 onExpand={() => setShowRightPanel(true)}
               >
-                <RightPanel />
+                <div className=" h-full overflow-hidden">
+                  <RightPanel />
+                </div>
               </Panel>
             </>
-          )}
+          ) : null}
         </PanelGroup>
         {/* )} */}
       </div>

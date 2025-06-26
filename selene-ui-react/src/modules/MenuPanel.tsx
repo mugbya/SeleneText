@@ -1,5 +1,6 @@
 import { Home, Search, Settings, Folder } from 'lucide-react';
 import {MenuPanelProps} from '@/types';
+import React from 'react';
 
 
 
@@ -27,7 +28,7 @@ export default function MenuPanel({ openSettings, toggleLeft }: MenuPanelProps) 
                 <button
                     // onClick={() => setShowLeftPanel(true)}
                     onClick={toggleLeft}
-                    title="打开文件夹"
+                    title="打开文件夹树形结构"
                     className="hover:bg-accent p-2 rounded"
                 >
                     <Folder className="w-6 h-6" />

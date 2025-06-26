@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 
-
 type RightMode = "normal" | "settings";
 
 interface PanelsState {
@@ -24,7 +23,20 @@ export const usePanelsStore = create<PanelsState>((set) => ({
   setRightMode: (mode) => set({ rightMode: mode }),
 
   toggleLeftPanel: () =>
-    set((state) => ({ showLeftPanel: !state.showLeftPanel })),
+    set((state) => ({
+      showLeftPanel: !state.showLeftPanel
+     })),
+
+  // toggleLeftPanel: () => {
+  //   set((state) => {
+  //     const showLeftPanel = state.showLeftPanel;
+  //     console.log("[usePanelsStore] toggleLeftPanel", showLeftPanel);
+  //     return {
+  //       showLeftPanel: !showLeftPanel,
+  //       // showRightPanel: !showLeftPanel,
+  //     };
+  //   });
+  // },
 
   toggleRightPanel: () =>
     set((state) => ({
