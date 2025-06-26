@@ -162,21 +162,22 @@ export default function MainContentTabs({
             className="flex-1 flex flex-col h-full overflow-auto pb-3 pr-3 bg-muted rounded"
             // className="flex-1 flex flex-col h-full overflow-auto bg-muted rounded"
           >
-            <div className="p-3 pl-12">
-            <h2 className="w-full text-base font-semibold text-muted-foreground text-left">
+            {/* <div className="p-3 pl-12">
+                <h2 className="w-full text-base font-semibold text-muted-foreground text-left">
                   {file.path}
                 </h2>
-            </div>
+            </div> */}
                 
             {/* <ScrollArea className="h-full"> */}
-              <div className="space-y-4 overflow-auto">
+              {/* <div className="space-y-4 overflow-auto"> */}
         
                 {/* 文件内容展示区域 */}
                 <FileContentViewer
+                  filePath={file.path}
                   currentFile={currentFile ?? null}
                   handleChange={handleChange}
                 />
-              </div>
+              {/* </div> */}
             {/* </ScrollArea> */}
           </TabsContent>
         ))}

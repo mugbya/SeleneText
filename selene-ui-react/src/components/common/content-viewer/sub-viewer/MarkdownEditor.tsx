@@ -13,8 +13,10 @@ import { cursor } from "@milkdown/plugin-cursor";
 import { block, blockConfig } from "@milkdown/plugin-block";
 import "@milkdown/crepe/theme/common/style.css";
 import "@milkdown/crepe/theme/frame.css";
+import { useMarkdownStore } from "@/store/userMarkdownStore";
 
 interface CrepeEditorProps {
+  mode: "wysiwyg" | "source";
   value: string;
   onChange: (val: string) => void;
 }
@@ -80,41 +82,44 @@ export const CrepeEditor = forwardRef<CrepeEditorHandle, CrepeEditorProps>(
 );
 
 export const MilkdownEditorWrapper: React.FC<CrepeEditorProps> = ({
+  mode,
   value,
   onChange,
 }) => {
   // 切换模式状态
-  const [mode, setMode] = useState<"wysiwyg" | "source">("wysiwyg");
-  // 编辑器实例引用，方便外部调用同步方法
-  const crepeRef = useRef<CrepeEditorHandle>(null);
-  // Markdown 源码字符串（作为数据源）
-  const [markdown, setMarkdown] = useState(value);
+  // const [mode, setMode] = useState<"wysiwyg" | "source">("wysiwyg");
+  // // 编辑器实例引用，方便外部调用同步方法
+  // const crepeRef = useRef<CrepeEditorHandle>(null);
+  // // Markdown 源码字符串（作为数据源）
+  // const [markdown, setMarkdown] = useState(value);
 
-  // 切换到源码模式时，不需要额外操作（内容已实时同步）
-  const switchToSource = () => {
-    setMode("source");
-  };
+  // // 切换到源码模式时，不需要额外操作（内容已实时同步）
+  // const switchToSource = () => {
+  //   setMode("source");
+  // };
 
-  const switchToWysiwyg = async () => {
-    if (crepeRef.current) {
-      await crepeRef.current.replaceContent(markdown);
-    }
-    setMode("wysiwyg");
-  };
-
+  // const switchToWysiwyg = async () => {
+  //   if (crepeRef.current) {
+  //     await crepeRef.current.replaceContent(markdown);
+  //   }
+  //   setMode("wysiwyg");
+  // };
+  const {markdown, setMarkdown, crepeRef} = useMarkdownStore(value);
   return (
     <MilkdownProvider>
-      <button
+      <div className="pl-10 items-center">
+      {/* <button
         onClick={() => {
           if (mode === "wysiwyg") switchToSource();
           else switchToWysiwyg();
         }}
       >
         切换到 {mode === "wysiwyg" ? "源码" : "即时"} 模式
-      </button>
+      </button> */}
+      </div>
 
       {mode === "wysiwyg" ? (
-        <CrepeEditor value={value} onChange={onChange} ref={crepeRef} />
+        <CrepeEditor mode={mode} value={value} onChange={onChange} ref={crepeRef} />
       ) : (
         <textarea
           value={markdown}
