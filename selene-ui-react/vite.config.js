@@ -1,8 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from "@tailwindcss/vite";
-import path from 'path' // <-- 需要引入 path 模块
 import csp from 'vite-plugin-csp';
+import { fileURLToPath } from 'url'
+import { dirname, resolve } from 'path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+console.log("[vite.config.ts] __dirname: ", __dirname);
+
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -23,12 +29,12 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'), // <-- 关键配置
+      '@': resolve(__dirname, 'src'), // <-- 关键配置
     },
   },
   base: './', // ✅ 避免路径丢失
   build: {
-    outDir: path.resolve(__dirname, '../selene-client/renderer'), // <-- 指向 Electron 主进程目录
+    outDir: resolve(__dirname, '../selene-client/renderer'), // <-- 指向 Electron 主进程目录
     emptyOutDir: true
   },
 
