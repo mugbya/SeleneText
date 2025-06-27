@@ -5,6 +5,7 @@ import { getFileType } from "@/utils/fileUtil";
 import React from "react";
 import { ImagePreview } from "./sub-viewer/ImagePreview";
 import { useMarkdownStore } from "@/store/userMarkdownStore";
+import { useProjectsStore } from "@/store/useProjectStore";
 
 interface FileContentViewerProps {
   filePath: string;
@@ -24,9 +25,12 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
 
   switch (fileType) {
     case "markdown":
-      const { mode, switchToSource, switchToWysiwyg } = useMarkdownStore(
+      const { switchToSource, switchToWysiwyg } = useMarkdownStore(
         currentFile.content
       );
+      const { activeProjectId, setFileModeForProject } = useProjectsStore();
+      const mode = currentFile?.mode ?? "wysiwyg";
+
       return (
         <>
           <div className="flex items-center pl-4 border-b border-b-[var(--color-border)] rounded-[var(--radius)]">
@@ -34,10 +38,11 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
               {filePath}
             </h2>
             <button
-              className="ml-50 px-4 py-2 text-black bg-gray-50 hover:bg-orange-400 rounded shadow"
+              className="ml-auto px-4 py-2 text-black bg-gray-50 hover:bg-orange-400 rounded shadow"
               onClick={() => {
                 if (mode === "wysiwyg") switchToSource();
                 else switchToWysiwyg();
+                setFileModeForProject(activeProjectId, currentFile.path, mode === 'wysiwyg' ? 'source' : 'wysiwyg');
               }}
             >
               切换到 {mode === "wysiwyg" ? "源码" : "即时"} 模式
@@ -46,7 +51,6 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
           </div>
 
           <div className="flex-1 flex flex-col h-full overflow-y-auto text-left">
-            {/* <div className="w-full h-[70vh] resize-none font-mono text-sm text-left"> */}
             <MilkdownEditorWrapper
               mode={mode}
               value={currentFile.content}

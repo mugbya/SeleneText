@@ -27,6 +27,7 @@ export function useUnifiedFileChangeHandler({
 }) {
   const onChange = useCallback(
     (newContent: string) => {
+      console.log("[useUnifiedFileChangeHandler] 监听到文件变动");
       if (activeProject && projectId && activeProject.lastActiveFile) {
         changeFileContentForProject(projectId, activeProject.lastActiveFile, newContent);
       } else if (activeOrphanFile) {

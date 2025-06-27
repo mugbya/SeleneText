@@ -31,9 +31,14 @@ interface ProjectsStore {
     setActiveFileForProject: (projectId: string | null, filepath: string | null) => void;
     closeFileForProject: (projectId: string | null, filePath: string) => void;
 
+    // 目录树的展开收起
     toggleExpanded: (path: string) => void;
     setExpanded: (path: string, expanded: boolean) => void;
     resetExpanded: () => void;
+
+    // markdown文件处理
+    setFileModeForProject: (projectId: string | null, filePath: string, mode: 'source' | 'wysiwyg') => void;
+    setMarkdownForFile: (projectId: string | null, filePath: string, markdown: string) => void;
 
     /**
      * 临时文件列表
@@ -117,7 +122,7 @@ export const useProjectsStore = create<ProjectsStore>()(
             closeProject: (projectId) => {
                 set((state) => {
                     if (!projectId) return {};
-                    
+
                     const newProjects = { ...state.projects };
                     delete newProjects[projectId];
                     const newActiveId =
@@ -307,6 +312,52 @@ export const useProjectsStore = create<ProjectsStore>()(
                         f.path === filePath ? { ...f, content } : f
                     ),
                 })),
+                
+            setFileModeForProject: (projectId, filePath, mode) => {
+                set((state) => {
+                    if (!projectId) return {};
+
+                    const project = state.projects[projectId];
+                    if (!project) return {};
+
+                    const updatedFiles = project.openFiles.map((f) =>
+                        f.path === filePath ? { ...f, mode } : f
+                    );
+
+                    return {
+                        projects: {
+                            ...state.projects,
+                            [projectId]: {
+                                ...project,
+                                openFiles: updatedFiles,
+                            },
+                        },
+                    };
+                });
+            },
+
+            setMarkdownForFile: (projectId, filePath, markdown) => {
+                set((state) => {
+                    if (!projectId) return {};
+
+                    const project = state.projects[projectId];
+                    if (!project) return {};
+
+                    const updatedFiles = project.openFiles.map((f) =>
+                        f.path === filePath ? { ...f, markdown } : f
+                    );
+
+                    return {
+                        projects: {
+                            ...state.projects,
+                            [projectId]: {
+                                ...project,
+                                openFiles: updatedFiles,
+                            },
+                        },
+                    };
+                });
+            },
         }),
         {
             name: 'projects-store', // localStorage key

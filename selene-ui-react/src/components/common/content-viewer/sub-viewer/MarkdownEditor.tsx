@@ -14,13 +14,13 @@ import { block, blockConfig } from "@milkdown/plugin-block";
 import "@milkdown/crepe/theme/common/style.css";
 import "@milkdown/crepe/theme/frame.css";
 import { useMarkdownStore } from "@/store/userMarkdownStore";
+import { useProjectsStore } from "@/store/useProjectStore";
 
 interface CrepeEditorProps {
   mode: "wysiwyg" | "source";
   value: string;
   onChange: (val: string) => void;
 }
-
 
 export interface CrepeEditorHandle {
   replaceContent: (content: string) => void;
@@ -31,6 +31,17 @@ export const CrepeEditor = forwardRef<CrepeEditorHandle, CrepeEditorProps>(
     const editorContainerRef = useRef<HTMLDivElement>(null);
     const crepeRef = useRef<Crepe | null>(null);
     const [ready, setReady] = useState(false);
+
+    const {
+      projects,
+      activeProjectId,
+      setMarkdownForFile,
+    } = useProjectsStore();
+    const currentProject = projects[activeProjectId!];
+    const currentFile = currentProject?.openFiles.find(
+      (f) => f.path === currentProject.lastActiveFile
+    );
+    if (!currentFile) return null;
 
     useEffect(() => {
       const root = editorContainerRef.current;
@@ -47,6 +58,8 @@ export const CrepeEditor = forwardRef<CrepeEditorHandle, CrepeEditorProps>(
             filterNodes: () => true,
           });
           ctx.get(listenerCtx).markdownUpdated((_, md) => {
+            console.log("[CrepeEditor] markdownUpdated: ", md);
+            setMarkdownForFile(activeProjectId, currentFile.path, md);
             onChange(md);
           });
         })
@@ -71,13 +84,7 @@ export const CrepeEditor = forwardRef<CrepeEditorHandle, CrepeEditorProps>(
       },
     }));
 
-    return (
-      <div
-        ref={editorContainerRef}
-        className="milkdown-editor-root"
-        // style={{ minHeight: 400, border: "1px solid #ccc", padding: 8 }}
-      />
-    );
+    return <div ref={editorContainerRef} className="milkdown-editor-root" />;
   }
 );
 
@@ -86,46 +93,43 @@ export const MilkdownEditorWrapper: React.FC<CrepeEditorProps> = ({
   value,
   onChange,
 }) => {
-  // 切换模式状态
-  // const [mode, setMode] = useState<"wysiwyg" | "source">("wysiwyg");
-  // // 编辑器实例引用，方便外部调用同步方法
-  // const crepeRef = useRef<CrepeEditorHandle>(null);
-  // // Markdown 源码字符串（作为数据源）
-  // const [markdown, setMarkdown] = useState(value);
+  const { crepeRef } = useMarkdownStore(value);
 
-  // // 切换到源码模式时，不需要额外操作（内容已实时同步）
-  // const switchToSource = () => {
-  //   setMode("source");
-  // };
+  const { projects, activeProjectId, setMarkdownForFile } = useProjectsStore();
+  const currentProject = projects[activeProjectId!];
+  const currentFile = currentProject?.openFiles.find(
+    (f) => f.path === currentProject.lastActiveFile
+  );
+  if (!currentFile) return null;
 
-  // const switchToWysiwyg = async () => {
-  //   if (crepeRef.current) {
-  //     await crepeRef.current.replaceContent(markdown);
-  //   }
-  //   setMode("wysiwyg");
-  // };
-  const {markdown, setMarkdown, crepeRef} = useMarkdownStore(value);
+  const markdown = currentFile?.markdown ?? currentFile?.content ?? "";
+
   return (
     <MilkdownProvider>
-      <div className="pl-10 items-center">
-      {/* <button
-        onClick={() => {
-          if (mode === "wysiwyg") switchToSource();
-          else switchToWysiwyg();
-        }}
-      >
-        切换到 {mode === "wysiwyg" ? "源码" : "即时"} 模式
-      </button> */}
-      </div>
+      <div className="pl-10 items-center"></div>
 
       {mode === "wysiwyg" ? (
-        <CrepeEditor mode={mode} value={value} onChange={onChange} ref={crepeRef} />
+        <CrepeEditor
+          mode={mode}
+          value={value}
+          onChange={onChange}
+          ref={crepeRef}
+        />
       ) : (
         <textarea
           value={markdown}
-          onChange={(e) => setMarkdown(e.target.value)}
+          onChange={(e) => {
+
+            // 保存markdown
+            setMarkdownForFile(
+              activeProjectId,
+              currentFile.path,
+              e.target.value
+            ); 
+            // 调用文件保存函数 保存centent
+            onChange(e.target.value); 
+          }}
           className="w-full h-full resize-none font-mono text-sm text-left pl-5 pt-5 rounded-[var(--radius)]"
-          // style={{ width: "100%", height: 400, fontFamily: "monospace" }}
         />
       )}
     </MilkdownProvider>
