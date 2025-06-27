@@ -159,7 +159,7 @@ export default function MainContentTabs({
           <TabsContent
             key={file.path}
             value={file.path}
-            className="flex-1 flex flex-col h-full overflow-auto  pb-3 pr-0 border border-[var(--color-border)] rounded-[var(--radius)]"
+            className="flex-1 flex flex-col h-full overflow-auto  border border-[var(--color-border)] rounded-[var(--radius)]"
             // className="flex-1 flex flex-col h-full overflow-auto bg-muted rounded"
           >
             {/* <div className="p-3 pl-12">

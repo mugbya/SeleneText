@@ -124,7 +124,8 @@ export const MilkdownEditorWrapper: React.FC<CrepeEditorProps> = ({
         <textarea
           value={markdown}
           onChange={(e) => setMarkdown(e.target.value)}
-          style={{ width: "100%", height: 400, fontFamily: "monospace" }}
+          className="w-full h-full resize-none font-mono text-sm text-left pl-5 pt-5 rounded-[var(--radius)]"
+          // style={{ width: "100%", height: 400, fontFamily: "monospace" }}
         />
       )}
     </MilkdownProvider>
