@@ -1,5 +1,5 @@
 import CodeMirrorViewer from "@/components/common/content-viewer/sub-viewer/CodeMirrorViewer";
-import { MilkdownEditorWrapper } from "@/components/common/content-viewer/sub-viewer/MarkdownEditor";
+import { MilkdownEditorWrapper } from "@/components/common/markdown/MarkdownEditor";
 import { FileTab } from "@/types";
 import { getFileType } from "@/utils/fileUtil";
 import React from "react";

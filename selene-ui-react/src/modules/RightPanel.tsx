@@ -21,7 +21,7 @@ export default function RightPanel() {
     function handleScrollToHeading(slug: string) {
         // console.log("[RightPanel] handleScrollToHeading", slug);
         const el = document.getElementById(slug);
-        console.log("[RightPanel] handleScrollToHeading: ", slug, "el: ", el);
+        // console.log("[RightPanel] handleScrollToHeading: ", slug, "el: ", el);
         if (el) {
             el.scrollIntoView({ behavior: "smooth", block: "start" });
         }
