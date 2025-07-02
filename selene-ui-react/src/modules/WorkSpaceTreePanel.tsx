@@ -48,7 +48,8 @@ function WorkSpaceTreePanel({
   };
 
   return (
-    <div className="flex-1 left-panel p-2 space-y-2 text-sm h-full overflow-y-auto">
+    <div className="flex-1 left-panel p-2 space-y-2 text-sm h-full overflow-y-auto overflow-x-auto whitespace-nowrap">
+      <div className="w-max">
       <FileTree
         projectId={projectId}
         folderPath={rootPath}
@@ -56,6 +57,7 @@ function WorkSpaceTreePanel({
         onFileClick={handlerOpenFile}
         activeFilePath={activeFilePath || ""}
       />
+      </div>
     </div>
   );
 }
