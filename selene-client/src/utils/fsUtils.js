@@ -25,6 +25,10 @@ function readDirRecursive(dirPath, depth = 0, maxDepth = 10) {
   //   console.log("给的是文件: ", dirPath);
   //   return [];
   // }
+  if (!fs.existsSync(dirPath)) {
+    console.log("文件夹不存在: ", dirPath);
+    return [];
+  }
 
   const entries = fs.readdirSync(dirPath, { withFileTypes: true });
 

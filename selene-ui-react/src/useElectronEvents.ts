@@ -8,6 +8,7 @@ export function useElectronEvents() {
 
   const addProject = useProjectsStore((s) => s.addProject);
   const closeProject = useProjectsStore((s) => s.closeProject);
+  const closeProjectByPath = useProjectsStore((s) => s.closeProjectByPath);
   const updateProject = useProjectsStore((s) => s.updateProject);
 
   /**
@@ -34,6 +35,14 @@ export function useElectronEvents() {
   const closeFolderHandler = async () => {
     const { activeProjectId } = useProjectsStore.getState(); // 💥 get 最新状态
     closeProject(activeProjectId);
+  }
+
+  const folderDeletedHandler = async (rootPath: string) => {
+    console.log("[ipcRenderer] folder-deleted:", rootPath);
+    toast.error(`项目目录已被删除：${rootPath}`, {
+      className: "truncate", // 相当于 overflow-hidden + text-ellipsis + whitespace-nowrap
+    });
+    useProjectsStore.getState().closeProjectByPath(rootPath); // 你可以添加这个函数
   }
 
   /**
@@ -110,14 +119,17 @@ export function useElectronEvents() {
     api.on("load-folder", loadFolder); //  监听打开文件夹操作，加载文件夹
     api.on("close-folder", closeFolderHandler);
     api.on("folder-changed", folderChangedHandler);
+    api.on("folder-deleted", folderDeletedHandler);
     api.on("file-save", saveHandler);
 
 
 
     return () => {
-      api.removeAllListeners("file-save");
       api.removeAllListeners("load-folder");
+      api.removeAllListeners("close-folder");
       api.removeAllListeners("folder-changed");
+      api.removeAllListeners("folder-deleted");
+      api.removeAllListeners("file-save");
     };
   }, []);
 }

@@ -22,6 +22,7 @@ interface ProjectsStore {
     updateProject: (projectId: string, updater: (p: ProjectTab) => Partial<ProjectTab>) => void;
     switchProject: (projectId: string) => void;
     closeProject: (projectId: string | null) => void;
+    closeProjectByPath: (rootPath: string | null) => void;
     setActiveProjectId: (projectId: string | null) => void;
     getActiveProject: () => ProjectTab | null;
 
@@ -119,6 +120,23 @@ export const useProjectsStore = create<ProjectsStore>()(
                 return activeProjectId ? projects[activeProjectId] : null;
             },
 
+            closeProjectByPath:(rootPath) => {
+                set((state) => {
+                    const projectId = Object.keys(state.projects).find((id) => state.projects[id].rootPath === rootPath);
+                    if (!projectId) return {};
+                    const newProjects = {...state.projects };
+                    delete newProjects[projectId];
+                    const newActiveId =
+                        state.activeProjectId === projectId
+                           ? Object.keys(newProjects)[0] || null
+                            : state.activeProjectId;
+                    return {
+                        projects: newProjects,
+                        activeProjectId: newActiveId,
+                    }
+                })
+            },
+            
             closeProject: (projectId) => {
                 set((state) => {
                     if (!projectId) return {};

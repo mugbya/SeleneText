@@ -1,9 +1,11 @@
 const path = require('path');
+const fs = require('fs');
 const { throttle } = require('lodash');
 const { app, BrowserWindow } = require('electron');
 const chokidarLib = require('chokidar'); // ✅ 只写一次
 const { readDirRecursive } = require(path.join(global.__root, 'src/utils/fsUtils'));
 const folderWatchers = new Map(); // ✅ JS 里不写泛型 允许动态 watch 多个文件夹 防止重复监听
+const folderCheckIntervals = new Map(); // 在外部维护一个 intervalMap，避免重复定时器
 
 const isDev = !app.isPackaged;
 const ignoreTag = isDev ? '.prod_' : '.dev_';
@@ -57,6 +59,22 @@ function watchFolder(folderPath, window) {
   watcher.on('unlinkDir', throttledSendUpdate);
 
   folderWatchers.set(folderPath, watcher);
+
+   // 👇 添加定期检查目录是否存在
+   const interval = setInterval(() => {
+    if (!fs.existsSync(folderPath)) {
+      console.warn(`[watchFolder] ⚠️ 文件夹已被删除: ${folderPath}`);
+      watcher.close();
+      folderWatchers.delete(folderPath);
+      clearInterval(interval);
+      folderCheckIntervals.delete(folderPath);
+
+      console.log('[watchFolder] 发送文件夹删除通知');
+      window.webContents.send('folder-deleted', folderPath);
+    }
+  }, 3000);
+
+  folderCheckIntervals.set(folderPath, interval);
 }
 
 module.exports = {
