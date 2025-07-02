@@ -5,9 +5,40 @@ const EXCLUDED_FILES = ['.DS_Store'];
 const EXCLUDED_DIRS = ['node_modules', '.git'];
 
 const allowedTextExtensions = [
-  '.txt', '.md', '.json', '.js', '.ts', '.jsx', '.tsx', '.html', '.css', '.scss', '.yml', 
-  '.yaml', '.xml', '.csv', '.env', '.sql', '.ini', '.conf', '.log', '.properties', '.conf', '.cfg', '.ini',
-  '.png', '.jpg', '.svg', '.gif', '.ico', '.webp', '.bmp', '.tif', '.tiff', '.psd',  '.eps', '.raw', '.indd', 
+  // 文本 & 配置类
+  '.txt', '.md', '.json', '.yml', '.yaml', '.xml', '.csv', '.env',
+  '.ini', '.conf', '.cfg', '.log', '.properties',
+
+  // Web 前端
+  '.html', '.css', '.scss', '.js', '.ts', '.jsx', '.tsx',
+
+  // 后端语言
+  '.py',     // Python
+  '.rs',     // Rust
+  '.go',     // Go
+  '.java',   // Java
+  '.c', '.h',           // C
+  '.cpp', '.hpp',       // C++
+  '.cs',                // C# (如果涉及 .NET)
+  '.php',               // PHP
+  '.rb',                // Ruby
+  '.kt', '.kts',        // Kotlin
+
+  // Shell & 脚本
+  '.sh', '.bash', '.zsh', '.bat', '.ps1', '.cmd',
+
+  // 数据库相关
+  '.sql',
+
+  // Makefile & 构建工具
+  '.make', '.mk', 'Makefile', 'Dockerfile', 'CMakeLists.txt',
+
+  // Markdown 相关
+  '.md',
+
+  // 图片预览（如果需要 inline 预览）
+  '.png', '.jpg', '.jpeg', '.svg', '.gif', '.ico',
+  '.webp', '.bmp', '.tif', '.tiff', '.psd', '.eps', '.raw', '.indd',
 ];
 
 function isHidden(name) {

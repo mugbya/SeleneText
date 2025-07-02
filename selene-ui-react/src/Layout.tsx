@@ -10,9 +10,10 @@ import type { ImperativePanelHandle } from "react-resizable-panels";
 import ProjectTabs from "./modules/ProjectTabs";
 import { useElectronEvents } from "./useElectronEvents";
 import { usePanelsStore } from "./store/panelsStore";
-import { Toaster } from "sonner";
+import { toast, Toaster } from "sonner";
 import { useProjectsStore } from "./store/useProjectStore";
 import React from "react";
+import { smartToast } from "./utils/commonUtil";
 
 export default function Layout() {
   useElectronEvents();
@@ -59,13 +60,20 @@ export default function Layout() {
   );
   console.log("[Layout] projectActiveFilePath: %o", projectActiveFilePath);
   console.log("[Layout] projectOpenFiles: %o", projectOpenFiles);
-
+  
+  // smartToast('项目目录已被删除：/Users/mugbya/Desktop/测试删除', 'info');
+  // toast.info(<div className="">项目目录已被删除：/Users/mugbya/Desktop/测试删除</div>, { dismissible: true, closeButton: true })
+  
   return (
     <div className="flex flex-col h-screen bg-background text-foreground ">
       <Header toggleLeft={toggleLeftPanel} toggleRight={toggleRightPanel} />
 
       {/* 消息提示 */}
-      <Toaster position="top-center" richColors />
+      <Toaster
+        position="top-center"
+        richColors
+        duration={30000}
+      />
 
       {/* 项目标签栏 - 只在有多个项目时显示 */}
       {shouldShowProjectTabs && (

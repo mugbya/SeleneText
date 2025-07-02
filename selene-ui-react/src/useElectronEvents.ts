@@ -3,6 +3,7 @@ import type { Folder } from "@/types";
 import { toast } from "sonner";
 import { handleFileSave } from "@/logic/fileSaver";
 import { useProjectsStore } from "./store/useProjectStore";
+import { smartToast } from "./utils/commonUtil";
 
 export function useElectronEvents() {
 
@@ -39,9 +40,8 @@ export function useElectronEvents() {
 
   const folderDeletedHandler = async (rootPath: string) => {
     console.log("[ipcRenderer] folder-deleted:", rootPath);
-    toast.error(`项目目录已被删除：${rootPath}`, {
-      className: "truncate", // 相当于 overflow-hidden + text-ellipsis + whitespace-nowrap
-    });
+    // toast.error(`项目目录已被删除：${rootPath}`, {
+    smartToast(`根目录 ${rootPath} 已被删除`);
     useProjectsStore.getState().closeProjectByPath(rootPath); // 你可以添加这个函数
   }
 
