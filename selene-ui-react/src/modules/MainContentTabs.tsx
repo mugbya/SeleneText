@@ -122,7 +122,7 @@ export default function MainContentTabs({
                     className="pl-2 pr-6 py-1 max-w-[160px] truncate rounded-md text-sm font-medium text-muted-foreground
               data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow transition-all"
                   >
-                    {(file.path.split("/").pop() || "").slice(0, 10)}
+                    {(file.path.split("/").pop() || "").slice(0, 6)}
                     {(file.path.split("/").pop() || "").length > 10 ? "…" : ""}
                   </TabsTrigger>
                   <X
