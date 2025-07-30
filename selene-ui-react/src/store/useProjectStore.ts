@@ -141,8 +141,20 @@ export const useProjectsStore = create<ProjectsStore>()(
                 set((state) => {
                     if (!projectId) return {};
 
+                    const project = state.projects[projectId];
+                    if (!project) return {};
+
                     const newProjects = { ...state.projects };
                     delete newProjects[projectId];
+
+                    // 清理 expandedDirs 中属于该项目的目录
+                    const newExpandedDirs: Record<string, boolean> = {};
+                    for (const key in state.expandedDirs) {
+                        if (!key.startsWith(project.rootPath)) {
+                            newExpandedDirs[key] = state.expandedDirs[key];
+                        }
+                    }
+
                     const newActiveId =
                         state.activeProjectId === projectId
                             ? Object.keys(newProjects)[0] || null
@@ -150,6 +162,7 @@ export const useProjectsStore = create<ProjectsStore>()(
                     return {
                         projects: newProjects,
                         activeProjectId: newActiveId,
+                        expandedDirs: newExpandedDirs,
                     };
                 });
             },
@@ -404,10 +417,21 @@ export async function initProjectsStoreFromElectronStore() {
 // 👇 持久化到 electron-store 的同步监听器
 if (typeof window !== 'undefined' && window.electronAPI) {
     useProjectsStore.subscribe((state) => {
+
+        // 清理 expandedDirs 中不属于任何项目的目录
+        const newExpandedDirs: Record<string, boolean> = {};
+        for (const key in state.expandedDirs) {
+            const project = Object.values(state.projects).find((p) => key.startsWith(p.rootPath));
+            if (project) {
+                newExpandedDirs[key] = state.expandedDirs[key];
+            }
+        }
+
         const persistData = {
             projects: state.projects,
             activeProjectId: state.activeProjectId,
-            expandedDirs: state.expandedDirs,
+            // expandedDirs: state.expandedDirs,
+            expandedDirs: newExpandedDirs,
             orphanFiles: state.orphanFiles,
             activeOrphanFile: state.activeOrphanFile,
         };
