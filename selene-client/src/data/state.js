@@ -7,24 +7,24 @@ const { watchFolder } = require(path.join(global.__root, 'src/utils/watchFolder'
 const store = new Store({ name: 'SeleneText-store' })
 
 // 在主程序中 全局定义一个 roots 数组，用于存储所有的根目录。
-let roots = new Set(); // 存储所有的根目录
+// let roots = new Set(); // 存储所有的根目录
 
 function addRoot(p) {
-  roots.add(path.resolve(p));
+  // roots.add(path.resolve(p));
 }
 
 function getRoots() {
-  return [...roots];
+  // return [...roots];
 }
 
 function setRoots(list) {
-  roots.clear();
-  list.forEach(p => roots.add(path.resolve(p)));
+  // roots.clear();
+  // list.forEach(p => roots.add(path.resolve(p)));
 }
 
 // 如果需要删除根目录
 function removeRoot(p) {
-  roots.delete(path.resolve(p));
+  // roots.delete(path.resolve(p));
 }
 
 function restoreWatchedFolders(win) {

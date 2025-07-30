@@ -38,8 +38,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   createFolder: (dir, name) =>
     ipcRenderer.invoke('create-folder', { dir, name }),
 
-  renamePath: (oldPath, newName) =>
-    ipcRenderer.invoke('rename-path', { oldPath, newName }),
+  renamePath: (rootPath, oldPath, newName) =>
+    ipcRenderer.invoke('rename-path', { rootPath, oldPath, newName }),
 
   deletePath: (targetPath) =>
     ipcRenderer.invoke('delete-path', { targetPath }),

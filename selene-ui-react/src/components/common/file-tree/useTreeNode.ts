@@ -2,7 +2,9 @@
 import { useState } from "react";
 import { FileNode } from "@/types";
 import { toast } from "sonner";
-import {useProjectsStore} from "@/store/useProjectStore";
+import { useProjectsStore } from "@/store/useProjectStore";
+import { smartToast } from "@/utils/commonUtil";
+import { t } from "i18next";
 
 type DialogType = "create" | "rename" | "delete" | null;
 
@@ -26,6 +28,12 @@ export function useTreeNode(rootPath: string, node: FileNode, selectedPath?: str
   const isDir = node.isDirectory;
   const isSelected = node.path === selectedPath;
 
+    const {
+      getActiveProject,
+    } = useProjectsStore.getState(); // 💥 get 最新状态
+
+    const project = getActiveProject();
+
   // const toggle = () => {
   //   if (isDir) {
   //     setExpanded((prev) => !prev);
@@ -47,13 +55,13 @@ export function useTreeNode(rootPath: string, node: FileNode, selectedPath?: str
   const handleCreate = async () => {
     const trimmed = newFileName.trim();
     if (!trimmed) {
-      toast.warning("名称不能为空");
+      smartToast("名称不能为空", "warning");
       return;
     }
 
     const exists = node.children?.some((child) => child.name === trimmed);
     if (exists) {
-      toast.error("已存在同名项");
+      smartToast("已存在同名项", "error");
       return;
     }
 
@@ -63,26 +71,32 @@ export function useTreeNode(rootPath: string, node: FileNode, selectedPath?: str
         : await window.electronAPI.createFolder(node.path, trimmed);
 
     if (res?.success) {
-      toast.success(`${newType === "file" ? "文件" : "文件夹"}创建成功`);
+      smartToast(`${newType === "file" ? "文件" : "文件夹"}创建成功`, "success");
       window.electronAPI.send("refresh-folder", rootPath ); // 刷新文件夹需要给项目的根路径
       closeDialog();
     } else {
-      toast.error("创建失败");
+      smartToast("创建失败", "error");
     }
   };
 
   const handleRename = async () => {
     const trimmed = renameValue.trim();
     if (!trimmed || trimmed === node.name) {
-      toast.warning("请输入有效名称");
+      // toast.warning("请输入有效名称");
+      smartToast("请输入有效名称", "warning");
       return;
     }
 
-    const res = await window.electronAPI.renamePath(node.path, trimmed);
+    if (!project?.rootPath) {
+      smartToast("项目根路径不存在", 'error');
+      return;
+    }
+
+    const res = await window.electronAPI.renamePath(project?.rootPath, node.path, trimmed);
     if (res.success) {
-      toast.success("重命名成功");
+      smartToast("重命名成功", "success");
     } else {
-      toast.error("重命名失败");
+      smartToast("重命名失败", "error");
     }
     closeDialog();
   };
@@ -91,7 +105,7 @@ export function useTreeNode(rootPath: string, node: FileNode, selectedPath?: str
     console.log("[useTreeNode] handleDelete ....", node)
     const res = await window.electronAPI.deletePath(node.path);
     if (res.success) {
-      toast.success("已删除");
+      smartToast("删除成功", "success");
       // const parentPath = node.path.substring(0, node.path.lastIndexOf("/"));
       // console.log("[useTreeNode] parentPath", parentPath)
       window.electronAPI.send("refresh-folder", rootPath ); // 刷新文件夹需要给项目的根路径
@@ -108,7 +122,7 @@ export function useTreeNode(rootPath: string, node: FileNode, selectedPath?: str
         removeOrphanFile(node.path);
       }
     } else {
-      toast.error("删除失败");
+      smartToast("删除失败", "error");
     }
     closeDialog();
   };

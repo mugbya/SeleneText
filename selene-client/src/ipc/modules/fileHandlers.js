@@ -70,7 +70,7 @@ function registerFileHandlers() {
   });
 
   // 重命名
-  ipcMain.handle('rename-path', async (event, { oldPath, newName }) => {
+  ipcMain.handle('rename-path', async (event, {rootPath, oldPath, newName }) => {
     try {
       const parentDir = path.dirname(oldPath);
       const newPath = path.join(parentDir, newName);
@@ -83,13 +83,14 @@ function registerFileHandlers() {
       await delay(100); // 等待文件系统同步
 
       const win = BrowserWindow.getAllWindows()[0];
-      const currentRoots = getRoots();
+      // const currentRoots = getRoots();
 
-      const isRoot = currentRoots.some(root =>
-        path.resolve(root) === path.resolve(oldPath)
-      );
+      // const isRoot = currentRoots.some(root =>
+      //   path.resolve(root) === path.resolve(oldPath)
+      // );
+      const isRoot = rootPath === oldPath;
       console.log("\n------------");
-      console.log(`[重命名] 当前根目录:`, getRoots());
+      console.log(`[重命名] 当前根目录:`, rootPath);
       console.log(`[重命名] oldPath: ${oldPath}, newPath: ${newPath}`);
       console.log(`[重命名] 是否根目录:`, isRoot);
 
@@ -105,19 +106,19 @@ function registerFileHandlers() {
           { basePath: newPath, contents }
         ]);
       } else {
-        const rootBase = currentRoots.find(root =>
-          path.resolve(oldPath).startsWith(path.resolve(root))
-        );
-        console.log("🔄 重命名子目录:%s, 仅刷新所属根目录%s", newName, rootBase);
+        // const rootBase = currentRoots.find(root =>
+        //   path.resolve(oldPath).startsWith(path.resolve(root))
+        // );
+        console.log("🔄 重命名子目录:%s, 仅刷新所属根目录%s", newName, rootPath);
 
-        if (rootBase && fs.existsSync(rootBase)) {
+        if (rootPath && fs.existsSync(rootPath)) {
 
-          const rootContents = readDirRecursive(rootBase);
+          const rootContents = readDirRecursive(rootPath);
 
-          addRoot(rootBase);
+          // addRoot(rootBase);
 
           win?.webContents.send("replace-folder", {
-            basePath: rootBase,
+            basePath: rootPath,
             contents: rootContents,
           });
         } else {
