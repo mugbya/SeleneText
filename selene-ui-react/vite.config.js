@@ -35,7 +35,17 @@ export default defineConfig({
   base: './', // ✅ 避免路径丢失
   build: {
     outDir: resolve(__dirname, '../selene-client/renderer'), // <-- 指向 Electron 主进程目录
-    emptyOutDir: true
+    emptyOutDir: true,
+    rollupOptions: {
+      external: [
+        // 告诉 Rollup/Electron 这些包不要打包进 UI bundle
+        'vscode-languageserver-types',
+        'vscode-jsonrpc',
+        '@chevrotain/regexp-to-ast',
+        'vscode-jsonrpc/lib/common/cancellation.js',
+        'vscode-jsonrpc/lib/common/events.js',
+      ],
+    },
   },
 
   // server: {

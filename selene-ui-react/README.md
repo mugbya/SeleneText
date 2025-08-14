@@ -9,6 +9,19 @@ yarn
 yarn dev
 ```
 
+一键解决方案（彻底重装 PnP 依赖）
+```bash
+# 清理 Yarn 缓存
+yarn cache clean
+
+# 删除 node_modules 和虚拟包缓存
+rm -rf node_modules .yarn/__virtual__ .yarn/cache
+
+# 重新安装所有依赖
+yarn install --immutable
+```
+
+
 避免 tsx 文件一直报错
 
 ```bash
