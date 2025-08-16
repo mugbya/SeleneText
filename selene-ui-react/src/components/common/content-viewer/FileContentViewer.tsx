@@ -6,6 +6,7 @@ import React from "react";
 import { ImagePreview } from "./sub-viewer/ImagePreview";
 import { useMarkdownStore } from "@/store/userMarkdownStore";
 import { useProjectsStore } from "@/store/useProjectStore";
+import MermaidPreview from "../MermaidPreview";
 
 interface FileContentViewerProps {
   filePath: string;
@@ -18,6 +19,7 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
   currentFile,
   handleChange,
 }) => {
+  if (!filePath) return null;
   if (!currentFile) return null;
 
   const fileType = getFileType(currentFile.path);
@@ -59,6 +61,14 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
           </div>
         </>
       );
+      // return (
+      //   <>
+      //     {/* <MermaidPreview markdown={currentFile.content} /> */}
+      //     <div style={{ padding: 16 }}>
+      //       <MermaidPreview markdown={currentFile.content} />
+      //     </div>
+      //   </>
+      // );
     case "code":
       return (
         <>

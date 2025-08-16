@@ -18,6 +18,8 @@ import { useProjectsStore } from "@/store/useProjectStore";
 import CodeMirrorViewer from "@/components/common/content-viewer/sub-viewer/CodeMirrorViewer";
 import {headingIdGenerator} from "@milkdown/preset-commonmark";
 import {textToId} from "@/utils/stringUtil";
+import {mermaidNodePlugin, mermaidProse, mermaidViewPlugin } from "@/components/plugin/milkdown-mermaid-plugin";
+import mermaid from "mermaid";
 
 interface CrepeEditorProps {
     mode: "wysiwyg" | "source";
@@ -57,14 +59,27 @@ export const CrepeEditor = forwardRef<CrepeEditorHandle, CrepeEditorProps>(
                 .use(listener)
                 .use(cursor)
                 .use(block)
+                //  .use(mermaidExtension) // 使用组合插件
+                 // 逐个添加 Mermaid 插件
+        .use(mermaidNodePlugin)
+        .use(mermaidViewPlugin)
+        .use(mermaidProse)
                 .config((ctx) => {
                     // ctx.set(blockConfig.key, {
                     //     filterNodes: () => true,
                     // });
+                    ctx.set(blockConfig.key, {
+                        filterNodes: (pos) => {
+                            // 正确方式：从位置获取节点
+                            const node = pos.node();
+                            return node.type.name === "mermaid" || true;
+                        },
+                    });
+
                     ctx.get(listenerCtx).markdownUpdated((_, md) => {
                         // console.log("[CrepeEditor] markdownUpdated: ", md);
                         setMarkdownForFile(activeProjectId, currentFile.path, md);
-                        onChange(md);
+                        // onChange(md);
                     });
 
                     // 自定义标题 ID 生成器
@@ -82,6 +97,25 @@ export const CrepeEditor = forwardRef<CrepeEditorHandle, CrepeEditorProps>(
                     crepe.editor.action(replaceAll(value));
                     crepeRef.current = crepe;
                     setReady(true);
+
+                    // 初始化 Mermaid 渲染
+                    setTimeout(() => {
+                        try {
+                            const mermaidElements = root.querySelectorAll('.mermaid');
+                            if (mermaidElements.length > 0) {
+                                // 转换为 HTMLElement 数组
+                                const htmlElements = Array.from(mermaidElements) as HTMLElement[];
+                                
+                                mermaid.run({
+                                    querySelector: '.mermaid',
+                                    nodes: htmlElements
+                                });
+                            }
+                        } catch (e) {
+                            console.error("Mermaid initialization error:", e);
+                        }
+                    }, 500);
+
                 });
 
             return () => {

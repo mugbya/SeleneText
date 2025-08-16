@@ -27,7 +27,19 @@ yarn install --immutable
 ```bash
 yarn add react react-dom
 yarn add -D typescript @types/react @types/react-dom
+
+yarn add @milkdown/core@7.14.0 @milkdown/preset-commonmark@7.14.0 @milkdown/prose@7.14.0 mermaid 
+
+yarn add @milkdown/core@7.14.0 \
+         @milkdown/prose@7.14.0 \
+         @milkdown/utils@7.14.0 \
+         @milkdown/preset-commonmark@7.14.0 \
+         @milkdown/plugin-listener@7.14.0 \
+         @milkdown/plugin-cursor@7.14.0 \
+         @milkdown/plugin-block@7.14.0
+
 ```
+
 
 安装 Tailwind CSS
 
