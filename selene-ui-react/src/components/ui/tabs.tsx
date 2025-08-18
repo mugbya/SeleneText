@@ -53,7 +53,6 @@ function TabsContent({
   className,
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.Content>) {
-  console.log("TabsContent");
   return (
     <TabsPrimitive.Content
       data-slot="tabs-content"

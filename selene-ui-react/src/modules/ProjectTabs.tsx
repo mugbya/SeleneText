@@ -2,18 +2,28 @@
 // import clsx from "clsx";
 import { ProjectTab } from "@/types";
 import { cn } from "@/lib/utils";
+import { useProjectsStore } from "@/store/useProjectStore";
 
-export default function ProjectTabs({
-  projects,
-  activeProjectId,
-  onSwitch,
-  onClose,
-}: {
-  projects: Record<string, ProjectTab>;
-  activeProjectId: string;
-  onSwitch: (id: string) => void;
-  onClose: (id: string) => void;
-}) {
+export default function ProjectTabs(
+//   {
+//   projects,
+//   activeProjectId,
+//   onSwitch,
+//   onClose,
+// }: {
+//   projects: Record<string, ProjectTab>;
+//   activeProjectId: string;
+//   onSwitch: (id: string) => void;
+//   onClose: (id: string) => void;
+// }
+) {
+
+  const projects = useProjectsStore((s) => s.projects);
+  const activeProjectId = useProjectsStore((s) => s.activeProjectId);
+  const switchProject = useProjectsStore((s) => s.switchProject);
+  const closeProject = useProjectsStore((s) => s.closeProject); // 如果你在用
+
+
   // 如果不超过2个项目，就不显示标签栏
   // console.log("[ProjectTabs] 当前项目数量：%s", projects.length);
   // if (projects.length <= 1) {
@@ -49,7 +59,7 @@ export default function ProjectTabs({
   {Object.values(projects).map((project) => (
     <div
       key={project.id}
-      onClick={() => onSwitch(project.id)}
+      onClick={() => switchProject(project.id)}
       className={cn(
         "flex items-center h-8 rounded-t-lg text-sm cursor-pointer px-2", // 缩小内边距
         activeProjectId === project.id
@@ -62,7 +72,7 @@ export default function ProjectTabs({
         <button
           onClick={(e) => {
             e.stopPropagation();
-            onClose(project.id);
+            closeProject(project.id);
           }}
           className="text-xs text-zinc-400 hover:text-red-500 "
           style={{ padding: 2 }}

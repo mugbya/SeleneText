@@ -1,6 +1,8 @@
 import { FileTab, Folder, ProjectTab } from '@/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { normalizeForCompare } from '@/utils/stringUtil';
+
 
 interface ProjectsStore {
     /**
@@ -120,15 +122,15 @@ export const useProjectsStore = create<ProjectsStore>()(
                 return activeProjectId ? projects[activeProjectId] : null;
             },
 
-            closeProjectByPath:(rootPath) => {
+            closeProjectByPath: (rootPath) => {
                 set((state) => {
                     const projectId = Object.keys(state.projects).find((id) => state.projects[id].rootPath === rootPath);
                     if (!projectId) return {};
-                    const newProjects = {...state.projects };
+                    const newProjects = { ...state.projects };
                     delete newProjects[projectId];
                     const newActiveId =
                         state.activeProjectId === projectId
-                           ? Object.keys(newProjects)[0] || null
+                            ? Object.keys(newProjects)[0] || null
                             : state.activeProjectId;
                     return {
                         projects: newProjects,
@@ -136,7 +138,7 @@ export const useProjectsStore = create<ProjectsStore>()(
                     }
                 })
             },
-            
+
             closeProject: (projectId) => {
                 set((state) => {
                     if (!projectId) return {};
@@ -343,7 +345,7 @@ export const useProjectsStore = create<ProjectsStore>()(
                         f.path === filePath ? { ...f, content } : f
                     ),
                 })),
-                
+
             setFileModeForProject: (projectId, filePath, mode) => {
                 set((state) => {
                     if (!projectId) return {};
@@ -367,16 +369,59 @@ export const useProjectsStore = create<ProjectsStore>()(
                 });
             },
 
+            // setMarkdownForFile: (projectId, filePath, markdown) => {
+            //     set((state) => {
+            //         if (!projectId) return {};
+
+            //         const project = state.projects[projectId];
+            //         if (!project) return {};
+
+            //         const updatedFiles = project.openFiles.map((f) =>
+            //             f.path === filePath ? { ...f, markdown } : f
+            //         );
+
+            //         return {
+            //             projects: {
+            //                 ...state.projects,
+            //                 [projectId]: {
+            //                     ...project,
+            //                     openFiles: updatedFiles,
+            //                 },
+            //             },
+            //         };
+            //     });
+            // },
+
             setMarkdownForFile: (projectId, filePath, markdown) => {
                 set((state) => {
-                    if (!projectId) return {};
+                    if (!projectId) return state;
 
                     const project = state.projects[projectId];
-                    if (!project) return {};
+                    if (!project) return state;
 
-                    const updatedFiles = project.openFiles.map((f) =>
-                        f.path === filePath ? { ...f, markdown } : f
-                    );
+                    const nextRaw = markdown ?? '';
+
+                    let changed = false;
+                    const updatedFiles = project.openFiles.map((f) => {
+                        if (f.path !== filePath) return f;
+
+                        const prevRaw = f.markdown ?? '';
+                        const prevNorm = normalizeForCompare(prevRaw);
+                        const nextNorm = normalizeForCompare(nextRaw);
+
+                        if (prevNorm === nextNorm) {
+                            console.log('markdown 没有变化\n', prevNorm, nextNorm);
+                            // ✅ 语义等价：不更新，保持引用，避免无意义渲染
+                            return f;
+                        }
+                        console.log('markdown 有变化\n', prevNorm, nextNorm);
+
+                        changed = true;
+                        // ⚠️ 存“原始文本”还是“规范化后”的文本？通常建议存原始文本，以免改变用户输入
+                        return { ...f, markdown: nextRaw, content: nextRaw };
+                    });
+
+                    if (!changed) return state;
 
                     return {
                         projects: {
@@ -389,6 +434,7 @@ export const useProjectsStore = create<ProjectsStore>()(
                     };
                 });
             },
+
         }),
         {
             name: 'projects-store', // localStorage key

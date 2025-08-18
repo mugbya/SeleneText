@@ -1,50 +1,80 @@
-import { WorkspaceTreeProps } from "@/types";
 import FileTree from "@/components/common/file-tree/FileTree";
 import { useRef } from "react";
 import { useProjectsStore } from "@/store/useProjectStore";
 import { getFileType } from "@/utils/fileUtil";
 
-function WorkSpaceTreePanel({
-  projectId,
-  activeFilePath,
-  rootPath,
-  folderTree,
-}: WorkspaceTreeProps) {
+function WorkSpaceTreePanel() {
+
+  // const projects = useProjectsStore((s) => s.projects);
+  const projectId = useProjectsStore((s) => s.activeProjectId);
+  // const setActiveFileForProject = useProjectsStore((s) => s.setActiveFileForProject);
+
+  const activeProject = useProjectsStore((s) => s.getActiveProject()); // 改写法订阅了函数执行结果（实际的数据），自然能触发刷新。非常重要！！！
+  const folderTree = activeProject?.folderTree;
+  const projectRootPath = activeProject?.rootPath ?? null;
+  const projectActiveFilePath = activeProject?.lastActiveFile;
+
+  // const switchProject = useProjectsStore((s) => s.switchProject);
+  // const closeProject = useProjectsStore((s) => s.closeProject); // 如果你在用
+
 
   const renderCount = useRef(0);
   renderCount.current += 1;
   console.log("[WorkSpaceTreePanel] 渲染次数:", renderCount.current);
 
-  if (!projectId || !folderTree) {
+  if (!projectId || !folderTree || !projectRootPath) {
     return (
       <div className="flex items-center justify-center h-full text-gray-500">
         加载中...
       </div>
     );
   }
+  // console.log("[WorkSpaceTreePanel] 项目folderTree:", folderTree);
 
   const handlerOpenFile = (projectId: string, filePath: string) => {
-    // console.log("读取文件内容：", filePath);
-    const fileType = getFileType(filePath);
-    if (fileType === "image"){
-        // 如果是图片类型，直接添加到 openFiles 中
-        useProjectsStore.getState().addOpenFileForProject(projectId, {
-          path: filePath,
-          content: "",
-        });
-        return
-    }
+      // console.log("读取文件内容：", filePath);
+      const fileType = getFileType(filePath);
 
-    window.electronAPI.readFile(filePath).then(({ success, content }) => {
-      if (!success) {
-        console.error("读取文件失败！");
-        return;
-      }
-      useProjectsStore.getState().addOpenFileForProject(projectId, {
+      const { addOpenFileForProject, setActiveFileForProject, setMarkdownForFile } = useProjectsStore.getState();
+
+      setActiveFileForProject(projectId, filePath); // ✅ 激活新文件
+      addOpenFileForProject(projectId, {
         path: filePath,
-        content: content,
+        // content: "",
       });
-    });
+
+      // if (fileType === "image") {
+      //     // 如果是图片类型，直接添加到 openFiles 中
+      //     addOpenFileForProject(projectId, {
+      //       path: filePath,
+      //       // content: "",
+      //     });
+      //     setActiveFileForProject(projectId, filePath); // ✅ 激活新文件
+      //     return;
+      // }
+
+      // window.electronAPI.readFile(filePath).then(({ success, content }) => {
+      //   if (!success) {
+      //     console.error("读取文件失败！");
+      //     return;
+      //   }
+        
+      //   setActiveFileForProject(projectId, filePath); // ✅ 激活新文件
+      //   if (fileType === "markdown") {
+      //     addOpenFileForProject(projectId, {
+      //       path: filePath,
+      //       // content,
+      //       // markdown: content,
+      //       // content: null
+      //     });
+      //   } else{
+      //     addOpenFileForProject(projectId, {
+      //       path: filePath,
+      //       // content,
+      //       // content: "", // 懒加载数据
+      //     });
+      //   }
+      // });
   };
 
   return (
@@ -52,10 +82,10 @@ function WorkSpaceTreePanel({
       <div className="w-max">
       <FileTree
         projectId={projectId}
-        folderPath={rootPath}
+        folderPath={projectRootPath}
         folderTree={folderTree}
         onFileClick={handlerOpenFile}
-        activeFilePath={activeFilePath || ""}
+        activeFilePath={projectActiveFilePath || ""}
       />
       </div>
     </div>

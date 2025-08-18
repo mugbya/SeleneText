@@ -9,7 +9,7 @@ export function useElectronEvents() {
 
   const addProject = useProjectsStore((s) => s.addProject);
   const closeProject = useProjectsStore((s) => s.closeProject);
-  const closeProjectByPath = useProjectsStore((s) => s.closeProjectByPath);
+  // const closeProjectByPath = useProjectsStore((s) => s.closeProjectByPath);
   const updateProject = useProjectsStore((s) => s.updateProject);
 
   /**
@@ -51,7 +51,7 @@ export function useElectronEvents() {
    * @returns 
    */
   const folderChangedHandler = async (folder: Folder) => {
-    console.log("[ipcRenderer] folder-changed:", folder);
+    // console.log("[ipcRenderer] folder-changed:", folder);
     if (!folder) {  // 文件夹为空，不处理
       console.warn("文件夹为空，不处理");
       return;
@@ -59,7 +59,7 @@ export function useElectronEvents() {
 
     const { basePath, contents } = folder;
 
-    const { projects, } = useProjectsStore.getState(); // 💥 get 最新状态
+    const { projects, } = useProjectsStore.getState(); // 💥 get 最新状态。  在组件外部 或 异步回调里（比如 ipcRenderer 事件）
 
     // 查找已存在的项目 ID（根据 basePath 匹配）
     const existingProject = Object.values(projects).find(
@@ -72,7 +72,8 @@ export function useElectronEvents() {
     }
 
     // 更新文件树
-    updateProject(existingProject.id, () => ({
+    // updateProject(existingProject.id, () => ({
+     useProjectsStore.getState().updateProject(existingProject.id, () => ({
       folderTree: {
         name: folder.basePath.split('/').pop() || 'Project',  // 根目录名称
         path: folder.basePath,                 // 根目录完整路径

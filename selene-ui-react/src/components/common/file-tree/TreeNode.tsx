@@ -51,7 +51,7 @@ const TreeNode = React.memo(function TreeNode({
     handleDelete,
   } = useTreeNode(rootPath, node, activeFilePath);
 
-//   console.log("TreeNode: ", node);
+  // console.log("TreeNode: ", node);
 
   // React 渲染中用（响应式）
   const isExpanded = useProjectsStore((s) => s.expandedDirs[node.path]);

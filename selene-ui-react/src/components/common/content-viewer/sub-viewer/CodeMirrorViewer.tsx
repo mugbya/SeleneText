@@ -13,6 +13,7 @@ export default function CodeMirrorViewer({
   onChange: (newCode: string) => void;
 }) {
   const extensions = language === 'javascript' ? [javascript()] : [];
+  // console.log("CodeMirrorViewer code", code);
 
   return (
       <CodeMirror

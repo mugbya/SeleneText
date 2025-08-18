@@ -6,11 +6,19 @@ import { useUnifiedFileChangeHandler } from "@/store/useUnifiedFileChangeHandler
 import { useProjectsStore } from "@/store/useProjectStore";
 import { FileContentViewer } from "@/components/common/content-viewer/FileContentViewer";
 
-export default function MainContentTabs({
-  projectId,
-}: {
-  projectId: string | null;
-}) {
+export default function MainContentTabs(
+//   {
+//   projectId,
+// }: {
+//   projectId: string | null;
+// }
+) {
+  // console.log("MainContentTabs 渲染");
+  const projectId = useProjectsStore((s) => s.activeProjectId);
+  if (!projectId) {
+    return null;
+  }
+
   const changeFileContentForProject = useProjectsStore(
     (s) => s.changeFileContentForProject
   );
@@ -18,8 +26,12 @@ export default function MainContentTabs({
     (s) => s.setActiveFileForProject
   );
 
-  const { orphanFiles, activeOrphanFile, getActiveProject } =
-    useProjectsStore.getState();
+  // const { orphanFiles, activeOrphanFile, getActiveProject } =
+  //   useProjectsStore.getState();
+
+  const getActiveProject = useProjectsStore((s) => s.getActiveProject);
+  const orphanFiles = useProjectsStore((s) => s.orphanFiles);
+  const activeOrphanFile = useProjectsStore((s) => s.activeOrphanFile);
 
   const createNewFileForProject = useProjectsStore(
     (s) => s.createNewFileForProject
@@ -37,14 +49,21 @@ export default function MainContentTabs({
   // const orphanFiles = useProjectsStore((s) => s.orphanFiles);
   // const activeOrphanFile = useProjectsStore((s) => s.activeOrphanFile);
 
-  const activeProject = getActiveProject();
-  const openFiles = activeProject?.openFiles ?? orphanFiles;
-  const activeFile = activeProject?.lastActiveFile ?? activeOrphanFile;
+  // 下面写法才能及时获取store 的变更，才能触发当前组件的刷新
+  const activeFile = useProjectsStore((s) => s.projects[projectId]?.lastActiveFile);
+  const openFiles = useProjectsStore((s) => s.projects[projectId]?.openFiles);
 
-  const currentFile =
-    activeProject?.openFiles.find(
-      (f) => f.path === activeProject.lastActiveFile
-    ) || orphanFiles.find((f) => f.path === activeOrphanFile);
+  const activeProject = getActiveProject();
+  // const openFiles = activeProject?.openFiles ?? orphanFiles;
+  // const activeFile = activeProject?.lastActiveFile ?? activeOrphanFile;
+
+  const openFilesMerge = openFiles ?? orphanFiles;
+  const activeFileMerge = activeFile ?? activeOrphanFile;
+
+  // const currentFile =
+  //   activeProject?.openFiles.find(
+  //     (f) => f.path === activeProject.lastActiveFile
+  //   ) || orphanFiles.find((f) => f.path === activeOrphanFile);
 
   // 处理文件内容变化
   const handleChange = useUnifiedFileChangeHandler({
@@ -85,7 +104,7 @@ export default function MainContentTabs({
   console.log("[MainContentTabs] 渲染次数:", renderCount.current);
   console.log(
     "[MainContentTabs] 当前文件：",
-    currentFile,
+    // currentFile,
     "openFiles: ",
     openFiles
   );
@@ -94,7 +113,7 @@ export default function MainContentTabs({
     <main className="flex flex-col flex-1 h-full pr-1.5">
       {/* 标签页 */}
       <Tabs
-        value={activeFile || ""}
+        value={activeFileMerge || ""}
         onValueChange={(filepath) => {
           setActiveFileForProject(projectId, filepath);
         }}
@@ -115,7 +134,7 @@ export default function MainContentTabs({
             ref={tabScrollContainerRef}
           >
             <TabsList className="flex w-max items-center space-x-2 h-12">
-              {openFiles.map((file) => (
+              {openFilesMerge.map((file) => (
                 <div key={file.path} className="relative mr-2">
                   <TabsTrigger
                     value={file.path}
@@ -155,7 +174,7 @@ export default function MainContentTabs({
         </div>
 
         {/* 标签页内容 */}
-        {openFiles.map((file) => (
+        {openFilesMerge.map((file) => (
           <TabsContent
             key={file.path}
             value={file.path}
@@ -173,8 +192,9 @@ export default function MainContentTabs({
         
                 {/* 文件内容展示区域 */}
                 <FileContentViewer
+                  activeProject={activeProject}
                   filePath={file.path}
-                  currentFile={currentFile ?? null}
+                  // currentFile={currentFile ?? null}
                   handleChange={handleChange}
                 />
               {/* </div> */}

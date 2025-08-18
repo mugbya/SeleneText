@@ -18,6 +18,9 @@ import { useProjectsStore } from "@/store/useProjectStore";
 import CodeMirrorViewer from "@/components/common/content-viewer/sub-viewer/CodeMirrorViewer";
 import {headingIdGenerator} from "@milkdown/preset-commonmark";
 import {textToId} from "@/utils/stringUtil";
+import { debounce } from 'lodash';
+import { normalizeForCompare } from '@/utils/stringUtil';
+
 
 interface CrepeEditorProps {
     mode: "wysiwyg" | "source";
@@ -36,16 +39,27 @@ export const CrepeEditor = forwardRef<CrepeEditorHandle, CrepeEditorProps>(
         const crepeRef = useRef<Crepe | null>(null);
         const [ready, setReady] = useState(false);
 
-        const {
-            projects,
-            activeProjectId,
-            setMarkdownForFile,
-        } = useProjectsStore();
-        const currentProject = projects[activeProjectId!];
+        const setMarkdownForFile = useProjectsStore((s) => s.setMarkdownForFile);
+        const activeProjectId = useProjectsStore(s => s.activeProjectId);
+        if (!activeProjectId) return null;
+
+        const currentProject = useProjectsStore((s) => s.getActiveProject());
         const currentFile = currentProject?.openFiles.find(
             (f) => f.path === currentProject.lastActiveFile
         );
         if (!currentFile) return null;
+
+        const handleMarkdownUpdate = debounce((md: string) => {
+            console.log("[CrepeEditor] md: ", md);
+            console.log("[CrepeEditor] origin value: ", value);
+            // const currentMarkdown = currentFile?.markdown ?? '';
+            if (normalizeForCompare(md) !== normalizeForCompare(value)) {
+                console.log("[CrepeEditor] handleMarkdownUpdate: ", md);
+                setMarkdownForFile(activeProjectId, currentFile.path, md);
+                onChange(md);
+            }
+        }, 3000);
+
 
         useEffect(() => {
             const root = editorContainerRef.current;
@@ -63,8 +77,7 @@ export const CrepeEditor = forwardRef<CrepeEditorHandle, CrepeEditorProps>(
                     // });
                     ctx.get(listenerCtx).markdownUpdated((_, md) => {
                         // console.log("[CrepeEditor] markdownUpdated: ", md);
-                        setMarkdownForFile(activeProjectId, currentFile.path, md);
-                        onChange(md);
+                        handleMarkdownUpdate(md);
                     });
 
                     // 自定义标题 ID 生成器
@@ -79,6 +92,7 @@ export const CrepeEditor = forwardRef<CrepeEditorHandle, CrepeEditorProps>(
                 })
                 .create()
                 .then(() => {
+                    // console.log("[CrepeEditor] create: ", value);
                     crepe.editor.action(replaceAll(value));
                     crepeRef.current = crepe;
                     setReady(true);
@@ -116,7 +130,7 @@ export const MilkdownEditorWrapper: React.FC<CrepeEditorProps> = ({
     );
     if (!currentFile) return null;
 
-    const markdown = currentFile?.markdown ?? currentFile?.content ?? "";
+    // const markdown = currentFile?.markdown ?? currentFile?.content ?? "";
 
     return (
         <MilkdownProvider>
@@ -146,7 +160,7 @@ export const MilkdownEditorWrapper: React.FC<CrepeEditorProps> = ({
                 //   className="w-full h-full resize-none font-mono text-sm text-left pl-5 pt-5 rounded-[var(--radius)]"
                 // />
                 <CodeMirrorViewer
-                    code={markdown}
+                    code={value}
                     language="markdown"
                     editable={true}
                     onChange={(content) => {

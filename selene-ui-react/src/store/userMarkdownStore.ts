@@ -34,7 +34,8 @@ export function useMarkdownStore(value: string) {
     };
 
     const switchToWysiwyg = async () => {
-        const latestMarkdown = getCurrentFileMarkdown(); // 从 store 或 props 获取
+        // const latestMarkdown = getCurrentFileMarkdown(); // 从 store 或 props 获取
+        const latestMarkdown = value
         console.log("[switchToWysiwyg] latestMarkdown: ", latestMarkdown);
         if (crepeRef.current) {
             await crepeRef.current.replaceContent(latestMarkdown);

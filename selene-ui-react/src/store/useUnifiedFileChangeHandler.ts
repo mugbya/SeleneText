@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import type { ProjectTab, FileTab } from "@/types";
 
 /**
+ * 帮你写一个 最终版 onChange（包含内容比较 + 防抖 + Ctrl+S 保存钩子）
  * 文件变动的监听处理
  * @param project
  * @param projectId

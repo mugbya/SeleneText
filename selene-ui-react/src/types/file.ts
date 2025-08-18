@@ -1,7 +1,7 @@
 
 export type FileTab = {
     path: string;          // 当前 UI 内部唯一标识，可是 untitled-xxx.txt
-    content: string;       // 文件内容
+    content?: string | null;       // 文件内容
     realPath?: string;     // 真实磁盘路径，首次保存后写入
     isTemporary?: boolean; // true 表示未保存的虚拟文件
     mode?: 'wysiwyg' | 'source';
