@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { ImagePreview } from "./sub-viewer/ImagePreview";
 import { useMarkdownStore } from "@/store/userMarkdownStore";
 import { useProjectsStore } from "@/store/useProjectStore";
-import MermaidPreview from "../MermaidPreview";
+import MermaidPreview from "../../test/MermaidPreview";
 
 interface FileContentViewerProps {
   activeProject: ProjectTab | null;
@@ -32,10 +32,7 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
 
   // 切换文件时重置内容
   useEffect(() => {
-    
-    if (!filePath) return;
-    if (!currentFile) return;
-
+    if (!filePath || !currentFile) return;
 
     if (currentFile.path === filePath) {
       setCurrentFileContent(null); // ✅ 重置内容，第一次 render 显示加载中
@@ -55,6 +52,7 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
     }
   }, [currentFile, filePath]);
 
+  // 组件卸载前也会触发一次
   // useEffect(() => {
   //   console.log("[FileContentViewer] mounted", filePath);
   //   return () => {
@@ -62,25 +60,25 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
   //   };
   // }, [filePath]);
 
-  useEffect(() => {
-    if (!currentFileContent || !currentFile) return;
-    // 只打印当前激活的文件
+  // useEffect(() => {
+  //   if (!currentFileContent || !currentFile) return;
+  //   // 只打印当前激活的文件
 
-    if (currentFile.path === filePath) {
-      // console.log(
-      //   "[FileContentViewer]",
-      //   new Date().toISOString(),
-      //   "fileId:", filePath,
-      //   "content length:", currentFileContent.length,
-      //   "\ncontent:", currentFileContent
-      // );
-    }
-  }, [currentFileContent, currentFile, filePath]);
+  //   if (currentFile.path === filePath) {
+  //     console.log(
+  //       "[FileContentViewer]",
+  //       new Date().toISOString(),
+  //       "fileId:", filePath,
+  //       "content length:", currentFileContent.length,
+  //       "\ncontent:", currentFileContent
+  //     );
+  //   }
+  // }, [currentFileContent, currentFile, filePath]);
 
         // ✅ hooks 必须放顶层
   // const { switchToSource, switchToWysiwyg } = useMarkdownStore(currentFileContent || '');
   // const { switchToSource, switchToWysiwyg, crepeRef, mode } = useMarkdownStore(currentFileContent || '');
-  const { switchToSource, switchToWysiwyg, crepeRef, mode } = useMarkdownStore();
+  const { switchToSource, switchToWysiwyg, mode } = useMarkdownStore();
   const { activeProjectId, setFileModeForProject } = useProjectsStore();
   
 
@@ -92,27 +90,18 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
     );
   }
 
-  console.log(
-    "[FileContentViewer]",
-    new Date().toISOString(),
-    "fileId:", filePath,
-    "content length:", currentFileContent.length,
-    "\ncontent:", currentFileContent
-  );
+  // console.log(
+  //   "[FileContentViewer]",
+  //   new Date().toISOString(),
+  //   "fileId:", filePath,
+  //   "content length:", currentFileContent.length,
+  //   "\ncontent:", currentFileContent
+  // );
 
   const fileType = getFileType(currentFile.path);
   const language = currentFile.path.split(".").pop() || "txt";
 
-      //   console.log(
-      //   "[FileContentViewer]",
-      //   new Date().toISOString(),
-      //   "fileId:", filePath,
-      //   "content length:", currentFileContent.length,
-      //   "\ncontent:", currentFileContent
-      // );
-
   if (fileType === "markdown") {
-    // const mode = currentFile?.mode ?? "wysiwyg";
 
     return (
       <>
@@ -125,11 +114,7 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
             onClick={() => {
               if (mode === "wysiwyg") switchToSource();
               else switchToWysiwyg();
-              setFileModeForProject(
-                activeProjectId,
-                currentFile.path,
-                mode === "wysiwyg" ? "source" : "wysiwyg"
-              );
+              setFileModeForProject(activeProjectId, currentFile.path, mode === "wysiwyg" ? "source" : "wysiwyg");
             }}
           >
             切换到 {mode === "wysiwyg" ? "源码" : "即时"} 模式

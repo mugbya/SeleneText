@@ -41,7 +41,7 @@ interface ProjectsStore {
 
     // markdown文件处理
     setFileModeForProject: (projectId: string | null, filePath: string, mode: 'source' | 'wysiwyg') => void;
-    setMarkdownForFile: (projectId: string | null, filePath: string, markdown: string) => void;
+    // setMarkdownForFile: (projectId: string | null, filePath: string, markdown: string) => void;
 
     /**
      * 临时文件列表
@@ -392,50 +392,50 @@ export const useProjectsStore = create<ProjectsStore>()(
             //     });
             // },
 
-            setMarkdownForFile: (projectId, filePath, markdown) => {
-                set((state) => {
-                    if (!projectId) return state;
+            // setMarkdownForFile: (projectId, filePath, markdown) => {
+            //     set((state) => {
+            //         if (!projectId) return state;
 
-                    const project = state.projects[projectId];
-                    if (!project) return state;
+            //         const project = state.projects[projectId];
+            //         if (!project) return state;
 
-                    const nextRaw = markdown ?? '';
+            //         const nextRaw = markdown ?? '';
 
-                    let changed = false;
-                    const updatedFiles = project.openFiles.map((f) => {
-                        if (f.path !== filePath) return f;
+            //         let changed = false;
+            //         const updatedFiles = project.openFiles.map((f) => {
+            //             if (f.path !== filePath) return f;
 
-                        const prevRaw = f.markdown ?? '';
-                        const prevNorm = normalizeForCompare(prevRaw);
-                        const nextNorm = normalizeForCompare(nextRaw);
+            //             const prevRaw = f.markdown ?? '';
+            //             const prevNorm = normalizeForCompare(prevRaw);
+            //             const nextNorm = normalizeForCompare(nextRaw);
 
-                        if (prevNorm === nextNorm) {
-                            console.log('markdown 没有变化\n', prevNorm, nextNorm);
-                            // ✅ 语义等价：不更新，保持引用，避免无意义渲染
-                            return f;
-                        }
-                        console.log('markdown 有变化\n');
-                        console.log('markdown 有变化 prevNorm\n', prevNorm);
-                        console.log('markdown 有变化 nextNorm\n', nextNorm);
+            //             if (prevNorm === nextNorm) {
+            //                 console.log('markdown 没有变化\n', prevNorm, nextNorm);
+            //                 // ✅ 语义等价：不更新，保持引用，避免无意义渲染
+            //                 return f;
+            //             }
+            //             console.log('markdown 有变化\n');
+            //             console.log('markdown 有变化 prevNorm\n', prevNorm);
+            //             console.log('markdown 有变化 nextNorm\n', nextNorm);
 
-                        changed = true;
-                        // ⚠️ 存“原始文本”还是“规范化后”的文本？通常建议存原始文本，以免改变用户输入
-                        return { ...f, markdown: nextRaw, content: nextRaw };
-                    });
+            //             changed = true;
+            //             // ⚠️ 存“原始文本”还是“规范化后”的文本？通常建议存原始文本，以免改变用户输入
+            //             return { ...f, markdown: nextRaw, content: nextRaw };
+            //         });
 
-                    if (!changed) return state;
+            //         if (!changed) return state;
 
-                    return {
-                        projects: {
-                            ...state.projects,
-                            [projectId]: {
-                                ...project,
-                                openFiles: updatedFiles,
-                            },
-                        },
-                    };
-                });
-            },
+            //         return {
+            //             projects: {
+            //                 ...state.projects,
+            //                 [projectId]: {
+            //                     ...project,
+            //                     openFiles: updatedFiles,
+            //                 },
+            //             },
+            //         };
+            //     });
+            // },
 
         }),
         {

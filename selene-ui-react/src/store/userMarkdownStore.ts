@@ -33,18 +33,18 @@ export function useMarkdownStore() {
     const switchToSource = () => {
         setMode("source");
     };
-    const getCurrentFileMarkdown = () => {
-        const { activeProjectId, projects } = useProjectsStore.getState();
-        if (!activeProjectId) return '';
-        const project = projects[activeProjectId];
-        const file = project.openFiles.find(f => f.path === project.lastActiveFile);
-        return file?.markdown ?? file?.content ?? '';
-    };
+    // const getCurrentFileMarkdown = () => {
+    //     const { activeProjectId, projects } = useProjectsStore.getState();
+    //     if (!activeProjectId) return '';
+    //     const project = projects[activeProjectId];
+    //     const file = project.openFiles.find(f => f.path === project.lastActiveFile);
+    //     return file?.markdown ?? file?.content ?? '';
+    // };
 
     const switchToWysiwyg = async () => {
         // const latestMarkdown = getCurrentFileMarkdown(); // 从 store 或 props 获取
         // const latestMarkdown = currentFileContent
-        
+
         // console.log("[switchToWysiwyg] latestMarkdown: ", currentFileContent);
         // if (crepeRef.current) {
         //     await crepeRef.current.replaceContent(currentFileContent);
