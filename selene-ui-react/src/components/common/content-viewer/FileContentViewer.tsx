@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { ImagePreview } from "./sub-viewer/ImagePreview";
 import { useMarkdownStore } from "@/store/userMarkdownStore";
 import { useProjectsStore } from "@/store/useProjectStore";
+import MermaidPreview from "../MermaidPreview";
 
 interface FileContentViewerProps {
   activeProject: ProjectTab | null;
@@ -31,27 +32,55 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
 
   // 切换文件时重置内容
   useEffect(() => {
+    
     if (!filePath) return;
+    if (!currentFile) return;
 
-    setCurrentFileContent(null); // ✅ 重置内容，第一次 render 显示加载中
 
-    window.electronAPI.readFile(filePath).then(({ success, content }) => {
-      if (!success) {
-        console.error("读取文件失败！");
-        return;
+    if (currentFile.path === filePath) {
+      setCurrentFileContent(null); // ✅ 重置内容，第一次 render 显示加载中
+
+      if (currentFile?.content){
+        setCurrentFileContent(currentFile.content);
+        return
       }
-      setCurrentFileContent(content);
+      
+      window.electronAPI.readFile(filePath).then(({ success, content }) => {
+        if (!success) {
+          console.error("读取文件失败！");
+          return;
+        }
+        setCurrentFileContent(content);
+      });
+    }
+  }, [currentFile, filePath]);
+
+  // useEffect(() => {
+  //   console.log("[FileContentViewer] mounted", filePath);
+  //   return () => {
+  //     console.log("[FileContentViewer] unmounted", filePath);
+  //   };
+  // }, [filePath]);
+
+  useEffect(() => {
+    if (!currentFileContent || !currentFile) return;
+    // 只打印当前激活的文件
+
+    if (currentFile.path === filePath) {
       // console.log(
       //   "[FileContentViewer]",
       //   new Date().toISOString(),
       //   "fileId:", filePath,
-      //   "content length:", content.length
+      //   "content length:", currentFileContent.length,
+      //   "\ncontent:", currentFileContent
       // );
-    });
-  }, [filePath]);
+    }
+  }, [currentFileContent, currentFile, filePath]);
 
         // ✅ hooks 必须放顶层
-  const { switchToSource, switchToWysiwyg } = useMarkdownStore(currentFileContent || '');
+  // const { switchToSource, switchToWysiwyg } = useMarkdownStore(currentFileContent || '');
+  // const { switchToSource, switchToWysiwyg, crepeRef, mode } = useMarkdownStore(currentFileContent || '');
+  const { switchToSource, switchToWysiwyg, crepeRef, mode } = useMarkdownStore();
   const { activeProjectId, setFileModeForProject } = useProjectsStore();
   
 
@@ -63,20 +92,27 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
     );
   }
 
-        console.log(
-        "[FileContentViewer]",
-        new Date().toISOString(),
-        "fileId:", filePath,
-        "content length:", currentFileContent.length
-      );
+  console.log(
+    "[FileContentViewer]",
+    new Date().toISOString(),
+    "fileId:", filePath,
+    "content length:", currentFileContent.length,
+    "\ncontent:", currentFileContent
+  );
 
   const fileType = getFileType(currentFile.path);
   const language = currentFile.path.split(".").pop() || "txt";
 
+      //   console.log(
+      //   "[FileContentViewer]",
+      //   new Date().toISOString(),
+      //   "fileId:", filePath,
+      //   "content length:", currentFileContent.length,
+      //   "\ncontent:", currentFileContent
+      // );
+
   if (fileType === "markdown") {
-    // const { switchToSource, switchToWysiwyg } = useMarkdownStore(currentFileContent);
-    // const { activeProjectId, setFileModeForProject } = useProjectsStore();
-    const mode = currentFile?.mode ?? "wysiwyg";
+    // const mode = currentFile?.mode ?? "wysiwyg";
 
     return (
       <>
@@ -103,10 +139,14 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
 
         <div className="flex-1 flex flex-col h-full overflow-y-auto text-left">
           <MilkdownEditorWrapper
+            key={filePath}
+            filePath={filePath}
+            currentFile={currentFile}
             mode={mode}
             value={currentFileContent}
             onChange={handleChange}
           />
+          {/* <MermaidPreview markdown={currentFileContent} /> */}
         </div>
       </>
     );
@@ -122,6 +162,7 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
         </div>
         <div className="flex flex-col flex-1 overflow-auto resize-none font-mono text-sm">
           <CodeMirrorViewer
+            key={filePath}
             code={currentFileContent}
             language={language}
             editable={true}
@@ -141,7 +182,7 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
           </h2>
         </div>
         <div className="flex-1 flex flex-col h-full w-full overflow-auto">
-          <ImagePreview path={currentFile.path} />
+          <ImagePreview key={filePath} path={currentFile.path} />
         </div>
       </>
     );
@@ -157,6 +198,7 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
       </div>
       <div className="flex-1 flex flex-col h-full overflow-y-auto text-left">
         <CodeMirrorViewer
+          key={filePath}
           code={currentFileContent}
           language={language}
           editable={true}

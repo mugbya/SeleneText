@@ -5,7 +5,8 @@ export interface CrepeEditorHandle {
     replaceContent: (content: string) => void;
 }
 
-export function useMarkdownStore(value: string) {
+// export function useMarkdownStore(currentFileContent: string) {
+export function useMarkdownStore() {
     // 切换模式状态
     const [mode, setMode] = useState<"wysiwyg" | "source">("wysiwyg");
     // 编辑器实例引用，方便外部调用同步方法
@@ -18,6 +19,13 @@ export function useMarkdownStore(value: string) {
     // useEffect(() => {
     //     setMarkdown(value);
     // }, [value]);
+
+      // ⚡ 当 currentFileContent 变化时，更新编辑器内容
+    // useEffect(() => {
+    //     if (crepeRef.current) {
+    //     crepeRef.current.replaceContent(currentFileContent);
+    //     }
+    // }, [currentFileContent]);
 
     // console.log("[useMarkdownStore] markdown", markdown)
 
@@ -35,16 +43,17 @@ export function useMarkdownStore(value: string) {
 
     const switchToWysiwyg = async () => {
         // const latestMarkdown = getCurrentFileMarkdown(); // 从 store 或 props 获取
-        const latestMarkdown = value
-        console.log("[switchToWysiwyg] latestMarkdown: ", latestMarkdown);
-        if (crepeRef.current) {
-            await crepeRef.current.replaceContent(latestMarkdown);
-        }
+        // const latestMarkdown = currentFileContent
+        
+        // console.log("[switchToWysiwyg] latestMarkdown: ", currentFileContent);
+        // if (crepeRef.current) {
+        //     await crepeRef.current.replaceContent(currentFileContent);
+        // }
         setMode("wysiwyg");
     };
 
     return {
-        // mode,
+        mode,
         // markdown,
         // setMarkdown,
         switchToSource,

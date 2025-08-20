@@ -270,3 +270,22 @@ button:focus-visible {
   background-color: white;
   font-size: 1rem;
 }
+
+/* mermaid-node 样式示例，可按需调整 */
+/* .mermaid-node svg {
+  font-family: 'trebuchet ms', verdana, arial;
+  font-size: 16px;
+  fill: #333;
+} */
+
+.mermaid-node .label {
+  font-size: 14px;
+  fill: #000;
+}
+
+.mermaid-node svg {
+  fill: #333;
+  stroke: #333;
+  font-family: 'Arial', sans-serif;
+  font-size: 14px;
+}

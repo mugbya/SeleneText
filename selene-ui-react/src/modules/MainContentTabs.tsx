@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { X, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -65,6 +65,11 @@ export default function MainContentTabs(
   //     (f) => f.path === activeProject.lastActiveFile
   //   ) || orphanFiles.find((f) => f.path === activeOrphanFile);
 
+    // useEffect(() => {
+    //   console.log('[DEBUG] MainContentTabs 组件渲染');
+
+    // }, []);
+
   // 处理文件内容变化
   const handleChange = useUnifiedFileChangeHandler({
     activeProject,
@@ -108,6 +113,8 @@ export default function MainContentTabs(
     "openFiles: ",
     openFiles
   );
+
+  if (!openFiles || openFiles.length === 0) return null;
 
   return (
     <main className="flex flex-col flex-1 h-full pr-1.5">
@@ -194,7 +201,6 @@ export default function MainContentTabs(
                 <FileContentViewer
                   activeProject={activeProject}
                   filePath={file.path}
-                  // currentFile={currentFile ?? null}
                   handleChange={handleChange}
                 />
               {/* </div> */}

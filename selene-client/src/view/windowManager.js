@@ -22,6 +22,7 @@ function createMainWindow() {
             contextIsolation: true,  // ✅ 开启上下文隔离
             nodeIntegration: false,  // ✅ 禁用 Node 集成
             sandbox: false, // ✅ 必须显式关闭 sandbox
+            // webSecurity: true, // 或者设置 CSP header 不允许 unsafe-inline
             // devTools: true,
         },
         title: "Selene Text"

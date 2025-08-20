@@ -20,9 +20,14 @@ import {headingIdGenerator} from "@milkdown/preset-commonmark";
 import {textToId} from "@/utils/stringUtil";
 import { debounce } from 'lodash';
 import { normalizeForCompare } from '@/utils/stringUtil';
-
+// import {mermaidNodePlugin, mermaidProse, mermaidViewPlugin } from "@/components/plugin/milkdown-mermaid-plugin";
+import {mermaidRemarkPlugin, mermaidNodePlugin, mermaidViewPlugin } from "@/components/plugin/milkdown-mermaid-plugin";
+import mermaid from "mermaid";
+import { FileTab } from "@/types";
 
 interface CrepeEditorProps {
+    filePath: string,
+    currentFile: FileTab,
     mode: "wysiwyg" | "source";
     value: string;
     onChange: (val: string) => void;
@@ -34,7 +39,7 @@ export interface CrepeEditorHandle {
 
 
 export const CrepeEditor = forwardRef<CrepeEditorHandle, CrepeEditorProps>(
-    ({ value, onChange }, ref) => {
+    ({ filePath, currentFile, value, onChange }, ref) => {
         const editorContainerRef = useRef<HTMLDivElement>(null);
         const crepeRef = useRef<Crepe | null>(null);
         const [ready, setReady] = useState(false);
@@ -44,9 +49,9 @@ export const CrepeEditor = forwardRef<CrepeEditorHandle, CrepeEditorProps>(
         if (!activeProjectId) return null;
 
         const currentProject = useProjectsStore((s) => s.getActiveProject());
-        const currentFile = currentProject?.openFiles.find(
-            (f) => f.path === currentProject.lastActiveFile
-        );
+        // const currentFile = currentProject?.openFiles.find(
+        //     (f) => f.path === currentProject.lastActiveFile
+        // );
         if (!currentFile) return null;
 
         const handleMarkdownUpdate = debounce((md: string) => {
@@ -55,26 +60,35 @@ export const CrepeEditor = forwardRef<CrepeEditorHandle, CrepeEditorProps>(
             // const currentMarkdown = currentFile?.markdown ?? '';
             if (normalizeForCompare(md) !== normalizeForCompare(value)) {
                 console.log("[CrepeEditor] handleMarkdownUpdate: ", md);
-                setMarkdownForFile(activeProjectId, currentFile.path, md);
+                // setMarkdownForFile(activeProjectId, currentFile.path, md);
                 onChange(md);
             }
-        }, 3000);
+        }, 300);
 
 
         useEffect(() => {
+            if (!currentFile || filePath !== currentFile.path) {
+                // filePath 和 currentFile 不一致时，不做处理
+                return;
+            }
+
             const root = editorContainerRef.current;
             if (!root) return;
 
             const crepe = new Crepe({ root });
 
             crepe.editor
+                // 先挂 remark，把 ```mermaid``` 改成自定义 mdast 节点
+                .use(mermaidRemarkPlugin)
+                // 再注册 schema & view
+                .use(mermaidNodePlugin)
+                .use(mermaidViewPlugin)
+
                 .use(listener)
                 .use(cursor)
                 .use(block)
                 .config((ctx) => {
-                    // ctx.set(blockConfig.key, {
-                    //     filterNodes: () => true,
-                    // });
+         
                     ctx.get(listenerCtx).markdownUpdated((_, md) => {
                         // console.log("[CrepeEditor] markdownUpdated: ", md);
                         handleMarkdownUpdate(md);
@@ -116,22 +130,42 @@ export const CrepeEditor = forwardRef<CrepeEditorHandle, CrepeEditorProps>(
     }
 );
 
-export const MilkdownEditorWrapper: React.FC<CrepeEditorProps> = ({
+export const MilkdownEditorWrapper: React.FC<CrepeEditorProps> = ({ filePath, currentFile,
                                                                       mode,
                                                                       value,
                                                                       onChange,
                                                                   }) => {
-    const { crepeRef } = useMarkdownStore(value);
+    // const { crepeRef } = useMarkdownStore(value);
+    const { crepeRef } = useMarkdownStore();
 
     const { projects, activeProjectId, setMarkdownForFile } = useProjectsStore();
     const currentProject = projects[activeProjectId!];
-    const currentFile = currentProject?.openFiles.find(
-        (f) => f.path === currentProject.lastActiveFile
-    );
+    // const currentFile = currentProject?.openFiles.find(
+    //     (f) => f.path === currentProject.lastActiveFile
+    // );
     if (!currentFile) return null;
 
-    // const markdown = currentFile?.markdown ?? currentFile?.content ?? "";
+        // ✅ 只在 value 更新时打印，不会渲染两次都打
+    // useEffect(() => {
+    //     if (currentFile?.path) {
+    //         console.log("[MilkdownEditorWrapper]", currentFile.path, "value:", value);
+    //     }
+    // }, [value, currentFile?.path]);
 
+    useEffect(() => {
+         if (!currentFile || filePath !== currentFile.path) {
+            // filePath 和 currentFile 不一致时，不做处理。 避免切换时不要渲染旧文件内容
+            return;
+        }
+
+        console.log("[MilkdownEditorWrapper] filePath: ", filePath);
+        console.log("[MilkdownEditorWrapper] currentFile: ", currentFile);
+        console.log(`[MilkdownEditorWrapper] 切换到 ${filePath}, 内容:`, value);
+    }, [filePath, value]);
+
+    // const markdown = currentFile?.markdown ?? currentFile?.content ?? "";
+    // console.log("[MilkdownEditorWrapper] value: ", value);
+    
     return (
         <MilkdownProvider>
             <div className="pl-10 items-center"></div>
@@ -139,6 +173,8 @@ export const MilkdownEditorWrapper: React.FC<CrepeEditorProps> = ({
             {mode === "wysiwyg" ? (
                 <CrepeEditor
                     mode={mode}
+                    filePath={filePath}
+                    currentFile={currentFile}
                     value={value}
                     onChange={onChange}
                     ref={crepeRef}

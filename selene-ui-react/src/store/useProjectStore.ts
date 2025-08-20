@@ -414,7 +414,9 @@ export const useProjectsStore = create<ProjectsStore>()(
                             // ✅ 语义等价：不更新，保持引用，避免无意义渲染
                             return f;
                         }
-                        console.log('markdown 有变化\n', prevNorm, nextNorm);
+                        console.log('markdown 有变化\n');
+                        console.log('markdown 有变化 prevNorm\n', prevNorm);
+                        console.log('markdown 有变化 nextNorm\n', nextNorm);
 
                         changed = true;
                         // ⚠️ 存“原始文本”还是“规范化后”的文本？通常建议存原始文本，以免改变用户输入
