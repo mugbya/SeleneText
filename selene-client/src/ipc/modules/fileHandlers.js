@@ -18,6 +18,25 @@ function registerFileHandlers() {
     return { success: true, content: result };
   });
 
+  // ipcMain.handle("read-file", async (event, { filePath }) => {
+  //   console.log("[read-file] filePath:", filePath);
+
+  //   try {
+  //     const stream = fs.createReadStream(filePath, { encoding: "utf-8", highWaterMark: 1024 * 1024 }); // 每次读取 1MB
+  //     let content = "";
+
+  //     for await (const chunk of stream) {
+  //       content += chunk;
+  //       // 可选：如果文件太大，可以按块发送给渲染进程
+  //       // event.sender.send("read-file-chunk", chunk);
+  //     }
+  //     return { success: true, content };
+  //   } catch (err) {
+  //     console.error("读取文件失败:", err);
+  //     return { success: false, error: err.message };
+  //   }
+  // });
+
   ipcMain.handle('save-file-as', async (event, { path, content }) => {
     // 文件另存为
     const result = await dialog.showSaveDialog({
