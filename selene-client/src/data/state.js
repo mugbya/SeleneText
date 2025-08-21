@@ -1,7 +1,7 @@
 
 const path = require("path");
 const Store = require('electron-store').default
-const { watchFolder } = require(path.join(global.__root, 'src/utils/watchFolder'));
+const { watchFolder } = require(path.join(global.__root, 'src/utils/nativeWatchFolder'));
 
 // electron-store 存储数据
 const store = new Store({ name: 'SeleneText-store' })

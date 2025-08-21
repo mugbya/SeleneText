@@ -7,6 +7,7 @@ global.__root = app.getAppPath(); // 一般返回项目根目录，放到导入�
 const { registerAllIpcHandlers } = require(path.join(global.__root, 'src/ipc'));        // 所有 ipc 处理器
 const { createMainWindow } = require(path.join(global.__root, 'src/view/windowManager'));
 const { restoreWatchedFolders } = require(path.join(global.__root, 'src/data/state'));
+const { cleanupWatchers } = require(path.join(global.__root, 'src/utils/nativeWatchFolder'));
 
 let pythonProcess
 
@@ -38,14 +39,33 @@ app.whenReady().then(() => {
   //   console.error(`[python error]: ${data}`)
   // })
 
-  // createWindow()
-
   const win = createMainWindow('zh');
 
   // 窗口 ready 后恢复监听的文件夹
   restoreWatchedFolders(win);
 });
 
+// 引入 restoreWatchedFolders 后，软件退出会很慢，需要等待所有文件夹监听都关闭后才会退出。这里做了强制退出，确保软件退出及时。
+app.on('before-quit', (event) => {
+  console.log('[ELECTRON] 清理中...');
+  
+  // 不再阻止默认退出，让应用自然退出
+  // 但仍然尝试清理资源
+  try {
+    // 同步清理，不等待异步操作完成
+    cleanupWatchers();
+  } catch (err) {
+    console.error('[ELECTRON] 清理过程出错:', err);
+  }
+  
+  // 设置强制退出定时器，确保应用不会卡住
+  setTimeout(() => {
+    console.log('[ELECTRON] 强制退出...');
+    process.exit(0);
+  }, 500); // 最多等待500毫秒就强制退出
+});
+
+app.on('quit', cleanupWatchers);
 
 app.on('will-quit', () => {
   // pythonProcess.kill()
