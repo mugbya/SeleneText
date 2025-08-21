@@ -3,7 +3,7 @@ const { dialog, ipcMain, BrowserWindow } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const { readDirRecursive } = require(path.join(global.__root, 'src/utils/fsUtils'));
-const { addRoot, removeRoot, getRoots } = require(path.join(global.__root, 'src/data/state'));
+// const { addRoot, removeRoot, getRoots } = require(path.join(global.__root, 'src/data/state'));
 
 // 加一个 delay 函数
 function delay(ms) {
@@ -118,8 +118,8 @@ function registerFileHandlers() {
         const contents = readDirRecursive(newPath);
         console.log("重命名根目录，刷新整个工作区, 重新调用 addRoot: %s, 且删除：%s", newPath, oldPath);
 
-        removeRoot(oldPath);
-        addRoot(newPath);
+        // removeRoot(oldPath);
+        // addRoot(newPath);
 
         win?.webContents.send("replace-folders", [
           { basePath: newPath, contents }

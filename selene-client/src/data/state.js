@@ -55,8 +55,8 @@ module.exports = {
   store,
   restoreWatchedFolders,
 
-  addRoot,
-  removeRoot,
-  getRoots,
-  setRoots,
+  // addRoot,
+  // removeRoot,
+  // getRoots,
+  // setRoots,
 };

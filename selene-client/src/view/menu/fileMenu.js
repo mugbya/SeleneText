@@ -3,7 +3,7 @@ const path = require('path');
 const { dialog, BrowserWindow } = require('electron');
 const { watchFolder } = require(path.join(global.__root, 'src/utils/nativeWatchFolder'));
 const { readDirRecursive } = require(path.join(global.__root, 'src/utils/fsUtils'));
-const { addRoot } = require(path.join(global.__root, 'src/data/state'));
+// const { addRoot } = require(path.join(global.__root, 'src/data/state'));
 const i18n = require(path.join(global.__root, 'src/i18n/i18n.main.js'));
 
 /**
@@ -67,7 +67,7 @@ function createFileMenu(win) {
             const dirPath = result.filePaths[0];
             const contents = readDirRecursive(dirPath);
             console.log("打开文件夹:", dirPath)
-            addRoot(dirPath);
+            // addRoot(dirPath);
   
             win.webContents.send('load-folder', {
               basePath: dirPath,
