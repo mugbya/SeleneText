@@ -25,6 +25,7 @@ import {
   mermaidNodePlugin,
   mermaidViewPlugin,
 } from "@/components/plugin/milkdown-mermaid-plugin";
+import { configureCrepe } from "./crepe-config";
 import { FileTab } from "@/types";
 
 interface CrepeEditorProps {
@@ -71,7 +72,11 @@ export const CrepeEditor = forwardRef<CrepeEditorHandle, CrepeEditorProps>(
       const root = editorContainerRef.current;
       if (!root) return;
 
+      // 创建 Crepe 实例
       const crepe = new Crepe({ root });
+      
+      // 应用自定义配置，添加 mermaid 语言支持
+      configureCrepe(crepe);
 
       crepe.editor
         // 先挂 remark，把 ```mermaid``` 改成自定义 mdast 节点

@@ -289,3 +289,32 @@ button:focus-visible {
   font-family: 'Arial', sans-serif;
   font-size: 14px;
 }
+
+.mermaid-wrapper {
+  position: relative;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  background-color: rgba(0, 0, 0, 0.02);
+  cursor: pointer;
+}
+
+.mermaid-wrapper:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.mermaid-node {
+  width: 100%;
+  overflow: auto;
+  user-select: text;
+}
+
+.mermaid-error {
+  color: #e53e3e;
+  padding: 0.5rem;
+  border: 1px dashed #e53e3e;
+  border-radius: 0.25rem;
+  background-color: rgba(229, 62, 62, 0.1);
+  white-space: pre-wrap;
+  font-family: monospace;
+}
