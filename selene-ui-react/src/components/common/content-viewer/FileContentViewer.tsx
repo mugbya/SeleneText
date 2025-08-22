@@ -37,12 +37,15 @@ export const FileContentViewer: React.FC<FileContentViewerProps> = ({
     if (currentFile.path === filePath) {
       setCurrentFileContent(null); // ✅ 重置内容，第一次 render 显示加载中
 
-      if (currentFile?.content){
+      // 最开始没有打开 文件时 currentFile?.content一定时null. 打开文件后，content 才会有值,即时全部删除完，都是空字符串
+      if (currentFile?.content != null || currentFile?.content !== undefined){
         setCurrentFileContent(currentFile.content);
         return
       }
-      
+
+
       window.electronAPI.readFile(filePath).then(({ success, content }) => {
+        console.log("[FileContentViewer] 触发读取文件内容", filePath);
         if (!success) {
           console.error("读取文件失败！");
           return;
