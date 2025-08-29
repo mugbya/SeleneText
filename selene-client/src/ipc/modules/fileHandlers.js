@@ -1,5 +1,5 @@
 // 💡 主进程接收渲染进程请求并保存文件内容 - 新增保存
-const { dialog, ipcMain, BrowserWindow } = require('electron');
+const { dialog, ipcMain, BrowserWindow, shell } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const { readDirRecursive } = require(path.join(global.__root, 'src/utils/fsUtils'));
@@ -212,6 +212,21 @@ function registerFileHandlers() {
         contents: folderContents
       }
     ]);
+  });
+
+  // 在文件系统中打开文件所在目录
+  ipcMain.on('open-in-file-system', (event, filePath) => {
+    try {
+      // 检查文件是否存在
+      if (fs.existsSync(filePath)) {
+        // 获取文件所在目录
+        const dirPath = path.dirname(filePath);
+        // 使用shell.openPath打开文件所在目录
+        shell.openPath(dirPath);
+      }
+    } catch (err) {
+      console.error('❌ 在文件系统中打开失败:', err);
+    }
   });
 
   // 移动文件/文件夹

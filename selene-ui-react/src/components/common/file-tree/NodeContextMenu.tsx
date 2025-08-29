@@ -19,6 +19,7 @@ export default function NodeContextMenu({
   onRename,
   onDelete,
   onMove,
+  onOpenInFileSystem,
 }: {
   isDir: boolean;
   onCreateFile: () => void;
@@ -26,6 +27,7 @@ export default function NodeContextMenu({
   onRename: () => void;
   onDelete: () => void;
   onMove: () => void;
+  onOpenInFileSystem: () => void;
 }) {
   // const activeProject = useProjectsStore((state) => state.getActiveProject());
   // const folderTree = activeProject?.folderTree;
@@ -53,6 +55,7 @@ export default function NodeContextMenu({
       )}
       <ContextMenuItem onClick={onRename}>重命名</ContextMenuItem>
       <ContextMenuItem onClick={onMove}>移动</ContextMenuItem>
+      <ContextMenuItem onClick={onOpenInFileSystem}>在文件系统中打开</ContextMenuItem>
       <ContextMenuItem
         onClick={onDelete}
         className="text-red-600 focus:bg-red-100 dark:focus:bg-red-900"

@@ -5,6 +5,10 @@ import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu";
 import NodeContextMenu from "./NodeContextMenu";
 import { cn } from "@/lib/utils";
 import { File, Folder, FolderOpen } from "lucide-react";
+// 使用简单的div代替图标，避免依赖问题
+// const File = () => <div className="w-4 h-4 text-zinc-500">📄</div>;
+// const Folder = () => <div className="w-4 h-4 text-yellow-500">📁</div>;
+// const FolderOpen = () => <div className="w-4 h-4 text-yellow-500">📂</div>;
 import CreateDialog from "./dialogs/CreateDialog";
 import RenameDialog from "./dialogs/RenameDialog";
 import DeleteDialog from "./dialogs/DeleteDialog";
@@ -170,7 +174,9 @@ const TreeNode = React.memo(function TreeNode({
   // console.log("TreeNode: ", node);
 
   // React 渲染中用（响应式）
-  const isExpanded = useProjectsStore((s) => s.expandedDirs[node.path]);
+  const isExpanded = useProjectsStore((state) => {
+    return state.expandedDirs[node.path];
+  });
 
   // 非 React 渲染流程中调用动作（非响应式）
   const toggleExpanded = () =>
@@ -231,6 +237,11 @@ const TreeNode = React.memo(function TreeNode({
           onRename={() => openDialog("rename")}
           onDelete={() => openDialog("delete")}
           onMove={handleMoveClick}
+          onOpenInFileSystem={() => {
+            if (window.electronAPI && window.electronAPI.send) {
+              window.electronAPI.send('open-in-file-system', node.path);
+            }
+          }}
         />
       </ContextMenu>
 

@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { X, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, Plus, ChevronLeft, ChevronRight, MoreHorizontal, FolderOpen } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useUnifiedFileChangeHandler } from "@/store/useUnifiedFileChangeHandler";
 import { useProjectsStore } from "@/store/useProjectStore";
@@ -44,6 +44,8 @@ export default function MainContentTabs(
   );
   const createOrphanFile = useProjectsStore((s) => s.createOrphanFile);
   const closeFileForProject = useProjectsStore((s) => s.closeFileForProject);
+  const updateProject = useProjectsStore((s) => s.updateProject);
+  const removeOrphanFile = useProjectsStore((s) => s.removeOrphanFile);
 
   // const activeProject = useProjectsStore((s) => s.getActiveProject());
   // const orphanFiles = useProjectsStore((s) => s.orphanFiles);
@@ -92,6 +94,89 @@ export default function MainContentTabs(
       createOrphanFile();
     }
   };
+
+  // 关闭全部文件
+  const handleCloseAllFiles = () => {
+    if (activeProjectId && activeProject) {
+      // 项目文件
+      updateProject(activeProjectId, (p) => ({
+        openFiles: [],
+        lastActiveFile: null
+      }));
+    } else {
+      // 孤立文件 - 使用逐个移除的方式
+      orphanFiles.forEach(file => {
+        removeOrphanFile(file.path);
+      });
+    }
+  };
+
+  // 关闭其他文件
+  const handleCloseOtherFiles = (currentFilePath: string) => {
+    if (activeProjectId && activeProject) {
+      // 项目文件
+      const currentFile = activeProject.openFiles.find(f => f.path === currentFilePath);
+      if (currentFile) {
+        updateProject(activeProjectId, (p) => ({
+          openFiles: [currentFile],
+          lastActiveFile: currentFilePath
+        }));
+      }
+    } else {
+      // 孤立文件 - 使用逐个移除的方式
+      orphanFiles.forEach(file => {
+        if (file.path !== currentFilePath) {
+          removeOrphanFile(file.path);
+        }
+      });
+    }
+  };
+
+  // 在文件系统中打开文件
+  const handleOpenInFileSystem = (filePath: string) => {
+    if (window.electronAPI && window.electronAPI.send) {
+      window.electronAPI.send('open-in-file-system', filePath);
+    }
+  };
+
+  // 右键菜单状态管理
+  const [contextMenuState, setContextMenuState] = useState({
+    isOpen: false,
+    x: 0,
+    y: 0,
+    filePath: ''
+  });
+
+  // 打开文件标签的右键菜单
+  const handleFileTabContextMenu = (e: React.MouseEvent, filePath: string) => {
+    e.preventDefault();
+    setContextMenuState({
+      isOpen: true,
+      x: e.clientX,
+      y: e.clientY,
+      filePath
+    });
+  };
+
+  // 打开全局右键菜单（全部关闭）
+  const handleGlobalContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setContextMenuState({
+      isOpen: true,
+      x: e.clientX,
+      y: e.clientY,
+      filePath: 'global'
+    });
+  };
+
+  // 关闭右键菜单
+  React.useEffect(() => {
+    const handleClick = () => setContextMenuState({ ...contextMenuState, isOpen: false });
+    if (contextMenuState.isOpen) {
+      document.addEventListener('click', handleClick);
+      return () => document.removeEventListener('click', handleClick);
+    }
+  }, [contextMenuState.isOpen]);
 
   // 文件标签页左右滑动
   const tabScrollContainerRef = useRef<HTMLDivElement>(null);
@@ -142,11 +227,12 @@ export default function MainContentTabs(
           >
             <TabsList className="flex w-max items-center space-x-2 h-12">
               {openFilesMerge.map((file) => (
-                <div key={file.path} className="relative mr-2">
+                <div key={file.path} className="relative mr-2 group">
                   <TabsTrigger
                     value={file.path}
                     className="pl-2 pr-6 py-1 max-w-[160px] truncate rounded-md text-sm font-medium text-muted-foreground
               data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow transition-all"
+                    onContextMenu={(e) => handleFileTabContextMenu(e, file.path)}
                   >
                     {(file.path.split("/").pop() || "").slice(0, 6)}
                     {(file.path.split("/").pop() || "").length > 10 ? "…" : ""}
@@ -158,9 +244,20 @@ export default function MainContentTabs(
                       closeFileForProject(projectId, file.path);
                     }}
                   />
+                  
+                  {/* 文件标签的更多操作按钮 */}
+                  <div className="absolute -right-7 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      className="p-1 rounded-full hover:bg-muted/50"
+                      onContextMenu={(e) => handleFileTabContextMenu(e, file.path)}
+                    >
+                      <MoreHorizontal className="w-4 h-4 text-muted-foreground hover:text-foreground" />
+                    </button>
+                  </div>
                 </div>
               ))}
 
+              {/* 新建文件按钮 */}
               <button
                 onClick={() => handleAddFile()}
                 className="ml-2 p-1 text-muted-foreground hover:text-foreground"
@@ -168,7 +265,48 @@ export default function MainContentTabs(
               >
                 <Plus className="w-4 h-4" />
               </button>
+              
+
             </TabsList>
+            
+            {/* 右键菜单 */}
+            {contextMenuState.isOpen && (
+              <div 
+                className="fixed z-50 bg-background border rounded-md shadow-lg p-1 text-sm"
+                style={{ top: contextMenuState.y, left: contextMenuState.x }}
+              >
+                {contextMenuState.filePath === 'global' ? (
+                  <button
+                    className="flex items-center w-full px-3 py-1.5 text-sm rounded-md hover:bg-muted/50"
+                    onClick={handleCloseAllFiles}
+                  >
+                    全部关闭
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      className="flex items-center w-full px-3 py-1.5 text-sm rounded-md hover:bg-muted/50"
+                      onClick={() => handleCloseOtherFiles(contextMenuState.filePath)}
+                    >
+                      关闭其他
+                    </button>
+                    <button
+                      className="flex items-center w-full px-3 py-1.5 text-sm rounded-md hover:bg-muted/50"
+                      onClick={handleCloseAllFiles}
+                    >
+                      全部关闭
+                    </button>
+                    <button
+                      className="flex items-center w-full px-3 py-1.5 text-sm rounded-md hover:bg-muted/50"
+                      onClick={() => handleOpenInFileSystem(contextMenuState.filePath)}
+                    >
+                      <FolderOpen className="mr-2 w-4 h-4" />
+                      在文件系统中打开
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
           </div>
 
           {/* 滚动按钮 - 右 */}

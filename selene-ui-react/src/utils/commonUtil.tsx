@@ -6,7 +6,7 @@ type ToastType = "success" | "error" | "info" | "warning";
 export function smartToast(
   message: string,
   type: ToastType = "info",
-  duration = 30000
+  duration = 3000
 ) {
   const isLong = message.length > 200;
   const content = (
