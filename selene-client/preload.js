@@ -44,8 +44,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   deletePath: (targetPath) =>
     ipcRenderer.invoke('delete-path', { targetPath }),
 
-  moveFile: (sourcePath, targetDir) =>
-    ipcRenderer.invoke('move-file', { sourcePath, targetDir }),
+  moveFile: (rootPath, sourcePath, targetDir) =>
+    ipcRenderer.invoke('move-file', { rootPath, sourcePath, targetDir }),
 
   loadFolder: ()  =>
     ipcRenderer.invoke('delete-path', { targetPath }),

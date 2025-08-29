@@ -230,7 +230,7 @@ function registerFileHandlers() {
   });
 
   // 移动文件/文件夹
-  ipcMain.handle('move-file', async (event, { sourcePath, targetDir }) => {
+  ipcMain.handle('move-file', async (event, { rootPath, sourcePath, targetDir }) => {
     try {
       // 检查源路径是否存在
       if (!fs.existsSync(sourcePath)) {
@@ -259,13 +259,14 @@ function registerFileHandlers() {
       const win = BrowserWindow.getAllWindows()[0];
       
       // 刷新源目录和目标目录
-      const sourceDir = path.dirname(sourcePath);
-      const sourceContents = readDirRecursive(sourceDir);
-      const targetContents = readDirRecursive(targetDir);
+      // const sourceDir = path.dirname(sourcePath);
+      // const sourceContents = readDirRecursive(sourceDir);
+      // const targetContents = readDirRecursive(targetDir);
+      const contents = readDirRecursive(rootPath);
       
       // 发送刷新事件
-      win?.webContents.send("folder-changed", { basePath: sourceDir, contents: sourceContents });
-      win?.webContents.send("folder-changed", { basePath: targetDir, contents: targetContents });
+      // win?.webContents.send("folder-changed", { basePath: sourceDir, contents: sourceContents });
+      win?.webContents.send("folder-changed", { basePath: rootPath, contents: contents });
       
       return { success: true, newPath: targetPath };
     } catch (err) {

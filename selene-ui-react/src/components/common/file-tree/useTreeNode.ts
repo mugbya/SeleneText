@@ -146,7 +146,7 @@ export function useTreeNode(rootPath: string, node: FileNode, selectedPath?: str
       return;
     }
     
-    const res = await window.electronAPI.moveFile(node.path, targetDir);
+    const res = await window.electronAPI.moveFile(rootPath, node.path, targetDir);
     if (res.success) {
       smartToast("移动成功", "success");
       
@@ -164,6 +164,7 @@ export function useTreeNode(rootPath: string, node: FileNode, selectedPath?: str
         removeOrphanFile(node.path);
       }
     } else {
+      console.log("移动失败: ", res);
       smartToast(`移动失败`, "error");
     }
   };

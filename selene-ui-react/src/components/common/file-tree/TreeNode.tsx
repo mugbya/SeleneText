@@ -146,7 +146,7 @@ const TreeNode = React.memo(function TreeNode({
         if (isDir && node.path.startsWith(nodeId)) return;
         
         // 执行移动操作
-        const res = await window.electronAPI.moveFile(nodeId, node.path);
+        const res = await window.electronAPI.moveFile(rootPath, nodeId, node.path);
         if (res.success) {
           smartToast("移动成功", "success");
           
@@ -158,6 +158,7 @@ const TreeNode = React.memo(function TreeNode({
             removeOrphanFile(nodeId);
           }
         } else {
+            console.log("移动失败: ", res);
             // 与useTreeNode.ts中的错误处理保持一致
             smartToast("移动失败", "error");
           }
