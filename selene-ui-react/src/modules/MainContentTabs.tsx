@@ -6,18 +6,11 @@ import { useUnifiedFileChangeHandler } from "@/store/useUnifiedFileChangeHandler
 import { useProjectsStore } from "@/store/useProjectStore";
 import { FileContentViewer } from "@/components/common/content-viewer/FileContentViewer";
 
-export default function MainContentTabs(
-//   {
-//   projectId,
-// }: {
-//   projectId: string | null;
-// }
-) {
-  // console.log("MainContentTabs 渲染");
+export default function MainContentTabs() {
+  // 首先获取所有需要用于条件判断的状态
   const projectId = useProjectsStore((s) => s.activeProjectId);
-  if (!projectId) {
-    return null;
-  }
+
+  // console.log("[MainContentTabs] 项目ID:", projectId);
 
   const changeFileContentForProject = useProjectsStore(
     (s) => s.changeFileContentForProject
@@ -52,8 +45,8 @@ export default function MainContentTabs(
   // const activeOrphanFile = useProjectsStore((s) => s.activeOrphanFile);
 
   // 下面写法才能及时获取store 的变更，才能触发当前组件的刷新
-  const activeFile = useProjectsStore((s) => s.projects[projectId]?.lastActiveFile);
-  const openFiles = useProjectsStore((s) => s.projects[projectId]?.openFiles);
+  const activeFile = useProjectsStore((s) => s.projects[projectId ?? ""]?.lastActiveFile);
+  const openFiles = useProjectsStore((s) => s.projects[projectId ?? ""]?.openFiles);
 
   const activeProject = getActiveProject();
   // const openFiles = activeProject?.openFiles ?? orphanFiles;
@@ -199,7 +192,11 @@ export default function MainContentTabs(
     openFiles
   );
 
-  if (!openFiles || openFiles.length === 0) return null;
+    // 最后再判断渲染内容 在Hook调用之后进行所有条件判断
+  if (!projectId && orphanFiles.length === 0) {
+    return null;
+  }
+    // if (!openFiles || openFiles.length === 0) return null;
 
   return (
     <main className="flex flex-col flex-1 h-full pr-1.5">

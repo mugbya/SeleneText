@@ -4,23 +4,29 @@ import { useProjectsStore } from "@/store/useProjectStore";
 import { getFileType } from "@/utils/fileUtil";
 
 function WorkSpaceTreePanel() {
-
-  // const projects = useProjectsStore((s) => s.projects);
+  // Get all state needed for conditions first
   const projectId = useProjectsStore((s) => s.activeProjectId);
-  // const setActiveFileForProject = useProjectsStore((s) => s.setActiveFileForProject);
-
-  const activeProject = useProjectsStore((s) => s.getActiveProject()); // 改写法订阅了函数执行结果（实际的数据），自然能触发刷新。非常重要！！！
+  const activeProject = useProjectsStore((s) => s.getActiveProject());
   const folderTree = activeProject?.folderTree;
   const projectRootPath = activeProject?.rootPath ?? null;
   const projectActiveFilePath = activeProject?.lastActiveFile;
-
-  // const switchProject = useProjectsStore((s) => s.switchProject);
-  // const closeProject = useProjectsStore((s) => s.closeProject); // 如果你在用
-
-
+  
+  // All hooks must be called before any conditional returns
   const renderCount = useRef(0);
   renderCount.current += 1;
   console.log("[WorkSpaceTreePanel] 渲染次数:", renderCount.current);
+
+  // All condition checks AFTER all hooks
+  if (!projectId || !folderTree || !projectRootPath) {
+    return (
+      <div className="flex items-center justify-center h-full text-gray-500">
+        加载中...
+      </div>
+    );
+  }
+
+  // const switchProject = useProjectsStore((s) => s.switchProject);
+  // const closeProject = useProjectsStore((s) => s.closeProject); // 如果你在用
 
   if (!projectId || !folderTree || !projectRootPath) {
     return (
@@ -35,7 +41,7 @@ function WorkSpaceTreePanel() {
       // console.log("读取文件内容：", filePath);
       const fileType = getFileType(filePath);
 
-      const { addOpenFileForProject, setActiveFileForProject, setMarkdownForFile } = useProjectsStore.getState();
+      const { addOpenFileForProject, setActiveFileForProject } = useProjectsStore.getState();
 
       setActiveFileForProject(projectId, filePath); // ✅ 激活新文件
       addOpenFileForProject(projectId, {
