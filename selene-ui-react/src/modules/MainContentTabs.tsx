@@ -152,15 +152,15 @@ export default function MainContentTabs() {
   };
 
   // 打开全局右键菜单（全部关闭）
-  const handleGlobalContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setContextMenuState({
-      isOpen: true,
-      x: e.clientX,
-      y: e.clientY,
-      filePath: 'global'
-    });
-  };
+  // const handleGlobalContextMenu = (e: React.MouseEvent) => {
+  //   e.preventDefault();
+  //   setContextMenuState({
+  //     isOpen: true,
+  //     x: e.clientX,
+  //     y: e.clientY,
+  //     filePath: 'global'
+  //   });
+  // };
 
   // 关闭右键菜单
   React.useEffect(() => {
@@ -209,38 +209,33 @@ export default function MainContentTabs() {
         className="h-full flex flex-col"
       >
         <div className="relative border-b-0 bg-muted/40 rounded-t-md overflow-hidden">
-          {/* 滚动按钮 - 左 */}
-          {/*<button*/}
-          {/*    className="absolute left-0 top-0 bottom-0 z-10 w-8 bg-gradient-to-r from-muted/40 to-transparent flex items-center justify-center"*/}
-          {/*    onClick={scrollLeft}*/}
-          {/*>*/}
-          {/*    <ChevronLeft className="w-4 h-4" />*/}
-          {/*</button>*/}
-
           {/* ✅ 真正的滚动容器 */}
           <div
             className="overflow-x-auto no-scrollbar"
             ref={tabScrollContainerRef}
           >
-            <TabsList className="flex w-max items-center space-x-2 h-12">
+            <div className="tabs-header border-b-0"> {/* 替换TabsList为tabs-header */}
               {openFilesMerge.map((file) => (
-                <div key={file.path} className="relative mr-2 group">
-                  <TabsTrigger
-                    value={file.path}
-                    className="pl-2 pr-6 py-1 max-w-[160px] truncate rounded-md text-sm font-medium text-muted-foreground
-              data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow transition-all"
+                <div key={file.path} className="relative mr-0 group">
+                  <div
+                    className={`tab-button ${activeFileMerge === file.path ? 'tab-button--active' : ''}`}
+                    onClick={() => setActiveFileForProject(projectId, file.path)}
                     onContextMenu={(e) => handleFileTabContextMenu(e, file.path)}
                   >
-                    {(file.path.split("/").pop() || "").slice(0, 6)}
-                    {(file.path.split("/").pop() || "").length > 10 ? "…" : ""}
-                  </TabsTrigger>
-                  <X
-                    className="w-4 h-4 absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      closeFileForProject(projectId, file.path);
-                    }}
-                  />
+                    <div className="flex items-center justify-between w-full space-x-2 max-w-[160px]">
+                      <span className="truncate">
+                        {(file.path.split("/").pop() || "").slice(0, 6)}
+                        {(file.path.split("/").pop() || "").length > 10 ? "…" : ""}
+                      </span>
+                      <X
+                        className="w-4 h-4 text-zinc-400 hover:text-red-500 cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          closeFileForProject(projectId, file.path);
+                        }}
+                      />
+                    </div>
+                  </div>
                   
                   {/* 文件标签的更多操作按钮 */}
                   <div className="absolute -right-7 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -248,7 +243,7 @@ export default function MainContentTabs() {
                       className="p-1 rounded-full hover:bg-muted/50"
                       onContextMenu={(e) => handleFileTabContextMenu(e, file.path)}
                     >
-                      <MoreHorizontal className="w-4 h-4 text-muted-foreground hover:text-foreground" />
+                      {/* <MoreHorizontal className="w-4 h-4 text-muted-foreground hover:text-foreground" /> */}
                     </button>
                   </div>
                 </div>
@@ -257,14 +252,15 @@ export default function MainContentTabs() {
               {/* 新建文件按钮 */}
               <button
                 onClick={() => handleAddFile()}
-                className="ml-2 p-1 text-muted-foreground hover:text-foreground"
+                className="ml-2 p-1 text-zinc-400 hover:text-foreground"
                 title="新建文件"
               >
                 <Plus className="w-4 h-4" />
               </button>
               
 
-            </TabsList>
+            {/* </TabsList> */}
+            </div>
             
             {/* 右键菜单 */}
             {contextMenuState.isOpen && (
@@ -297,7 +293,7 @@ export default function MainContentTabs() {
                       className="flex items-center w-full px-3 py-1.5 text-sm rounded-md hover:bg-muted/50"
                       onClick={() => handleOpenInFileSystem(contextMenuState.filePath)}
                     >
-                      <FolderOpen className="mr-2 w-4 h-4" />
+                      {/* <FolderOpen className="mr-2 w-4 h-4" /> */}
                       在文件系统中打开
                     </button>
                   </>
