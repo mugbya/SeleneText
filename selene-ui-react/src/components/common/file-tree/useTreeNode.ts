@@ -126,6 +126,47 @@ export function useTreeNode(rootPath: string, node: FileNode, selectedPath?: str
     }
     closeDialog();
   };
+  
+  // 移动文件或文件夹
+  const handleMove = async (targetDir: string) => {
+    if (!targetDir) {
+      smartToast("请选择目标目录", "warning");
+      return;
+    }
+    
+    // 不能移动到自身
+    if (targetDir === node.path && isDir) {
+      smartToast("不能移动到自身", "warning");
+      return;
+    }
+    
+    // 不能移动到自身的子目录
+    if (isDir && targetDir.startsWith(node.path)) {
+      smartToast("不能移动到自身的子目录", "warning");
+      return;
+    }
+    
+    const res = await window.electronAPI.moveFile(node.path, targetDir);
+    if (res.success) {
+      smartToast("移动成功", "success");
+      
+      const {
+        removeOrphanFile,
+        closeFileForProject,
+        activeProjectId
+      } = useProjectsStore.getState();
+      
+      if (activeProjectId && res.newPath) {
+        // 更新项目中已打开的文件路径
+        closeFileForProject(activeProjectId, node.path);
+        // 如果需要，可以在这里打开新路径的文件
+      } else if (res.newPath) {
+        removeOrphanFile(node.path);
+      }
+    } else {
+      smartToast(`移动失败`, "error");
+    }
+  };
 
   return {
     expanded,
@@ -148,5 +189,6 @@ export function useTreeNode(rootPath: string, node: FileNode, selectedPath?: str
     handleRename,
 
     handleDelete,
+    handleMove,
   };
 }

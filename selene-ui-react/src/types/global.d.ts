@@ -24,6 +24,7 @@ declare global {
 
       deletePath: (path: string) => Promise<{ success: boolean}>;
       renamePath: (rootPath: string, path: string, newName: string) => Promise<{ success: boolean}>;
+      moveFile: (sourcePath: string, targetDir: string) => Promise<{ success: boolean; newPath?: string }>;
 
       getProjectsStore: () => Promise<any>;
       setProjectsStore: (data: any) => Promise<void>;

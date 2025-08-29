@@ -214,6 +214,51 @@ function registerFileHandlers() {
     ]);
   });
 
+  // 移动文件/文件夹
+  ipcMain.handle('move-file', async (event, { sourcePath, targetDir }) => {
+    try {
+      // 检查源路径是否存在
+      if (!fs.existsSync(sourcePath)) {
+        return { success: false, error: "源路径不存在" };
+      }
+      
+      // 检查目标目录是否存在
+      if (!fs.existsSync(targetDir)) {
+        return { success: false, error: "目标目录不存在" };
+      }
+      
+      // 获取源文件/文件夹名称
+      const sourceName = path.basename(sourcePath);
+      // 构建目标路径
+      const targetPath = path.join(targetDir, sourceName);
+      
+      // 检查目标路径是否已存在
+      if (fs.existsSync(targetPath)) {
+        return { success: false, error: "目标路径已存在同名文件/文件夹" };
+      }
+      
+      // 执行移动操作
+      await fs.promises.rename(sourcePath, targetPath);
+      await delay(100); // 等待文件系统同步
+      
+      const win = BrowserWindow.getAllWindows()[0];
+      
+      // 刷新源目录和目标目录
+      const sourceDir = path.dirname(sourcePath);
+      const sourceContents = readDirRecursive(sourceDir);
+      const targetContents = readDirRecursive(targetDir);
+      
+      // 发送刷新事件
+      win?.webContents.send("folder-changed", { basePath: sourceDir, contents: sourceContents });
+      win?.webContents.send("folder-changed", { basePath: targetDir, contents: targetContents });
+      
+      return { success: true, newPath: targetPath };
+    } catch (err) {
+      console.error("❌ 移动失败", err);
+      return { success: false, error: err.message };
+    }
+  });
+
   // ipcMain.handle('show-save-dialog', async (event, options) => {
   //   const result = await dialog.showSaveDialog(BrowserWindow.getFocusedWindow(), options);
   //   return result;
