@@ -13,7 +13,8 @@ export async function handleFileSave(
     const hasSaved = !currentFile.isTemporary;
 
     const mode = currentFile.mode ?? "wysiwyg";
-    const contentToSave = mode === "source" ? currentFile.markdown ?? currentFile.content : currentFile.content;
+    // const contentToSave = mode === "source" ? currentFile.markdown ?? currentFile.content : currentFile.content;
+    const contentToSave = currentFile.content ?? "";
     // console.log("[handleFileSave] contentToSave: ", contentToSave);
     console.log("hasSaved: ", hasSaved);
     if (hasSaved) {
