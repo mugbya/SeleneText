@@ -219,19 +219,19 @@ export default function MainContentTabs() {
           >
             <div className="tabs-header border-b-0 flex items-center"> {/* 确保包含flex items-center */}
               {openFilesMerge.map((file) => (
-                <div key={file.path} className="relative mr-0 group">
+                <div key={file.path} className="relative mr-0 group flex-shrink-0">
                   <div
                     className={`tab-button ${activeFileMerge === file.path ? 'tab-button--active' : ''}`}
                     onClick={() => setActiveFileForProject(projectId, file.path)}
                     onContextMenu={(e) => handleFileTabContextMenu(e, file.path)}
+                    style={{ minWidth: '120px', maxWidth: '200px' }}
                   >
-                    <div className="flex items-center justify-between w-full space-x-2 max-w-[160px]">
-                      <span className="truncate">
-                        {(file.path.split("/").pop() || "").slice(0, 6)}
-                        {(file.path.split("/").pop() || "").length > 10 ? "…" : ""}
+                    <div className="flex items-center justify-between w-full space-x-2">
+                      <span className="truncate flex-1 text-left">
+                        {file.path.split("/").pop() || ""}
                       </span>
                       <X
-                        className="w-4 h-4 text-zinc-400 hover:text-red-500 cursor-pointer"
+                        className="w-4 h-4 text-zinc-400 hover:text-red-500 cursor-pointer flex-shrink-0"
                         onClick={(e) => {
                           e.stopPropagation();
                           closeFileForProject(projectId, file.path);
