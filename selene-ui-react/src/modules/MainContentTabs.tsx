@@ -55,6 +55,9 @@ export default function MainContentTabs() {
   const openFilesMerge = openFiles ?? orphanFiles;
   const activeFileMerge = activeFile ?? activeOrphanFile;
 
+  console.log("[MainContentTabs] openFilesMerge %o", openFilesMerge);
+  console.log("[MainContentTabs] activeFileMerge %o", activeFileMerge);
+
   // const currentFile =
   //   activeProject?.openFiles.find(
   //     (f) => f.path === activeProject.lastActiveFile
@@ -214,7 +217,7 @@ export default function MainContentTabs() {
             className="overflow-x-auto no-scrollbar"
             ref={tabScrollContainerRef}
           >
-            <div className="tabs-header border-b-0"> {/* 替换TabsList为tabs-header */}
+            <div className="tabs-header border-b-0 flex items-center"> {/* 确保包含flex items-center */}
               {openFilesMerge.map((file) => (
                 <div key={file.path} className="relative mr-0 group">
                   <div
@@ -248,17 +251,15 @@ export default function MainContentTabs() {
                   </div>
                 </div>
               ))}
-
+              
               {/* 新建文件按钮 */}
               <button
                 onClick={() => handleAddFile()}
-                className="ml-2 p-1 text-zinc-400 hover:text-foreground"
+                className="ml-2 p-3 text-muted-foreground hover:text-foreground rounded-md hover:bg-muted/50 transition-colors flex items-center justify-center min-w-[44px] min-h-[44px]"
                 title="新建文件"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-6 h-6" />
               </button>
-              
-
             {/* </TabsList> */}
             </div>
             
