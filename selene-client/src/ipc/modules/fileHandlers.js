@@ -1,8 +1,139 @@
 // 💡 主进程接收渲染进程请求并保存文件内容 - 新增保存
-const { dialog, ipcMain, BrowserWindow, shell } = require('electron');
+const { dialog, ipcMain, BrowserWindow, shell, app } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const { readDirRecursive } = require(path.join(global.__root, 'src/utils/fsUtils'));
+
+const isDev = !app.isPackaged;
+// 提前设置！⚠️一定在其他任何地方用 app.getPath 之前调用！
+const userDataDir = isDev
+  ? path.join(app.getPath("appData"), "SeleneText-dev")
+  : path.join(app.getPath("appData"), "SeleneText");
+
+// 备份文件管理器
+class BackupManager {
+  constructor() {
+    this.backupDir = path.join(userDataDir, 'bak');
+    this.openFiles = new Set(); // 跟踪打开的文件
+    this.maxBackupsPerFile = 3; // 每个文件最多保留3个备份
+  }
+
+  // 获取备份目录路径
+  getBackupDir() {
+    return this.backupDir;
+  }
+
+  // 创建备份目录
+  async ensureBackupDir() {
+    try {
+      await fs.promises.mkdir(this.backupDir, { recursive: true });
+    } catch (err) {
+      console.error('❌ 创建备份目录失败:', err);
+    }
+  }
+
+  // 生成备份文件路径
+  getBackupPath(filePath) {
+    const fileName = path.basename(filePath);
+    const fileHash = this.getFileHash(filePath);
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    return path.join(this.backupDir, `${fileHash}_${timestamp}_${fileName}`);
+  }
+
+  // 获取文件哈希（用于标识同一文件）
+  getFileHash(filePath) {
+    // 简单的哈希函数：使用文件路径的哈希
+    let hash = 0;
+    const str = path.resolve(filePath);
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // 转换为32位整数
+    }
+    return Math.abs(hash).toString(36);
+  }
+
+  // 获取文件的所有备份
+  async getFileBackups(filePath) {
+    try {
+      await this.ensureBackupDir();
+      const fileHash = this.getFileHash(filePath);
+      const files = await fs.promises.readdir(this.backupDir);
+      
+      return files
+        .filter(f => f.startsWith(`${fileHash}_`))
+        .map(f => path.join(this.backupDir, f))
+        .sort()
+        .reverse(); // 最新的在前
+    } catch (err) {
+      console.error('❌ 获取文件备份列表失败:', err);
+      return [];
+    }
+  }
+
+  // 清理旧的备份文件（保留最新的maxBackupsPerFile个）
+  async cleanupOldBackups(filePath) {
+    try {
+      const backups = await this.getFileBackups(filePath);
+      if (backups.length > this.maxBackupsPerFile) {
+        const toDelete = backups.slice(this.maxBackupsPerFile);
+        for (const backupPath of toDelete) {
+          try {
+            await fs.promises.unlink(backupPath);
+            console.log(`🗑️ 删除旧备份: ${backupPath}`);
+          } catch (err) {
+            console.error(`❌ 删除备份失败: ${backupPath}`, err);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('❌ 清理旧备份失败:', err);
+    }
+  }
+
+  // 清理文件的所有备份
+  async cleanupAllBackups(filePath) {
+    try {
+      const backups = await this.getFileBackups(filePath);
+      for (const backupPath of backups) {
+        try {
+          await fs.promises.unlink(backupPath);
+          console.log(`🗑️ 删除备份: ${backupPath}`);
+        } catch (err) {
+          console.error(`❌ 删除备份失败: ${backupPath}`, err);
+        }
+      }
+    } catch (err) {
+      console.error('❌ 清理所有备份失败:', err);
+    }
+  }
+
+  // 标记文件为打开状态
+  async markFileAsOpen(filePath) {
+    const resolvedPath = path.resolve(filePath);
+    this.openFiles.add(resolvedPath);
+    
+    // 对于打开的文件，清理旧的备份，只保留最近的3个
+    await this.cleanupOldBackups(resolvedPath);
+  }
+
+  // 标记文件为关闭状态
+  async markFileAsClosed(filePath) {
+    const resolvedPath = path.resolve(filePath);
+    this.openFiles.delete(resolvedPath);
+    
+    // 对于关闭的文件，清理该文件的所有备份
+    await this.cleanupAllBackups(resolvedPath);
+  }
+
+  // 检查文件是否打开
+  isFileOpen(filePath) {
+    return this.openFiles.has(path.resolve(filePath));
+  }
+}
+
+// 创建备份管理器实例
+const backupManager = new BackupManager();
 // const { addRoot, removeRoot, getRoots } = require(path.join(global.__root, 'src/data/state'));
 
 // 加一个 delay 函数
@@ -37,11 +168,11 @@ function registerFileHandlers() {
   //   }
   // });
 
-  ipcMain.handle('save-file-as', async (event, { path, content }) => {
+  ipcMain.handle('save-file-as', async (event, { filePath, content }) => {
     // 文件另存为
     const result = await dialog.showSaveDialog({
       title: '保存文件',
-      path: path || 'untitled.txt',
+      path: filePath || 'untitled.txt',
       filters: [
         { name: 'Text Files', extensions: ['txt', 'md', 'json', 'js', 'ts'] },
         { name: 'All Files', extensions: ['*'] },
@@ -57,9 +188,14 @@ function registerFileHandlers() {
   });
 
   // 写入文件（覆盖内容）
-  ipcMain.handle('save-file', async (event, { path, content }) => {
+  ipcMain.handle('save-file', async (event, { filePath, content }) => {
     try {
-      await fs.promises.writeFile(path, content, 'utf-8');
+      const dir = path.dirname(filePath);
+      if (!fs.existsSync(dir)) {
+          await fs.promises.mkdir(dir, { recursive: true });
+      }
+
+      await fs.promises.writeFile(filePath, content, 'utf-8');
       return { success: true };
     } catch (err) {
       console.error('❌ 写入文件失败:', err);
@@ -272,6 +408,172 @@ function registerFileHandlers() {
     } catch (err) {
       console.error("❌ 移动失败", err);
       return { success: false, error: err.message };
+    }
+  });
+
+  // 备份文件
+  ipcMain.handle('backup-file', async (event, filePath) => {
+    try {
+      // 检查文件是否存在
+      if (!fs.existsSync(filePath)) {
+        return { success: false, error: "文件不存在" };
+      }
+      
+      // 确保备份目录存在
+      await backupManager.ensureBackupDir();
+      
+      // 生成备份文件路径
+      const backupPath = backupManager.getBackupPath(filePath);
+      
+      // 复制文件到备份位置
+      await fs.promises.copyFile(filePath, backupPath);
+      
+      // 检查文件是否处于打开状态
+      const resolvedPath = path.resolve(filePath);
+      const isFileOpen = backupManager.openFiles.has(resolvedPath);
+      
+      if (isFileOpen) {
+        // 对于打开的文件，只保留最近的3个备份
+        await backupManager.cleanupOldBackups(filePath);
+      } else {
+        // 对于未打开的文件，清理所有备份
+        await backupManager.cleanupAllBackups(filePath);
+      }
+      
+      console.log(`✅ 文件备份成功: ${backupPath} (文件状态: ${isFileOpen ? '打开' : '关闭'})`);
+      return { success: true, backupPath };
+    } catch (err) {
+      console.error("❌ 文件备份失败", err);
+      return { success: false, error: err.message };
+    }
+  });
+
+  // 安全保存文件（先备份再保存）
+  ipcMain.handle('save-file-safely', async (event, { filePath, data }) => {
+    let fileExists = false;
+    
+    try {
+      // 检查文件是否存在
+      fileExists = fs.existsSync(filePath);
+      
+      if (fileExists) {
+        // 先备份原文件
+        try {
+          await backupManager.ensureBackupDir();
+          const backupPath = backupManager.getBackupPath(filePath);
+          await fs.promises.copyFile(filePath, backupPath);
+          console.log(`✅ 文件备份成功: ${backupPath}`);
+          
+          // 检查文件是否处于打开状态
+          const resolvedPath = path.resolve(filePath);
+          const isFileOpen = backupManager.openFiles.has(resolvedPath);
+          
+          if (isFileOpen) {
+            // 对于打开的文件，只保留最近的3个备份
+            await backupManager.cleanupOldBackups(filePath);
+          } else {
+            // 对于未打开的文件，清理所有备份
+            await backupManager.cleanupAllBackups(filePath);
+          }
+        } catch (backupErr) {
+          console.warn("⚠️ 备份失败，但继续尝试保存文件", backupErr);
+        }
+      }
+      
+      // 写入新内容
+      await fs.promises.writeFile(filePath, data, 'utf-8');
+      
+      console.log(`✅ 文件安全保存成功: ${filePath}`);
+      return { success: true };
+    } catch (err) {
+      console.error("❌ 文件安全保存失败", err);
+      
+      // 如果保存失败，尝试从备份恢复
+      if (fileExists) {
+        try {
+          const backups = await backupManager.getFileBackups(filePath);
+          if (backups.length > 0) {
+            const latestBackup = backups[0]; // 最新的备份
+            await fs.promises.copyFile(latestBackup, filePath);
+            console.log(`✅ 已从备份恢复文件: ${latestBackup}`);
+          }
+        } catch (restoreErr) {
+          console.error("❌ 备份恢复失败", restoreErr);
+        }
+      }
+      
+      return { success: false, error: err.message };
+    }
+  });
+
+  // 从备份恢复文件
+  ipcMain.handle('restore-from-backup', async (event, filePath) => {
+    try {
+      // 检查文件是否存在
+      if (!fs.existsSync(filePath)) {
+        return { success: false, error: "文件不存在" };
+      }
+      
+      // 查找最近的备份文件
+      const backups = await backupManager.getFileBackups(filePath);
+      
+      if (backups.length === 0) {
+        return { success: false, error: "未找到备份文件" };
+      }
+      
+      // 使用最新的备份文件恢复
+      const latestBackup = backups[0];
+      await fs.promises.copyFile(latestBackup, filePath);
+      
+      console.log(`✅ 文件恢复成功: ${latestBackup} -> ${filePath}`);
+      return { success: true };
+    } catch (err) {
+      console.error("❌ 文件恢复失败", err);
+      return { success: false, error: err.message };
+    }
+  });
+
+  // 标记文件为打开状态
+  ipcMain.handle('mark-file-open', async (event, filePath) => {
+    try {
+      await backupManager.markFileAsOpen(filePath);
+      console.log(`📂 标记文件为打开状态: ${filePath}`);
+      return { success: true };
+    } catch (err) {
+      console.error("❌ 标记文件打开状态失败", err);
+      return { success: false, error: err.message };
+    }
+  });
+
+  // 标记文件为关闭状态
+  ipcMain.handle('mark-file-closed', async (event, projectRootPath, filePath) => {
+    try {
+      const projectName = path.basename(projectRootPath); // 项目名
+      const relative = path.relative(projectRootPath, filePath); // 去掉根路径，得到相对路径
+      const withoutExt = relative.replace(/\.[^.]+$/, '');
+
+      const tmpPath = path.join(backupManager.getBackupDir(), projectName, withoutExt);
+
+      await backupManager.markFileAsClosed(tmpPath);
+      console.log(`📂 标记文件为关闭状态: ${tmpPath}`);
+      return { success: true };
+    } catch (err) {
+      console.error("❌ 标记文件关闭状态失败", err);
+      return { success: false, error: err.message };
+    }
+  });
+
+  // 获取用户数据目录下的文件备份路径
+  ipcMain.handle('get-user-date-file-back-path', async (event) => {
+    try {
+      const backupPath = backupManager.getBackupDir();
+      // 确保备份目录存在
+      await backupManager.ensureBackupDir();
+      // console.log(`✅ 获取文件备份路径成功: ${backupPath}`);
+      return backupPath;
+    } catch (err) {
+      console.error("❌ 获取文件备份路径失败", err);
+      return err.message;
     }
   });
 

@@ -26,11 +26,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   readFile: (filePath) =>
     ipcRenderer.invoke('read-file', {filePath}),
 
-  saveFileAs: (path, content) =>
-    ipcRenderer.invoke('save-file-as', { path, content }),
+  saveFileAs: (filePath, content) =>
+    ipcRenderer.invoke('save-file-as', { filePath, content }),
 
-  saveFile: (path, content) =>
-    ipcRenderer.invoke('save-file', { path, content }),
+  saveFile: (filePath, content) =>
+    ipcRenderer.invoke('save-file', { filePath, content }),
 
   createFile: (dir, name) =>
     ipcRenderer.invoke('create-file', { dir, name }),
@@ -55,8 +55,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
    * 提供 IPC 读写接口 - 数据缓存 使用 electron-store
    */
   getProjectsStore: () => ipcRenderer.invoke('get-projects-store'),
-  setProjectsStore: (data) => ipcRenderer.invoke('set-projects-store', data)
+  setProjectsStore: (data) => ipcRenderer.invoke('set-projects-store', data),
 
+  // 备份和安全写入相关API
+  backupFile: (filePath) => ipcRenderer.invoke('backup-file', filePath),
+  saveFileSafely: (filePath, data) => ipcRenderer.invoke('save-file-safely', { filePath, data }),
+  restoreFromBackup: (filePath) => ipcRenderer.invoke('restore-from-backup', filePath),
+  markFileOpen: (filePath) => ipcRenderer.invoke('mark-file-open', filePath),
+  markFileClosed: (projectRootPath, filePath) => ipcRenderer.invoke('mark-file-closed', projectRootPath, filePath),
+
+  getUserDateFileBackPath: () => ipcRenderer.invoke('get-user-date-file-back-path'),
 
   // showSaveDialog: (options) => ipcRenderer.invoke('show-save-dialog', options),
   // writeFile: (filePath, content) => ipcRenderer.invoke('write-file', filePath, content),

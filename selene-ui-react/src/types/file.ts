@@ -5,6 +5,7 @@ export type FileTab = {
     realPath?: string;     // 真实磁盘路径，首次保存后写入
     isTemporary?: boolean; // true 表示未保存的虚拟文件
     mode?: 'wysiwyg' | 'source';
+    projectRootPath: string;
     // markdown?: string;
 };
 

@@ -37,15 +37,27 @@ function WorkSpaceTreePanel() {
   }
   // console.log("[WorkSpaceTreePanel] 项目folderTree:", folderTree);
 
-  const handlerOpenFile = (projectId: string, filePath: string) => {
+  const handlerOpenFile = async (projectId: string, filePath: string) => {
       // console.log("读取文件内容：", filePath);
       const fileType = getFileType(filePath);
 
       const { addOpenFileForProject, setActiveFileForProject } = useProjectsStore.getState();
 
+      console.log('[DEBUG] handlerOpenFile 打开文件:', filePath);
+      // 标记文件为打开状态
+      if (window.electronAPI) {
+        try {
+          console.log('[DEBUG] handlerOpenFile 打开文件:', filePath);
+          await window.electronAPI.markFileOpen(filePath);
+        } catch (error) {
+          console.error('标记文件打开状态失败:', error);
+        }
+      }
+
       setActiveFileForProject(projectId, filePath); // ✅ 激活新文件
       addOpenFileForProject(projectId, {
         path: filePath,
+        projectRootPath: projectRootPath,
         // content: "",
       });
 
