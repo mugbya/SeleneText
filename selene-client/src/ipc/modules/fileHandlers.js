@@ -92,11 +92,13 @@ class BackupManager {
   }
 
   // 清理文件的所有备份
-  async cleanupAllBackups(filePath) {
+  async cleanupAllBackups(fileDir) {
     try {
-      const backups = await this.getFileBackups(filePath);
-      for (const backupPath of backups) {
+      const backups = await fs.promises.readdir(fileDir);
+      // const backups = await this.getFileBackups(filePath);
+      for (const itemFile of backups) {
         try {
+          const backupPath = path.join(fileDir, itemFile);
           await fs.promises.unlink(backupPath);
           console.log(`🗑️ 删除备份: ${backupPath}`);
         } catch (err) {
@@ -118,12 +120,14 @@ class BackupManager {
   }
 
   // 标记文件为关闭状态
-  async markFileAsClosed(filePath) {
-    const resolvedPath = path.resolve(filePath);
-    this.openFiles.delete(resolvedPath);
+  async markFileAsClosed(fileDir) {
+    console.log('[BackupManager] markFileAsClosed fileDir:', fileDir);
+    // const resolvedPath = path.resolve(filePath);
+    // console.log('[BackupManager] markFileAsClosed resolvedPath:', resolvedPath);
+    // this.openFiles.delete(resolvedPath);
     
     // 对于关闭的文件，清理该文件的所有备份
-    await this.cleanupAllBackups(resolvedPath);
+    await this.cleanupAllBackups(fileDir);
   }
 
   // 检查文件是否打开
@@ -437,7 +441,7 @@ function registerFileHandlers() {
         await backupManager.cleanupOldBackups(filePath);
       } else {
         // 对于未打开的文件，清理所有备份
-        await backupManager.cleanupAllBackups(filePath);
+        // await backupManager.cleanupAllBackups(filePath);
       }
       
       console.log(`✅ 文件备份成功: ${backupPath} (文件状态: ${isFileOpen ? '打开' : '关闭'})`);
@@ -473,7 +477,7 @@ function registerFileHandlers() {
             await backupManager.cleanupOldBackups(filePath);
           } else {
             // 对于未打开的文件，清理所有备份
-            await backupManager.cleanupAllBackups(filePath);
+            // await backupManager.cleanupAllBackups(filePath);
           }
         } catch (backupErr) {
           console.warn("⚠️ 备份失败，但继续尝试保存文件", backupErr);
@@ -563,7 +567,7 @@ function registerFileHandlers() {
     }
   });
 
-  // 获取用户数据目录下的文件备份路径
+  // 获取用户数据目录下的文件备份路径的根路径
   ipcMain.handle('get-user-date-file-back-path', async (event) => {
     try {
       const backupPath = backupManager.getBackupDir();
