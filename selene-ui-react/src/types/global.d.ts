@@ -28,8 +28,8 @@ declare global {
 
       getProjectsStore: () => Promise<any>;
       setProjectsStore: (data: any) => Promise<void>;
-      
 
+      saveFileSafely: (filePath: string, originFilePath: string, data: string) => Promise<{ success: boolean; error?: string }>;
       markFileOpen: (filePath: string) => Promise<{ success: boolean; error?: string }>;
       markFileClosed: (projectRootPath: string, filePath: string) => Promise<{ success: boolean; error?: string }>;
       getUserDateFileBackPath: () => Promise<string>;

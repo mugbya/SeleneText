@@ -58,12 +58,24 @@ contextBridge.exposeInMainWorld('electronAPI', {
   setProjectsStore: (data) => ipcRenderer.invoke('set-projects-store', data),
 
   // 备份和安全写入相关API
-  backupFile: (filePath) => ipcRenderer.invoke('backup-file', filePath),
-  saveFileSafely: (filePath, data) => ipcRenderer.invoke('save-file-safely', { filePath, data }),
-  restoreFromBackup: (filePath) => ipcRenderer.invoke('restore-from-backup', filePath),
-  markFileOpen: (filePath) => ipcRenderer.invoke('mark-file-open', filePath),
-  markFileClosed: (projectRootPath, filePath) => ipcRenderer.invoke('mark-file-closed', projectRootPath, filePath),
+  // backupFile: (filePath) => ipcRenderer.invoke('backup-file', filePath),
 
+  /**
+   * 安全写方法
+   * @param filePath
+   * @param originFilePath
+   * @param data
+   * @returns {Promise<any>}
+   */
+  saveFileSafely: (filePath, originFilePath, data) => ipcRenderer.invoke('save-file-safely', { filePath, originFilePath, data }),
+  // restoreFromBackup: (filePath) => ipcRenderer.invoke('restore-from-backup', filePath),
+  // markFileOpen: (filePath) => ipcRenderer.invoke('mark-file-open', filePath),
+  // markFileClosed: (projectRootPath, filePath) => ipcRenderer.invoke('mark-file-closed', projectRootPath, filePath),
+
+  /**
+   * 获取临时文件的根目录
+   * @returns {Promise<any>}
+   */
   getUserDateFileBackPath: () => ipcRenderer.invoke('get-user-date-file-back-path'),
 
   // showSaveDialog: (options) => ipcRenderer.invoke('show-save-dialog', options),

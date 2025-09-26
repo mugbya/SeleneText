@@ -86,47 +86,46 @@ export default function MainContentTabs() {
       // console.log("handleAddFile 有项目，新增项目下的文件");
       createNewFileForProject(activeProjectId);
       // 获取新创建的文件路径并标记为打开状态
-      const newFilePath = `untitled-${Date.now()}.txt`;
-      await handleMarkFileOpen(newFilePath);
+      // const newFilePath = `untitled-${Date.now()}.txt`;
+      // await handleMarkFileOpen(newFilePath);
     } else {
       // console.log("handleAddFile 无项目，新建孤立文件");
       // 无项目，新建孤立文件
       createOrphanFile();
       // 获取新创建的文件路径并标记为打开状态
-      const newFilePath = `untitled-${Date.now()}.txt`;
-      await handleMarkFileOpen(newFilePath);
+      // const newFilePath = `untitled-${Date.now()}.txt`;
+      // await handleMarkFileOpen(newFilePath);
     }
   };
 
   // 标记文件为打开状态
-  const handleMarkFileOpen = async (filePath: string) => {
-    console.log('[DEBUG] handleMarkFileOpen 打开文件:', filePath);
-    if (window.electronAPI) {
-      try {
-        console.log('[DEBUG] handleMarkFileOpen 打开文件:', filePath);
-        await window.electronAPI.markFileOpen(filePath);
-      } catch (error) {
-        console.error('标记文件打开状态失败:', error);
-      }
-    } else {
-      console.warn("⚠️ electronAPI 未注入，请检查 preload 配置或 contextIsolation 设置");
-    }
-  };
-
-  // 标记文件为关闭状态
-  const handleMarkFileClosed = async (file: FileTab) => {
-    console.log('[DEBUG] handleMarkFileClosed 关闭文件:', file);
-    if (window.electronAPI) {
-      try {
-        console.log('[DEBUG] handleMarkFileClosed 关闭文件:', file);
-        await window.electronAPI.markFileClosed(file.projectRootPath, file.path);
-      } catch (error) {
-        console.error('标记文件关闭状态失败:', error);
-      }
-    } else {
-      console.warn("⚠️ electronAPI 未注入，请检查 preload 配置或 contextIsolation 设置");
-    }
-  };
+  // const handleMarkFileOpen = async (filePath: string) => {
+  //   console.log('[DEBUG] handleMarkFileOpen 打开文件:', filePath);
+  //   if (window.electronAPI) {
+  //     try {
+  //       console.log('[DEBUG] handleMarkFileOpen 打开文件:', filePath);
+  //       await window.electronAPI.markFileOpen(filePath);
+  //     } catch (error) {
+  //       console.error('标记文件打开状态失败:', error);
+  //     }
+  //   } else {
+  //     console.warn("⚠️ electronAPI 未注入，请检查 preload 配置或 contextIsolation 设置");
+  //   }
+  // };
+  // // 标记文件为关闭状态
+  // const handleMarkFileClosed = async (file: FileTab) => {
+  //   console.log('[DEBUG] handleMarkFileClosed 关闭文件:', file);
+  //   if (window.electronAPI) {
+  //     try {
+  //       console.log('[DEBUG] handleMarkFileClosed 关闭文件:', file);
+  //       await window.electronAPI.markFileClosed(file.projectRootPath, file.path);
+  //     } catch (error) {
+  //       console.error('标记文件关闭状态失败:', error);
+  //     }
+  //   } else {
+  //     console.warn("⚠️ electronAPI 未注入，请检查 preload 配置或 contextIsolation 设置");
+  //   }
+  // };
 
   // 关闭全部文件
   const handleCloseAllFiles = () => {
@@ -271,8 +270,8 @@ export default function MainContentTabs() {
                         className="w-4 h-4 text-zinc-400 hover:text-red-500 cursor-pointer flex-shrink-0"
                         onClick={async (e) => {
                           e.stopPropagation();
-                          // 先标记文件为关闭状态，再关闭文件
-                          await handleMarkFileClosed(file);
+                          // // 先标记文件为关闭状态，再关闭文件
+                          // await handleMarkFileClosed(file);
                           closeFileForProject(projectId, file.path);
                         }}
                       />
