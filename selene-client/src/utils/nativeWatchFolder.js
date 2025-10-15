@@ -148,7 +148,7 @@ function watchFolder(folderPath, window) {
     
     // 广度优先遍历目录结构，但限制监听深度
     let depth = 0;
-    const MAX_DEPTH = 3; // 限制监听深度
+    const MAX_DEPTH = 6; // 限制监听深度
     const MAX_DIRS = 100; // 限制监听目录数量
     
     while (dirs.length > 0 && processedDirs.size < MAX_DIRS && depth < MAX_DEPTH) {
