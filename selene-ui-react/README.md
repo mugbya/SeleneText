@@ -38,6 +38,9 @@ yarn add @milkdown/core@7.14.0 \
          @milkdown/plugin-cursor@7.14.0 \
          @milkdown/plugin-block@7.14.0
 
+yarn add @milkdown/preset-gfm
+yarn add @milkdown/plugin-keymap
+
 # mermaid 相关
 yarn add unist-util-visit @types/unist mdast     
 

@@ -26,6 +26,7 @@
     "@milkdown/plugin-prism": "^7.15.3",
     "@milkdown/plugin-slash": "^7.14.0",
     "@milkdown/preset-commonmark": "^7.14.0",
+    "@milkdown/preset-gfm": "^7.17.1",
     "@milkdown/prose": "^7.14.0",
     "@milkdown/react": "^7.14.0",
     "@milkdown/theme-nord": "^7.14.0",
